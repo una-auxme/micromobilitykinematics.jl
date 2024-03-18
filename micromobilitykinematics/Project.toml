@@ -1,0 +1,7 @@
+name = "micromobilitykinematics"
+uuid = "4353f398-1834-4b80-bf01-510184fd36ae"
+authors = ["bruneadr "]
+version = "0.1.0"
+
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
