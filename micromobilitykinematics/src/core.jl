@@ -6,7 +6,7 @@
 #                                                                   |  z- Achse
 #                                                                   |
 #         |                                             y- Achse    |
-#         |                                        <-------------(rot_comp_UCS) 
+#         |                                        <-------------(steering_ucs) 
 #         |                                             ^           | |         x- Achse
 #         |                                             |           |      |
 #         |                                             |           |           |->
@@ -14,11 +14,11 @@
 #         |                                             |           |
 #         |                                             |           |
 #         |                                             |           |
-#         |                                       ---------------  (x)
-# (lever_mount_UCS)                                                           |
-#         |       |     track_lever                                         |        z_rotational_radius
-#         |               |                                                      |
-#         |                    (JC_l) --------------------------------    (JS_l)-----------(z)-----------(JS_r)
+#         |                                       ---------------  (x)                                                                           (lever_mount_UCS)
+# (lever_mount_UCS)                                                    |                                                                                  |
+#         |       |     track_lever                                         |        z_rotational_radius                                               |    track_lever 
+#         |               |                                                      |                                                                  |
+#         |                    (CJ_l) --------------------------------    (SJ_l)-----------(z)-----------(SJ_r)   -------------------------------- (CJ_r)
 #         |                     |                                           |                             |    
 #         |                     |<-------------- tie_rod --------------->    |<--- distance_between_ ----->|
 #         |                                                                       joint_pivot_points
@@ -32,19 +32,19 @@
 mutable struct RotationalComponent
     x_rotational_radius::Union{Float64, Nothing}                    # rotation around the x-axis
     z_rotational_radius::Union{Float64, Nothing}                    # rotation around the z-axis
-    to_joint_pivot_points::Union{Float64, Nothing}                  # distance from the component center (z) to joint pivot
+    to_joint_pivot_point::Union{Float64, Nothing}                   # distance from the component center (z) to joint pivot
     distance_between_joint_pivot_points::Union{Float64, Nothing}    # distance between both pivot poits (JR_l and (JR_r)
 
 
 
-    function RotationalComponent(xSteeringRadius::Float64,zSteeringRadius::Float64)
+    function RotationalComponent(x_rotational_radius::Float64,z_rotational_radius::Float64)
         inst = new()
 
-        inst.xSteeringRadius = xSteeringRadius
-        inst.zSteeringRadius = zSteeringRadius
+        inst.x_rotational_radius = x_rotational_radius
+        inst.z_rotational_radius = z_rotational_radius
 
         inst.to_joint_pivot_point = 23.5
-        inst.distance_between_joint_pivot_points = inst.to_joint_pivot_points * 2
+        inst.distance_between_joint_pivot_points = inst.to_joint_pivot_point * 2
    
         return inst
     end
@@ -71,7 +71,6 @@ mutable struct TrackLever
     end
 end
 
-
 mutable struct Steering
     ##### Components
     rotational_component::Union{RotationalComponent,Nothing}
@@ -80,8 +79,12 @@ mutable struct Steering
 
     ######## depends on the kinematics
 
-    sphere_joint::Union{Vector{Float64},Nothing}          #JR_l
-    circle_joint::Union{Vector{Float64},Nothing}          #JS_l
+    sphere_joints::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}          # (SJ_l, SJ_r) = (left, right)
+    circle_joints::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}          # (SC_l, SC_r) = (left, right)
+
+    sphere_joints_neutral::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}          # (SJ_l, SJ_r) = (left, right)
+    circle_joints_neutral::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}          # (SC_l, SC_r) = (left, right)
+
 
     ######## depends on the Suspension kinematics
 
@@ -89,22 +92,28 @@ mutable struct Steering
 
     ######## Positions of the Userdefined Coordinate System (UCS)
 
-    rotational_component_ucs::Union{Vector{Float64},Nothing}    
-    lever_mounting_point_ucs::Union{Vector{Float64},Nothing} 
+    wishbone_ucs_position::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}         # (left, right)   
+    lever_mounting_points_ucs::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}     # (left, right)
 
+    
 
-    kinematics!::Funtion
+    kinematics!::Function
 
-    function Steering(xSteeringRadius::Float64, zSteeringRadius::Float64, track_lever_length::Float64, tie_rod_length::Float64)
+    function Steering(x_rotational_radius::Float64, z_rotational_radius::Float64, track_lever_length::Float64, tie_rod_length::Float64)
         inst = new()
-        inst.rotational_component = RotationalComponent(xSteeringRadius, zSteeringRadius)
+        inst.rotational_component = RotationalComponent(x_rotational_radius, z_rotational_radius)
         inst.track_lever = TrackLever(track_lever_length)
         inst.tie_rod = TieRod(tie_rod_length)
 
-        inst.sphere_joint = nothing
-        inst.circle_joint = nothing
+        inst.sphere_joints = nothing
+        inst.circle_joints = nothing
 
-        inst.rotational_component_ucs = [36.0, -140.0, 139.0]
+        inst.sphere_joints_neutral = nothing
+        inst.circle_joints_neutral = nothing
+
+
+        inst.wishbone_ucs_position = ([-36.0, 140.0, -139.0], [-36.0, -140.0, -139.0])
+        inst.lever_mounting_points_ucs = nothing
 
         inst.kinematics! = steeringkinematics!
 
@@ -127,10 +136,12 @@ mutable struct Damper
     nominal_length::Union{Float64, Nothing}                                 # Damper nominal length (not compressed) [mm]
     travel::Union{Float64, Nothing}                                         # Damper travel [mm]
     compression::Union{Float64, Nothing}                                    # Damper Compression [%]
-    length::Union{Float64, Nothing}                                         # Damper Length with compression as set in LEFTcompression
+    length::Union{Float64, Nothing}  
+    length_neutral::Union{Float64, Nothing}                                        # Damper Length with compression as set in LEFTcompression
 
     upper_fixture::Union{Vector{Float64}, Nothing}                          # Damper upper fixtur
     lower_fixture::Union{Vector{Float64}, Nothing}                          # Damper lower fixture point 
+    lower_fixture_neutral::Union{Vector{Float64}, Nothing} 
 
     function Damper()
         inst = new()
@@ -139,8 +150,10 @@ mutable struct Damper
         inst.travel = 55.0
         inst.compression = 30.0
         inst.length = inst.nominal_length - (inst.compression / 100) * inst.travel
+        inst.length_neutral = inst.nominal_length - (30.0 / 100) * inst.travel
         inst.upper_fixture = [37.0;30.0; 160.0]
         inst.lower_fixture = nothing
+        inst.lower_fixture_neutral = nothing
         return inst
     end
 end
@@ -162,12 +175,12 @@ mutable struct LowerWishbone
     distance_rotation_axis_to_lower_damper_fixure::Union{Float64, Nothing}      # Distance LEFTrotation_axis to LowerDamperFixPoint [mm]
     distance_to_joint_x::Union{Float64, Nothing}                                # Distance on x-Axis bearing_rear to Joint [mm] 
     
-    
-    
+    sphere_joint_neutral::Union{Vector{Float64}, Nothing}
+    lower_fixture_neutral::Union{Vector{Float64}, Nothing}
     ######## depends on the kinematics
     sphere_joint::Union{Vector{Float64}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
     lower_fixture::Union{Vector{Float64}, Nothing}                              # Damper lower fixture point 
-    rotation_axis_TO_sphere_joint::Union{Vector{Float64}, Nothing}              # directuion vector to  Spherejoint from the LEFTLowerWishboneBearingRear x-Achse
+    #rotation_axis_TO_sphere_joint::Union{Vector{Float64}, Nothing}              # directuion vector to  Spherejoint from the LEFTLowerWishboneBearingRear x-Achse
 
     function LowerWishbone()
         inst = new()
@@ -179,6 +192,9 @@ mutable struct LowerWishbone
         inst.distance_to_joint_y = 140.0  
         inst.distance_rotation_axis_to_lower_damper_fixure = 85.0   
         inst.distance_to_joint_x =  37.00 
+
+        inst.sphere_joint_neutral = nothing
+        inst.lower_fixture_neutral = nothing
 
         inst.sphere_joint = nothing
         inst.lower_fixture = nothing
@@ -203,7 +219,7 @@ mutable struct UpperWishbone
 
     ######## depends on the kinematics
     sphere_joint::Union{Vector{Float64}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
-
+    sphere_joint_neutral::Union{Vector{Float64}, Nothing}   
 
     function UpperWishbone()
         inst = new()
@@ -221,7 +237,7 @@ mutable struct UpperWishbone
         tiltZ = -90+acosd(abs(dot([0;0;1],inst.rotation_axis)))
 
         inst.sphere_joint = nothing
-
+        inst.sphere_joint_neutral = nothing
         return inst
     end
 end
@@ -267,29 +283,27 @@ end
 
 mutable struct Suspension
     ##### Components 
-    lowerwishbone::Union{LowerWishbone,Nothing}
-    upperwishbone::Union{UpperWishbone,Nothing}
-    damper::Union{Damper,Nothing}
+    lowerwishbone::Union{Tuple{LowerWishbone,LowerWishbone},Nothing}    # (left, right)
+    upperwishbone::Union{Tuple{UpperWishbone,UpperWishbone},Nothing}    # (left, right)
+    damper::Union{Tuple{Damper,Damper},Nothing}                         # (left, right)
+    wheelmount::Union{WheelMount,Nothing}                        
     
     kinematics!::Function
 
     function Suspension()
         inst = new()
 
-        inst.lowerwishbone = LowerWishbone()
-        inst.upperwishbone = UpperWishbone()
-        inst.damper = Damper()
+        inst.lowerwishbone = (LowerWishbone(),LowerWishbone())      # (left, right)
+
+        inst.upperwishbone = (UpperWishbone(), UpperWishbone())     # (left, right)
+
+        inst.damper = (Damper(), Damper())                          # (left, right)
+
+        inst.wheelmount = WheelMount()
+
         inst.kinematics! = suspensionkinematics!
 
         return inst
     end
 
 end
-
-
-############ Steering #############################
-
-
-
-#########################################################################
-

@@ -29,7 +29,7 @@ calculates the intersecting points of a sphere (surface) and a circle
 
 """
 function circsphere(pos_circ,r_circ,n_circ,pos_sphere,r_sphere)
-    print(pos_circ,r_circ,n_circ,pos_sphere,r_sphere)
+    #print(pos_circ,r_circ,n_circ,pos_sphere,r_sphere)
     n_circ = n_circ/norm(n_circ)        #n_circ must be a unit vector
     d = (n_circ[1]*pos_sphere[1] + n_circ[2]*pos_sphere[2] + n_circ[3]*pos_sphere[3] - sum(n_circ.*pos_circ))
     if abs(d) > r_sphere
