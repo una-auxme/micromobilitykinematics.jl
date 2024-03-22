@@ -1,8 +1,6 @@
 
 using LinearAlgebra
 
-
-
 """
 calc_basis_vectors(v)
 
@@ -30,17 +28,3 @@ function calc_basis_vectors(v)
 
     x,y,z
 end
-
-
-
-#=
-function calc_basis_vectors(v)
-
-    z = v / norm(v)
-    y = [0, 1, 0]
-    x = cross(z,y)
-    x = x / norm(y)
-    
-        [x y z]
-end
-=#

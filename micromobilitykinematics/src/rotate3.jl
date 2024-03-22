@@ -1,4 +1,5 @@
 using LinearAlgebra
+using Rotations
 
 """
     rotate3(A,n,alpha,shift=[0;0;0])
@@ -45,4 +46,3 @@ function rotate3(A,n,alpha,shift=[0;0;0])
     #returning rotation matrix RM and rotated point R
     return RM,R
 end
-
