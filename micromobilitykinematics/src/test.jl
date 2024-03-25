@@ -7,14 +7,40 @@ include("calc_basis_vectors.jl")
 
 
 
-using Intersect3D
+using GeoSpatialRelations
 
+GeoSpatialRelations.Circle([1.0,0.0,0.0],20.0,[0.0,1.0,0.0])
+
+
+Circle([1.0,0.0,0.0],20.0,[0.0,1.0,0.0])
 
 lineplane()
 
 
 s = Suspension()
 
+suspensionkinematics!(s)
+
+s
+
+suspension = Suspension()
+a = 
+
+real_vector = convert(Vector{Real}, a )
+
+b = 
+c= 
+
+a = convert(Vector{Real},[suspension.damper[1].upper_fixture[1]; suspension.lowerwishbone[1].bearing_rear[2]; suspension.lowerwishbone[1].bearing_rear[3]])
+b = suspension.lowerwishbone[1].distance_rotation_axis_to_lower_damper_fixure
+c = suspension.lowerwishbone[1].rotation_axis
+GeoSpatialRelations.Circle(a,b,c)
+
+circ_damper = GeoSpatialRelations.Circle(suspension.damper[1].upper_fixture, suspension.damper[1].length_neutral, )
+
+suspension.damper[1].upper_fixture
+suspension.damper[1].length_neutral
+suspension.lowerwishbone[1].rotation_axis
 
 Intersect3D.
 

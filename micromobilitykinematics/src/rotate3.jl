@@ -1,5 +1,4 @@
 using LinearAlgebra
-using Rotations
 
 """
     rotate3(A,n,alpha,shift=[0;0;0])

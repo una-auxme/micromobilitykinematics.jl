@@ -1,14 +1,11 @@
 module micromobilitykinematic
 
     using Documenter
-    using Intersect3D
     using LinearAlgebra
-
+    using GeoSpatialRelations
+    using StaticArrays
 
 
     include("suspensionkinematics.jl")
     include("core.jl")
-
-
-
 end

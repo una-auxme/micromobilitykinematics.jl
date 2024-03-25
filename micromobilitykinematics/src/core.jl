@@ -28,16 +28,24 @@
 #         |                                       
 #         |                                       
 ########################################################################
+abstract type AbstractSteering end
 
-mutable struct RotationalComponent
-    x_rotational_radius::Union{Float64, Nothing}                    # rotation around the x-axis
-    z_rotational_radius::Union{Float64, Nothing}                    # rotation around the z-axis
-    to_joint_pivot_point::Union{Float64, Nothing}                   # distance from the component center (z) to joint pivot
-    distance_between_joint_pivot_points::Union{Float64, Nothing}    # distance between both pivot poits (JR_l and (JR_r)
+abstract type AbstractComponent <: AbstractSteering end
+
+abstract type AbstractRotationalComponent <: AbstractComponent end
+abstract type AbstractTieRod <: AbstractComponent end
+abstract type AbstractTrackLever <: AbstractComponent end
+
+mutable struct RotationalComponent <: AbstractComponent
+    x_rotational_radius::Real                    # rotation around the x-axis
+    z_rotational_radius::Real                   # rotation around the z-axis
+    to_joint_pivot_point::Real                   # distance from the component center (z) to joint pivot
+    distance_between_joint_pivot_points::Real    # distance between both pivot poits (JR_l and (JR_r)
 
 
 
-    function RotationalComponent(x_rotational_radius::Float64,z_rotational_radius::Float64)
+    function RotationalComponent(x_rotational_radius::Real, z_rotational_radius::Real)
+        
         inst = new()
 
         inst.x_rotational_radius = x_rotational_radius
@@ -51,27 +59,23 @@ mutable struct RotationalComponent
 
 end
 
-mutable struct TieRod
-    length::Union{Float64, Nothing}                             # lenght of the component
 
-    function TieRod(length)
-        inst = new()
-        inst.length = length
-        return inst
+for (type, supertype) in zip([:TieRod, :TrackLever],[:AbstractTieRod, :AbstractTrackLever])
+
+
+    @eval mutable struct $type <: $supertype
+        length::Real
+        function $type(length::Real)
+            new(length)
+        end
     end
+
+
 end
 
-mutable struct TrackLever
-    length::Union{Float64, Nothing}                            # lenght of the component
 
-    function TrackLever(length)
-        inst = new()
-        inst.length = length
-        return inst
-    end
-end
 
-mutable struct Steering
+mutable struct Steering <: AbstractSteering
     ##### Components
     rotational_component::Union{RotationalComponent,Nothing}
     track_lever::Union{TrackLever,Nothing}
@@ -79,11 +83,11 @@ mutable struct Steering
 
     ######## depends on the kinematics
 
-    sphere_joints::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}          # (SJ_l, SJ_r) = (left, right)
-    circle_joints::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}          # (SC_l, SC_r) = (left, right)
+    sphere_joints::Union{Tuple{Vector{Real},Vector{Real}},Nothing}          # (SJ_l, SJ_r) = (left, right)
+    circle_joints::Union{Tuple{Vector{Real},Vector{real}},Nothing}          # (SC_l, SC_r) = (left, right)
 
-    sphere_joints_neutral::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}          # (SJ_l, SJ_r) = (left, right)
-    circle_joints_neutral::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}          # (SC_l, SC_r) = (left, right)
+    sphere_joints_neutral::Union{Tuple{Vector{Real},Vector{Real}},Nothing}          # (SJ_l, SJ_r) = (left, right)
+    circle_joints_neutral::Union{Tuple{Vector{Real},Vector{Real}},Nothing}          # (SC_l, SC_r) = (left, right)
 
 
     ######## depends on the Suspension kinematics
@@ -92,14 +96,14 @@ mutable struct Steering
 
     ######## Positions of the Userdefined Coordinate System (UCS)
 
-    wishbone_ucs_position::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}         # (left, right)   
-    lever_mounting_points_ucs::Union{Tuple{Vector{Float64},Vector{Float64}},Nothing}     # (left, right)
+    wishbone_ucs_position::Union{Tuple{Vector{Real},Vector{Real}},Nothing}         # (left, right)   
+    lever_mounting_points_ucs::Union{Tuple{Vector{Real},Vector{Real}},Nothing}     # (left, right)
 
     
 
     kinematics!::Function
 
-    function Steering(x_rotational_radius::Float64, z_rotational_radius::Float64, track_lever_length::Float64, tie_rod_length::Float64)
+    function Steering(x_rotational_radius::Real, z_rotational_radius::Real, track_lever_length::Real, tie_rod_length::Real)
         inst = new()
         inst.rotational_component = RotationalComponent(x_rotational_radius, z_rotational_radius)
         inst.track_lever = TrackLever(track_lever_length)
@@ -122,29 +126,38 @@ mutable struct Steering
 
 end
 
-
 ############ Suspension Component Positions #############################
 
 
 
 #########################################################################
+abstract type AbstractSuspension end
+
+abstract type AbstractDamper <: AbstractSuspension end
+abstract type AbstractWishbone <: AbstractSuspension end
+abstract type AbstractLowerWishbone <: AbstractWishbone end
+abstract type AbstractUpperWishbone <: AbstractWishbone end
+abstract type AbstractWheelMount <: AbstractSuspension end
 
 
+mutable struct Damper <: AbstractDamper
 
-mutable struct Damper
+    id::Union{Symbol,Nothing}
 
-    nominal_length::Union{Float64, Nothing}                                 # Damper nominal length (not compressed) [mm]
-    travel::Union{Float64, Nothing}                                         # Damper travel [mm]
-    compression::Union{Float64, Nothing}                                    # Damper Compression [%]
-    length::Union{Float64, Nothing}  
-    length_neutral::Union{Float64, Nothing}                                        # Damper Length with compression as set in LEFTcompression
+    nominal_length::Union{Real, Nothing}                                 # Damper nominal length (not compressed) [mm]
+    travel::Union{Real, Nothing}                                         # Damper travel [mm]
+    compression::Union{Real, Nothing}                                    # Damper Compression [%]
+    length::Union{Real, Nothing}  
+    length_neutral::Union{Real, Nothing}                                        # Damper Length with compression as set in LEFTcompression
 
-    upper_fixture::Union{Vector{Float64}, Nothing}                          # Damper upper fixtur
-    lower_fixture::Union{Vector{Float64}, Nothing}                          # Damper lower fixture point 
-    lower_fixture_neutral::Union{Vector{Float64}, Nothing} 
+    upper_fixture::Union{Vector{Real}, Nothing}                          # Damper upper fixtur
+    lower_fixture::Union{Vector{Real}, Nothing}                          # Damper lower fixture point 
+    lower_fixture_neutral::Union{Vector{Real}, Nothing} 
 
     function Damper()
         inst = new()
+
+        inst.id = nothing 
 
         inst.nominal_length = 210.0
         inst.travel = 55.0
@@ -158,32 +171,35 @@ mutable struct Damper
     end
 end
 
+Damper()
 
-mutable struct LowerWishbone
+
+mutable struct LowerWishbone <: AbstractLowerWishbone
+
+    id::Union{Symbol,Nothing}
 
     ######## 
-    damper::Union{Damper, Nothing}   
-
-
-
-    ########    
-    bearing_rear::Union{Vector{Float64}, Nothing}                               # Rear Bearing of the Wishbone -> Center CoordinateSystem 
-    bearing_distance_x::Union{Float64, Nothing}                                 # Distance in X-Axis Lower Wishbone Bearings
-    bearing_front::Union{Vector{Float64}, Nothing}                              # Front Bearing of the Wishbone
-    rotation_axis::Union{Vector{Float64}, Nothing}                              # Rotation Axis Lower Wishbone UNIT VECTOR
-    distance_to_joint_y::Union{Float64, Nothing}                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
-    distance_rotation_axis_to_lower_damper_fixure::Union{Float64, Nothing}      # Distance LEFTrotation_axis to LowerDamperFixPoint [mm]
-    distance_to_joint_x::Union{Float64, Nothing}                                # Distance on x-Axis bearing_rear to Joint [mm] 
     
-    sphere_joint_neutral::Union{Vector{Float64}, Nothing}
-    lower_fixture_neutral::Union{Vector{Float64}, Nothing}
+    ########    
+    bearing_rear::Union{Vector{Real}, Nothing}                               # Rear Bearing of the Wishbone -> Center CoordinateSystem 
+    bearing_distance_x::Union{Real, Nothing}                                 # Distance in X-Axis Lower Wishbone Bearings
+    bearing_front::Union{Vector{Real}, Nothing}                              # Front Bearing of the Wishbone
+    rotation_axis::Union{Vector{Real}, Nothing}                              # Rotation Axis Lower Wishbone UNIT VECTOR
+    distance_to_joint_y::Union{Real, Nothing}                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
+    distance_rotation_axis_to_lower_damper_fixure::Union{Real, Nothing}      # Distance LEFTrotation_axis to LowerDamperFixPoint [mm]
+    distance_to_joint_x::Union{Real, Nothing}                                # Distance on x-Axis bearing_rear to Joint [mm] 
+    
+    sphere_joint_neutral::Union{Vector{Real}, Nothing}
+    lower_fixture_neutral::Union{Vector{Real}, Nothing}
     ######## depends on the kinematics
-    sphere_joint::Union{Vector{Float64}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
-    lower_fixture::Union{Vector{Float64}, Nothing}                              # Damper lower fixture point 
+    sphere_joint::Union{Vector{Real}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
+    lower_fixture::Union{Vector{Real}, Nothing}                              # Damper lower fixture point 
     #rotation_axis_TO_sphere_joint::Union{Vector{Float64}, Nothing}              # directuion vector to  Spherejoint from the LEFTLowerWishboneBearingRear x-Achse
 
     function LowerWishbone()
         inst = new()
+
+        inst.id = nothing
 
         inst.bearing_rear = [0.0;0.0;0.0]
         inst.bearing_distance_x = 74.00
@@ -204,26 +220,30 @@ mutable struct LowerWishbone
 
 end
 
-mutable struct UpperWishbone
-    bearing_rear::Union{Vector{Float64}, Nothing}                               # Rear Bearing of the Wishbone -> Center CoordinateSystem 
-    bearing_distance_x::Union{Float64, Nothing}                                 # Distance in X-Axis Lower Wishbone Bearings
-    bearing_front::Union{Vector{Float64}, Nothing}                              # Front Bearing of the Wishbone
-    rotation_axis::Union{Vector{Float64}, Nothing}                              # Rotation Axis Lower Wishbone UNIT VECTOR 
-    distance_to_joint_y::Union{Float64, Nothing}                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
-    distance_to_joint_x::Union{Float64, Nothing}                                # Distance on x-Axis bearing_rear to Joint [mm] 
+mutable struct UpperWishbone <: AbstractUpperWishbone
+
+    id::Union{Symbol,Nothing}
+
+    bearing_rear::Union{Vector{Real}, Nothing}                               # Rear Bearing of the Wishbone -> Center CoordinateSystem 
+    bearing_distance_x::Union{Real, Nothing}                                 # Distance in X-Axis Lower Wishbone Bearings
+    bearing_front::Union{Vector{Real}, Nothing}                              # Front Bearing of the Wishbone
+    rotation_axis::Union{Vector{Real}, Nothing}                              # Rotation Axis Lower Wishbone UNIT VECTOR 
+    distance_to_joint_y::Union{Real, Nothing}                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
+    distance_to_joint_x::Union{Real, Nothing}                                # Distance on x-Axis bearing_rear to Joint [mm] 
     
 
-    tiltx::Union{Float64, Nothing}                                              # angle LEFTUpperWishboneRotationAxis to xz-plane of LEFTLowerWishboneBearingRear 
-    tilty::Union{Float64, Nothing}                                              # angle LEFTUpperWishboneRotationAxis to xy-plane of LEFTLowerWishboneBearingRear 
-    tiltZ::Union{Float64, Nothing}                                              # angle LEFTUpperWishboneRotationAxis to yz-plane of LEFTLowerWishboneBearingRear set to zero (here) has to be calculated after calculating bearing positions
+    tiltx::Union{Real, Nothing}                                              # angle LEFTUpperWishboneRotationAxis to xz-plane of LEFTLowerWishboneBearingRear 
+    tilty::Union{Real, Nothing}                                              # angle LEFTUpperWishboneRotationAxis to xy-plane of LEFTLowerWishboneBearingRear 
+    tiltZ::Union{Real, Nothing}                                              # angle LEFTUpperWishboneRotationAxis to yz-plane of LEFTLowerWishboneBearingRear set to zero (here) has to be calculated after calculating bearing positions
 
     ######## depends on the kinematics
-    sphere_joint::Union{Vector{Float64}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
-    sphere_joint_neutral::Union{Vector{Float64}, Nothing}   
+    sphere_joint::Union{Vector{Real}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
+    sphere_joint_neutral::Union{Vector{Real}, Nothing}   
 
     function UpperWishbone()
         inst = new()
 
+        inst.id = nothing 
 
         inst.bearing_rear = [0.0; 0.0; 139.00] 
         inst.bearing_distance_x = 74.00
@@ -244,8 +264,8 @@ end
 
 mutable struct Chassi
     ##### Dimensions
-    width::Union{Float64, Nothing}
-    length::Union{Float64, Nothing}
+    width::Union{Real, Nothing}
+    length::Union{Real, Nothing}
 
     ##### Components
 
@@ -259,13 +279,13 @@ mutable struct Chassi
     end
 end
 
-mutable struct WheelMount
-    length::Union{Float64, Nothing}
-    camper_angle::Union{Float64, Nothing}
-    offset_x::Union{Float64, Nothing}
-    offset_y::Union{Float64, Nothing}
-    offset_z::Union{Float64, Nothing}
-    to_angle::Union{Float64, Nothing}
+mutable struct WheelMount <: AbstractWheelMount
+    length::Union{Real, Nothing}
+    camper_angle::Union{Real, Nothing}
+    offset_x::Union{Real, Nothing}
+    offset_y::Union{Real, Nothing}
+    offset_z::Union{Real, Nothing}
+    to_angle::Union{Real, Nothing}
 
     function WheelMount()
         inst = new()
@@ -281,7 +301,7 @@ mutable struct WheelMount
     end
 end
 
-mutable struct Suspension
+mutable struct Suspension <: AbstractSuspension
     ##### Components 
     lowerwishbone::Union{Tuple{LowerWishbone,LowerWishbone},Nothing}    # (left, right)
     upperwishbone::Union{Tuple{UpperWishbone,UpperWishbone},Nothing}    # (left, right)

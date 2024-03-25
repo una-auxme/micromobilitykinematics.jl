@@ -2,7 +2,7 @@
 
 julia_version = "1.9.4"
 manifest_format = "2.0"
-project_hash = "4dd72c8ffdb4600c4c9b4e6187a748a1b1096918"
+project_hash = "3ef0c7fcb125d7799b400a1c935c7ea0391adf80"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -65,6 +65,14 @@ version = "2.5.0+0"
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
+[[deps.GeoSpatialRelations]]
+deps = ["Documenter", "LinearAlgebra", "StaticArrays"]
+git-tree-sha1 = "8db350ecd5536d9b20eac7a9cc243a9baaafabe7"
+repo-rev = "main"
+repo-url = "C:\\Users\\bruneadr\\repos\\GeoSpatialRelations.jl"
+uuid = "4f4b3779-db02-45a2-a250-b7461b60f8cf"
+version = "0.1.0"
+
 [[deps.Git]]
 deps = ["Git_jll"]
 git-tree-sha1 = "04eff47b1354d702c3a85e8ab23d539bb7d5957e"
@@ -86,14 +94,6 @@ version = "0.2.4"
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
-
-[[deps.Intersect3D]]
-deps = ["Documenter", "LinearAlgebra"]
-git-tree-sha1 = "e81f1abdf1e58f595d193fb41db02cc742e45bf0"
-repo-rev = "main"
-repo-url = "C:\\Users\\bruneadr\\repos\\Intersect3D.jl"
-uuid = "4f4b3779-db02-45a2-a250-b7461b60f8cf"
-version = "0.1.0"
 
 [[deps.JLLWrappers]]
 deps = ["Artifacts", "Preferences"]
@@ -216,12 +216,6 @@ version = "1.4.3"
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
-[[deps.Quaternions]]
-deps = ["LinearAlgebra", "Random", "RealDot"]
-git-tree-sha1 = "994cc27cdacca10e68feb291673ec3a76aa2fae9"
-uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
-version = "0.7.6"
-
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
@@ -230,29 +224,11 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 deps = ["SHA", "Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
-[[deps.RealDot]]
-deps = ["LinearAlgebra"]
-git-tree-sha1 = "9f0a1b71baaf7650f4fa8a1d168c7fb6ee41f0c9"
-uuid = "c1ae055f-0cd5-4b69-90a6-9a35b1a98df9"
-version = "0.1.0"
-
 [[deps.RegistryInstances]]
 deps = ["LazilyInitializedFields", "Pkg", "TOML", "Tar"]
 git-tree-sha1 = "ffd19052caf598b8653b99404058fce14828be51"
 uuid = "2792f1a3-b283-48e8-9a74-f99dce5104f3"
 version = "0.1.0"
-
-[[deps.Rotations]]
-deps = ["LinearAlgebra", "Quaternions", "Random", "StaticArrays"]
-git-tree-sha1 = "2a0a5d8569f481ff8840e3b7c84bbf188db6a3fe"
-uuid = "6038ab10-8711-5258-84ad-4b1120ba62dc"
-version = "1.7.0"
-
-    [deps.Rotations.extensions]
-    RotationsRecipesBaseExt = "RecipesBase"
-
-    [deps.Rotations.weakdeps]
-    RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"

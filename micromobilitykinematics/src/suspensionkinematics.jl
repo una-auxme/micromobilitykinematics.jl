@@ -11,55 +11,50 @@ calculates all the movement-dependent positions of the joints in MOVED-Position
 """
 function suspensionkinematicsMOVED!(suspension::Suspension)
     
-    #left
+    for (side,index) in zip([:Left, :Right], [1,2])
 
-    dampel_lower_fixure = circcirc(suspension.damper[1].upper_fixture, 
-                                    suspension.damper[1].length, 
-                                    suspension.lowerwishbone[1].rotation_axis, 
-                                    [suspension.damper[1].upper_fixture[1]; suspension.lowerwishbone[1].bearing_rear[2]; suspension.lowerwishbone[1].bearing_rear[3]], 
-                                    suspension.lowerwishbone[1].distance_rotation_axis_to_lower_damper_fixure)
+        suspension.damper[index].id = side
+        suspension.upperwishbone[index].id = side
+        suspension.lowerwishbone[index].id = side
 
-    dampel_lower_fixure = dampel_lower_fixure[1]
-    suspension.damper[1].lower_fixture = dampel_lower_fixure
-    suspension.lowerwishbone[1].lower_fixture = dampel_lower_fixure
-
-    rotation_axis_TO_sphere_joint = [0;suspension.damper[1].lower_fixture[2]; suspension.damper[1].lower_fixture[3]]
-    rotation_axis_TO_sphere_joint =  (-suspension.lowerwishbone[1].bearing_rear + rotation_axis_TO_sphere_joint) / norm(-suspension.lowerwishbone[1].bearing_rear + rotation_axis_TO_sphere_joint)
-    suspension.lowerwishbone[1].sphere_joint = suspension.lowerwishbone[1].bearing_rear + suspension.lowerwishbone[1].rotation_axis * suspension.lowerwishbone[1].distance_to_joint_x + rotation_axis_TO_sphere_joint * suspension.lowerwishbone[1].distance_to_joint_y
-
-    pos_circ = suspension.upperwishbone[1].bearing_rear + suspension.upperwishbone[1].distance_to_joint_x * ((suspension.upperwishbone[1].bearing_front - suspension.upperwishbone[1].bearing_rear) / norm(suspension.upperwishbone[1].bearing_front - suspension.upperwishbone[1].bearing_rear))
-
-    suspension.upperwishbone[1].sphere_joint = circsphere(pos_circ, 
-                                                            suspension.upperwishbone[1].distance_to_joint_y,          
-                                                            suspension.upperwishbone[1].rotation_axis, 
-                                                            suspension.lowerwishbone[1].sphere_joint, 
-                                                            suspension.wheelmount.length)[1]
+        center = suspension.damper[index].upper_fixture
+        radius = suspension.damper[index].length
+        normal =  suspension.lowerwishbone[index].rotation_axis
+        circ_damper = GeoSpatialRelations.Circle(center, radius, normal)
 
 
-    #right
+        center = [suspension.damper[index].upper_fixture[1]; suspension.lowerwishbone[index].bearing_rear[2]; suspension.lowerwishbone[index].bearing_rear[3]]
+        radius = suspension.lowerwishbone[index].distance_rotation_axis_to_lower_damper_fixure
+        normal =  suspension.lowerwishbone[index].rotation_axis
+        circ_lowerwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, normal)
 
-    dampel_lower_fixure = circcirc(suspension.damper[2].upper_fixture, 
-                                    suspension.damper[2].length, 
-                                    suspension.lowerwishbone[2].rotation_axis, 
-                                    [suspension.damper[2].upper_fixture[1]; suspension.lowerwishbone[2].bearing_rear[2]; suspension.lowerwishbone[2].bearing_rear[3]], 
-                                    suspension.lowerwishbone[2].distance_rotation_axis_to_lower_damper_fixure)
+        dampel_lower_fixure = intersection(circ_damper, circ_lowerwishbone)
+    
 
-    dampel_lower_fixure = dampel_lower_fixure[1]
-    suspension.damper[2].lower_fixture = dampel_lower_fixure
-    suspension.lowerwishbone[2].lower_fixture = dampel_lower_fixure
 
-    rotation_axis_TO_sphere_joint = [0;suspension.damper[2].lower_fixture[2]; suspension.damper[2].lower_fixture[3]]
-    rotation_axis_TO_sphere_joint =  (-suspension.lowerwishbone[2].bearing_rear + rotation_axis_TO_sphere_joint) / norm(-suspension.lowerwishbone[2].bearing_rear + rotation_axis_TO_sphere_joint)
-    suspension.lowerwishbone[2].sphere_joint = suspension.lowerwishbone[2].bearing_rear + suspension.lowerwishbone[2].rotation_axis * suspension.lowerwishbone[2].distance_to_joint_x + rotation_axis_TO_sphere_joint * suspension.lowerwishbone[2].distance_to_joint_y
+        dampel_lower_fixure = dampel_lower_fixure[1]
+        suspension.damper[index].lower_fixture = dampel_lower_fixure
+        suspension.lowerwishbone[index].lower_fixture = dampel_lower_fixure
+    
+        rotation_axis_TO_sphere_joint = [0;suspension.damper[index].lower_fixture[2]; suspension.damper[index].lower_fixture[3]]
+        rotation_axis_TO_sphere_joint =  (-suspension.lowerwishbone[index].bearing_rear + rotation_axis_TO_sphere_joint) / norm(-suspension.lowerwishbone[index].bearing_rear + rotation_axis_TO_sphere_joint)
+        suspension.lowerwishbone[index].sphere_joint = suspension.lowerwishbone[index].bearing_rear + suspension.lowerwishbone[index].rotation_axis * suspension.lowerwishbone[index].distance_to_joint_x + rotation_axis_TO_sphere_joint * suspension.lowerwishbone[index].distance_to_joint_y
+        
 
-    pos_circ = suspension.upperwishbone[2].bearing_rear + suspension.upperwishbone[2].distance_to_joint_x * ((suspension.upperwishbone[2].bearing_front - suspension.upperwishbone[2].bearing_rear) / norm(suspension.upperwishbone[2].bearing_front - suspension.upperwishbone[2].bearing_rear))
 
-    suspension.upperwishbone[2].sphere_joint = circsphere(pos_circ, 
-                            suspension.upperwishbone[2].distance_to_joint_y,          
-                            suspension.upperwishbone[2].rotation_axis, 
-                            suspension.lowerwishbone[2].sphere_joint, 
-                            suspension.wheelmount.length)[1]
+        center = suspension.upperwishbone[index].bearing_rear + suspension.upperwishbone[index].distance_to_joint_x * ((suspension.upperwishbone[index].bearing_front - suspension.upperwishbone[index].bearing_rear) / norm(suspension.upperwishbone[index].bearing_front - suspension.upperwishbone[index].bearing_rear))
+        radius = suspension.upperwishbone[index].distance_to_joint_y
+        normal = suspension.upperwishbone[index].rotation_axis
+        circ_upperwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, normal)
 
+
+        center = suspension.lowerwishbone[index].sphere_joint
+        radius = suspension.wheelmount.length
+
+        sphere_lower_sphere_joint = GeoSpatialRelations.Sphere(center, radius)
+    
+        suspension.upperwishbone[index].sphere_joint = intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1]
+    end
 end
 
 
@@ -74,56 +69,51 @@ calculates all the movement-dependent positions of the joints in NEUTRAL-Positio
 
 """
 function suspensionkinematicsNEUTRAL!(suspension::Suspension)
+
+    for (side,index) in zip([:Left, :Right], [1,2])
+
+        suspension.damper[index].id = side
+        suspension.upperwishbone[index].id = side
+        suspension.lowerwishbone[index].id = side
+
+        #circle 1
+        center = suspension.damper[index].upper_fixture
+        radius = suspension.damper[index].length_neutral
+        normal =  suspension.lowerwishbone[index].rotation_axis
+        circ_damper = GeoSpatialRelations.Circle(center, radius, normal)
+
+        #circle 2
+        center = [suspension.damper[index].upper_fixture[1]; suspension.lowerwishbone[index].bearing_rear[2]; suspension.lowerwishbone[index].bearing_rear[3]]
+        radius = suspension.lowerwishbone[index].distance_rotation_axis_to_lower_damper_fixure
+        normal =  suspension.lowerwishbone[index].rotation_axis
+        circ_lowerwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, normal)
+
+        dampel_lower_fixure = intersection(circ_damper, circ_lowerwishbone)
     
+
+
+        dampel_lower_fixure = dampel_lower_fixure[1]
+        suspension.damper[index].lower_fixture_neutral = dampel_lower_fixure
+        suspension.lowerwishbone[index].lower_fixture_neutral = dampel_lower_fixure
     
+        rotation_axis_TO_sphere_joint = [0;suspension.damper[index].lower_fixture_neutral[2]; suspension.damper[index].lower_fixture_neutral[3]]
+        rotation_axis_TO_sphere_joint =  (-suspension.lowerwishbone[index].bearing_rear + rotation_axis_TO_sphere_joint) / norm(-suspension.lowerwishbone[index].bearing_rear + rotation_axis_TO_sphere_joint)
+        suspension.lowerwishbone[index].sphere_joint_neutral = suspension.lowerwishbone[index].bearing_rear + suspension.lowerwishbone[index].rotation_axis * suspension.lowerwishbone[index].distance_to_joint_x + rotation_axis_TO_sphere_joint * suspension.lowerwishbone[index].distance_to_joint_y
+        
 
-    dampel_lower_fixure = circcirc(suspension.damper[1].upper_fixture, 
-                                    suspension.damper[1].length_neutral, 
-                                    suspension.lowerwishbone[1].rotation_axis, 
-                                    [suspension.damper[1].upper_fixture[1]; suspension.lowerwishbone[1].bearing_rear[2]; suspension.lowerwishbone[1].bearing_rear[3]], 
-                                    suspension.lowerwishbone[1].distance_rotation_axis_to_lower_damper_fixure)
+        #circle 
+        center = suspension.upperwishbone[index].bearing_rear + suspension.upperwishbone[index].distance_to_joint_x * ((suspension.upperwishbone[index].bearing_front - suspension.upperwishbone[index].bearing_rear) / norm(suspension.upperwishbone[index].bearing_front - suspension.upperwishbone[index].bearing_rear))
+        radius = suspension.upperwishbone[index].distance_to_joint_y
+        normal = suspension.upperwishbone[index].rotation_axis
+        circ_upperwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, normal)
 
-    dampel_lower_fixure = dampel_lower_fixure[1]
-    suspension.damper[1].lower_fixture_neutral = dampel_lower_fixure
-    suspension.lowerwishbone[1].lower_fixture_neutral = dampel_lower_fixure
-
-    rotation_axis_TO_sphere_joint = [0;suspension.damper[1].lower_fixture_neutral[2]; suspension.damper[1].lower_fixture_neutral[3]]
-    rotation_axis_TO_sphere_joint =  (-suspension.lowerwishbone[1].bearing_rear + rotation_axis_TO_sphere_joint) / norm(-suspension.lowerwishbone[1].bearing_rear + rotation_axis_TO_sphere_joint)
-    suspension.lowerwishbone[1].sphere_joint_neutral = suspension.lowerwishbone[1].bearing_rear + suspension.lowerwishbone[1].rotation_axis * suspension.lowerwishbone[1].distance_to_joint_x + rotation_axis_TO_sphere_joint * suspension.lowerwishbone[1].distance_to_joint_y
-
-    pos_circ = suspension.upperwishbone[1].bearing_rear + suspension.upperwishbone[1].distance_to_joint_x * ((suspension.upperwishbone[1].bearing_front - suspension.upperwishbone[1].bearing_rear) / norm(suspension.upperwishbone[1].bearing_front - suspension.upperwishbone[1].bearing_rear))
-
-    suspension.upperwishbone[1].sphere_joint_neutral = circsphere(pos_circ, 
-                                                            suspension.upperwishbone[1].distance_to_joint_y,          
-                                                            suspension.upperwishbone[1].rotation_axis, 
-                                                            suspension.lowerwishbone[1].sphere_joint_neutral, 
-                                                            suspension.wheelmount.length)[1]
-
-
-    #right
-
-    dampel_lower_fixure = circcirc(suspension.damper[2].upper_fixture, 
-                                    suspension.damper[2].length_neutral, 
-                                    suspension.lowerwishbone[2].rotation_axis, 
-                                    [suspension.damper[2].upper_fixture[1]; suspension.lowerwishbone[2].bearing_rear[2]; suspension.lowerwishbone[2].bearing_rear[3]], 
-                                    suspension.lowerwishbone[2].distance_rotation_axis_to_lower_damper_fixure)
-
-    dampel_lower_fixure = dampel_lower_fixure[1]
-    suspension.damper[2].lower_fixture_neutral = dampel_lower_fixure
-    suspension.lowerwishbone[2].lower_fixture_neutral = dampel_lower_fixure
-
-    rotation_axis_TO_sphere_joint = [0;suspension.damper[2].lower_fixture_neutral[2]; suspension.damper[2].lower_fixture_neutral[3]]
-    rotation_axis_TO_sphere_joint =  (-suspension.lowerwishbone[2].bearing_rear + rotation_axis_TO_sphere_joint) / norm(-suspension.lowerwishbone[2].bearing_rear + rotation_axis_TO_sphere_joint)
-    suspension.lowerwishbone[2].sphere_joint_neutral = suspension.lowerwishbone[2].bearing_rear + suspension.lowerwishbone[2].rotation_axis * suspension.lowerwishbone[2].distance_to_joint_x + rotation_axis_TO_sphere_joint * suspension.lowerwishbone[2].distance_to_joint_y
-
-    pos_circ = suspension.upperwishbone[2].bearing_rear + suspension.upperwishbone[2].distance_to_joint_x * ((suspension.upperwishbone[2].bearing_front - suspension.upperwishbone[2].bearing_rear) / norm(suspension.upperwishbone[2].bearing_front - suspension.upperwishbone[2].bearing_rear))
-
-    suspension.upperwishbone[2].sphere_joint_neutral = circsphere(pos_circ, 
-                            suspension.upperwishbone[2].distance_to_joint_y,          
-                            suspension.upperwishbone[2].rotation_axis, 
-                            suspension.lowerwishbone[2].sphere_joint_neutral, 
-                            suspension.wheelmount.length)[1]
-
+        #Sphere 
+        center = suspension.lowerwishbone[index].sphere_joint_neutral
+        radius = suspension.wheelmount.length
+        sphere_lower_sphere_joint = GeoSpatialRelations.Sphere(center, radius)
+    
+        suspension.upperwishbone[index].sphere_joint_neutral = intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1]
+    end
 end
 
 """
