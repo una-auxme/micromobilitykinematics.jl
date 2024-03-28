@@ -55,10 +55,10 @@ function steeringkinematics!(θx::Float64, θz::Float64, steering::Steering, sus
     lower_end_of_rotational_component = (steering.wishbone_ucs_position[1].*[-1,-1,-1] - [0.0,0.0,steering.rotational_component.x_rotational_radius])
     
     #line
-    line = Line(suspension.lowerwishbone[1].sphere_joint_neutral, convert(Vector{Real},left_base_vec[:,3]))
+    line = Line(suspension.lowerwishbone[1].sphere_joint_neutral, left_base_vec[:,3])
  
     #plane
-    plane = Plane(convert(Vector{Real},lower_end_of_rotational_component), convert(Vector{Real},[0.0,0.0,1.0]))
+    plane = Plane(lower_end_of_rotational_component, [0.0,0.0,1.0])
 
     inter = intersection(line, plane)
     
@@ -95,8 +95,6 @@ function steeringkinematics!(θx::Float64, θz::Float64, steering::Steering, sus
         end
     end
 
-    c = (convert(Vector{Real},collect(left)), convert(Vector{Real},collect(right)))
-    
-    steering.circle_joints = c
+    steering.circle_joints = (collect(left), collect(right))
 end
 
