@@ -30,7 +30,7 @@ function steeringkinematics!(θx::Float64, θz::Float64, steering::Steering, sus
     steering.sphere_joints = (left_sphere_joints, right_sphere_joints) 
 
     ###############
-    wheel_ucs = [[1;0;0] [0;1;0] [0;0;1]]
+    wheel_ucs = [[1.0;0.0;0.0] [0.0;1.0;0.0] [0.0;0.0;1.0]]
 
 
     suspension.kinematics!(suspension)
@@ -54,11 +54,15 @@ function steeringkinematics!(θx::Float64, θz::Float64, steering::Steering, sus
     ##############
     lower_end_of_rotational_component = (steering.wishbone_ucs_position[1].*[-1,-1,-1] - [0.0,0.0,steering.rotational_component.x_rotational_radius])
     
-    intersection = lineplane(suspension.lowerwishbone[1].sphere_joint_neutral,
-                                base_vec_wheel_ucs[1][:,3],[0.0,0.0,1.0], 
-                                lower_end_of_rotational_component)
+    #line
+    line = Line(suspension.lowerwishbone[1].sphere_joint_neutral, convert(Vector{Real},left_base_vec[:,3]))
+ 
+    #plane
+    plane = Plane(convert(Vector{Real},lower_end_of_rotational_component), convert(Vector{Real},[0.0,0.0,1.0]))
+
+    inter = intersection(line, plane)
     
-    vec_offset = intersection - suspension.lowerwishbone[1].sphere_joint_neutral
+    vec_offset = inter - suspension.lowerwishbone[1].sphere_joint_neutral
     offset_length = norm(vec_offset)
     ##############
     
@@ -66,64 +70,33 @@ function steeringkinematics!(θx::Float64, θz::Float64, steering::Steering, sus
 
     
 
-    #left
-    track_lever_mount_IN_wheel_ucs = EulerExtrinsicRotations(track_lever_mount, 
-                                                            base_vec_wheel_ucs[1][:,1],
-                                                            base_vec_wheel_ucs[1][:,2],
-                                                            base_vec_wheel_ucs[1][:,3], 
-                                                            wheel_ucs[:,1],
-                                                            wheel_ucs[:,2], 
-                                                            wheel_ucs[:,3],
-                                                            tran = true) 
+    for (circle_joint,index,shift) in zip([:left, :right], [1,2], [[1,1,1],[1,-1,1]])
+
+        track_lever_mount_IN_wheel_ucs = applyMatrixRotation(track_lever_mount,base_vec_wheel_ucs[index], wheel_ucs)
+
+        track_lever_mount_IN_wishbone_ucs = wheel_ucs_position[index] + track_lever_mount_IN_wheel_ucs
+        track_lever_mount_IN_steering_ucs = steering.wishbone_ucs_position[index] + track_lever_mount_IN_wishbone_ucs.*(shift)
 
 
-    track_lever_mount_IN_wishbone_ucs = wheel_ucs_position[1] + track_lever_mount_IN_wheel_ucs
+        #Circle 
+        circ = Circle(track_lever_mount_IN_steering_ucs,steering.track_lever.length,base_vec_wheel_ucs[index][:,3])
 
-    track_lever_mount_IN_steering_ucs = steering.wishbone_ucs_position[1] + track_lever_mount_IN_wishbone_ucs
-
-
-    circle_joints_1, circle_joints_2 = circsphere(track_lever_mount_IN_steering_ucs,
-                                steering.track_lever.length,
-                                base_vec_wheel_ucs[1][:,3],
-                                steering.sphere_joints[1],
-                                steering.tie_rod.length)
+        #Sphere
+        sphere = Sphere(steering.sphere_joints[index],steering.tie_rod.length)
 
 
-    if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          
-        left_circle_joints = circle_joints_2
-    else
-        left_circle_joints = circle_joints_1
+        circle_joints_1, circle_joints_2 = intersection(circ, sphere)
+        
+
+        if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          
+            @eval $circle_joint = $circle_joints_2
+        else
+            @eval $circle_joint = $circle_joints_1
+        end
     end
 
-    #right
-
-    track_lever_mount_IN_wheel_ucs = EulerExtrinsicRotations(track_lever_mount, 
-                                                                base_vec_wheel_ucs[2][:,1],
-                                                                base_vec_wheel_ucs[2][:,2],
-                                                                base_vec_wheel_ucs[2][:,3], 
-                                                                wheel_ucs[:,1],
-                                                                wheel_ucs[:,2], 
-                                                                wheel_ucs[:,3],
-                                                                 tran = true) 
-
-
-    track_lever_mount_IN_wishbone_ucs = wheel_ucs_position[2] + track_lever_mount_IN_wheel_ucs
-
-    track_lever_mount_IN_steering_ucs = steering.wishbone_ucs_position[2] + track_lever_mount_IN_wishbone_ucs.*[1,-1,1]
-
-    circle_joints_1, circle_joints_2 = circsphere(track_lever_mount_IN_steering_ucs,
-                                                    steering.track_lever.length,
-                                                    base_vec_wheel_ucs[2][:,3],
-                                                    steering.sphere_joints[2],
-                                                    steering.tie_rod.length)
-
-
-    if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          
-        right_circle_joints = circle_joints_2
-    else
-        right_circle_joints = circle_joints_1
-    end
-
-    steering.circle_joints = (left_circle_joints, right_circle_joints)
+    c = (convert(Vector{Real},collect(left)), convert(Vector{Real},collect(right)))
+    
+    steering.circle_joints = c
 end
 

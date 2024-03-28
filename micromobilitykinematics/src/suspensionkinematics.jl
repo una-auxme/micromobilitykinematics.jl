@@ -80,13 +80,13 @@ function suspensionkinematicsNEUTRAL!(suspension::Suspension)
         center = suspension.damper[index].upper_fixture
         radius = suspension.damper[index].length_neutral
         normal =  suspension.lowerwishbone[index].rotation_axis
-        circ_damper = GeoSpatialRelations.Circle(center, radius, normal)
+        circ_damper = Circle(center, radius, normal)
 
         #circle 2
         center = [suspension.damper[index].upper_fixture[1]; suspension.lowerwishbone[index].bearing_rear[2]; suspension.lowerwishbone[index].bearing_rear[3]]
         radius = suspension.lowerwishbone[index].distance_rotation_axis_to_lower_damper_fixure
         normal =  suspension.lowerwishbone[index].rotation_axis
-        circ_lowerwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, normal)
+        circ_lowerwishbone = Circle(convert(Vector{Real},center), radius, normal)
 
         dampel_lower_fixure = intersection(circ_damper, circ_lowerwishbone)
     
@@ -105,12 +105,12 @@ function suspensionkinematicsNEUTRAL!(suspension::Suspension)
         center = suspension.upperwishbone[index].bearing_rear + suspension.upperwishbone[index].distance_to_joint_x * ((suspension.upperwishbone[index].bearing_front - suspension.upperwishbone[index].bearing_rear) / norm(suspension.upperwishbone[index].bearing_front - suspension.upperwishbone[index].bearing_rear))
         radius = suspension.upperwishbone[index].distance_to_joint_y
         normal = suspension.upperwishbone[index].rotation_axis
-        circ_upperwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, normal)
+        circ_upperwishbone = Circle(convert(Vector{Real},center), radius, normal)
 
         #Sphere 
         center = suspension.lowerwishbone[index].sphere_joint_neutral
         radius = suspension.wheelmount.length
-        sphere_lower_sphere_joint = GeoSpatialRelations.Sphere(center, radius)
+        sphere_lower_sphere_joint = Sphere(center, radius)
     
         suspension.upperwishbone[index].sphere_joint_neutral = intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1]
     end

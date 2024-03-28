@@ -1,6 +1,3 @@
-
-using LinearAlgebra
-
 """
 calc_basis_vectors(v)
 

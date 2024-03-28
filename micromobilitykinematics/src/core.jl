@@ -84,7 +84,7 @@ mutable struct Steering <: AbstractSteering
     ######## depends on the kinematics
 
     sphere_joints::Union{Tuple{Vector{Real},Vector{Real}},Nothing}          # (SJ_l, SJ_r) = (left, right)
-    circle_joints::Union{Tuple{Vector{Real},Vector{real}},Nothing}          # (SC_l, SC_r) = (left, right)
+    circle_joints::Union{Tuple{Vector{Real},Vector{Real}},Nothing}          # (SC_l, SC_r) = (left, right)
 
     sphere_joints_neutral::Union{Tuple{Vector{Real},Vector{Real}},Nothing}          # (SJ_l, SJ_r) = (left, right)
     circle_joints_neutral::Union{Tuple{Vector{Real},Vector{Real}},Nothing}          # (SC_l, SC_r) = (left, right)

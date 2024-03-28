@@ -1,9 +1,8 @@
 include("core.jl")
 include("suspensionkinematics.jl")
 include("steeringkinematics.jl")
-include("EulerRotation.jl") 
-include("rotate3.jl")
-include("calc_basis_vectors.jl")
+include("custom_funcs/rotations.jl") 
+include("custom_funcs/calc_basis_vectors.jl")
 
 
 
@@ -20,6 +19,11 @@ lineplane()
 s = Suspension()
 
 suspensionkinematics!(s)
+
+
+
+a = Steering()
+
 
 s
 
@@ -83,3 +87,29 @@ using Rotations
 rotate3()
 
 RotationVec()
+
+
+for (side,index,d) in zip([:left, :right], 1:2, [[1,1,1],[1,-1,1]])
+    @eval $side = $index
+end
+
+left
+
+right
+
+for (side, d) in zip([:left, :right], [[1,1,1],[1,-1,1]])
+        @eval $side = $d
+end 
+
+left
+
+c = zip([:left, :right], 1:2, [[1,1,1],[1,-1,1]])
+
+first(c)
+
+l = Line(Real[37.0, 132.88952119340925, -44.049689635529006], Real[0.0, 2.0447272971513675e-16, 1.0])
+
+0l.direction
+
+p = Plane(Real[36.0, -140.0, 86.0], Real[0.0, 0.0, 1.0])
+intersection(l, p)
