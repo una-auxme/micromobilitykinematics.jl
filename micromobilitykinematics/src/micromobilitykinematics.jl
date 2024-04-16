@@ -6,9 +6,9 @@ module micromobilitykinematic
     using StaticArrays
 
 
-    include("core.jl")
-    include("suspensionkinematics.jl")
-    include("steeringkinematics.jl")
+    include("core/core.jl")
+    include("core/suspensionkinematics.jl")
+    include("core/steeringkinematics.jl")
     include("custom_funcs/rotations.jl") 
     include("custom_funcs/calc_basis_vectors.jl")
     

@@ -37,14 +37,14 @@ abstract type AbstractTieRod <: AbstractComponent end
 abstract type AbstractTrackLever <: AbstractComponent end
 
 mutable struct RotationalComponent <: AbstractComponent
-    x_rotational_radius::Real                    # rotation around the x-axis
-    z_rotational_radius::Real                   # rotation around the z-axis
-    to_joint_pivot_point::Real                   # distance from the component center (z) to joint pivot
-    distance_between_joint_pivot_points::Real    # distance between both pivot poits (JR_l and (JR_r)
+    x_rotational_radius::Union{<:Real, Nothing}                     # rotation around the x-axis
+    z_rotational_radius::Union{<:Real, Nothing}                     # rotation around the z-axis
+    to_joint_pivot_point::Union{<:Real, Nothing}                    # distance from the component center (z) to joint pivot
+    distance_between_joint_pivot_points::Union{<:Real, Nothing}     # distance between both pivot poits (JR_l and (JR_r)
 
 
 
-    function RotationalComponent(x_rotational_radius::Real, z_rotational_radius::Real)
+    function RotationalComponent(x_rotational_radius::T, z_rotational_radius::T) where {T <: Real}
         
         inst = new()
 
@@ -64,13 +64,11 @@ for (type, supertype) in zip([:TieRod, :TrackLever],[:AbstractTieRod, :AbstractT
 
 
     @eval mutable struct $type <: $supertype
-        length::Real
-        function $type(length::Real)
+        length::Union{<:Real, Nothing}     
+        function $type(length::T) where {T <: Real}
             new(length)
         end
     end
-
-
 end
 
 
@@ -82,6 +80,11 @@ mutable struct Steering <: AbstractSteering
     tie_rod::Union{TieRod,Nothing}
 
     ######## depends on the kinematics
+    θx::Union{<:Real, Nothing}                  # Angle of rotation of the rotation component around the x-axis
+    θz::Union{<:Real, Nothing}                  # Angle of rotation of the rotation component around the z-axis
+
+    δi::Union{<:Real, Nothing}                  # inner steering angle of the wheel
+    δo::Union{<:Real, Nothing}                  # outer steering angle of the wheel
 
     sphere_joints::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}          # (SJ_l, SJ_r) = (left, right)
     circle_joints::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}          # (SC_l, SC_r) = (left, right)
@@ -89,16 +92,15 @@ mutable struct Steering <: AbstractSteering
     sphere_joints_neutral::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}          # (SJ_l, SJ_r) = (left, right)
     circle_joints_neutral::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}          # (SC_l, SC_r) = (left, right)
 
-
     ######## depends on the Suspension kinematics
 
+    base_vec_wheel_ucs::Union{Tuple{Matrix{<:Real}, Matrix{<:Real}},Nothing}    # Basis vectors of the wheel coordinate system
 
 
     ######## Positions of the Userdefined Coordinate System (UCS)
 
-    wishbone_ucs_position::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}         # (left, right)   
-    lever_mounting_points_ucs::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}     # (left, right)
-
+    wishbone_ucs_position::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}         # (left, right) in steering ucs
+    track_lever_mounting_points_ucs::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}     # (left, right) Mounting point of the tracklever in steering ucs
     
 
     kinematics!::Function
@@ -109,15 +111,23 @@ mutable struct Steering <: AbstractSteering
         inst.track_lever = TrackLever(track_lever_length)
         inst.tie_rod = TieRod(tie_rod_length)
 
+
+        inst.θx = nothing
+        inst.θz = nothing
+
+        inst.δi = nothing 
+        inst.δo = nothing           
+
         inst.sphere_joints = nothing
         inst.circle_joints = nothing
 
         inst.sphere_joints_neutral = nothing
         inst.circle_joints_neutral = nothing
 
+        inst.base_vec_wheel_ucs = nothing
 
         inst.wishbone_ucs_position = ([-36.0, 140.0, -139.0], [-36.0, -140.0, -139.0])
-        inst.lever_mounting_points_ucs = nothing
+        inst.track_lever_mounting_points_ucs = nothing
 
         inst.kinematics! = steeringkinematics!
 
@@ -154,14 +164,14 @@ mutable struct Damper <: AbstractDamper
     lower_fixture::Union{Vector{<:Real}, Nothing}                          # Damper lower fixture point 
     lower_fixture_neutral::Union{Vector{<:Real}, Nothing} 
 
-    function Damper()
+    function Damper(compression::T) where {T <: Real}
         inst = new()
 
         inst.id = nothing 
 
         inst.nominal_length = 210.0
         inst.travel = 55.0
-        inst.compression = 30.0
+        inst.compression = compression
         inst.length = inst.nominal_length - (inst.compression / 100) * inst.travel
         inst.length_neutral = inst.nominal_length - (30.0 / 100) * inst.travel
         inst.upper_fixture = [37.0;30.0; 160.0]
@@ -170,8 +180,6 @@ mutable struct Damper <: AbstractDamper
         return inst
     end
 end
-
-Damper()
 
 
 mutable struct LowerWishbone <: AbstractLowerWishbone
@@ -266,6 +274,7 @@ mutable struct Chassi
     ##### Dimensions
     width::Union{<:Real, Nothing}
     length::Union{<:Real, Nothing}
+    radius::Union{<:Real, Nothing}
 
     ##### Components
 
@@ -274,7 +283,7 @@ mutable struct Chassi
         inst = new()
         inst.width = 280.0
         inst.length = 1300.0
-
+        inst.radius = 3000.0            # desired track radius
         return inst
     end
 end
@@ -310,14 +319,14 @@ mutable struct Suspension <: AbstractSuspension
     
     kinematics!::Function
 
-    function Suspension()
+    function Suspension(compression::T) where {T <: Real} 
         inst = new()
 
         inst.lowerwishbone = (LowerWishbone(),LowerWishbone())      # (left, right)
 
         inst.upperwishbone = (UpperWishbone(), UpperWishbone())     # (left, right)
 
-        inst.damper = (Damper(), Damper())                          # (left, right)
+        inst.damper = (Damper(compression), Damper(compression))                          # (left, right)
 
         inst.wheelmount = WheelMount()
 
