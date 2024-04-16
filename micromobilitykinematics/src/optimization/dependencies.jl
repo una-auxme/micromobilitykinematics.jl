@@ -11,10 +11,11 @@ checks angle dependence
 """
 function angleDependence(arge...)
 try
-    if !(angleDependence(arge...) > 0)
+    if !(angle_dependence(arge...) > 0)
         error("dependence violation:    steering angle ")
     end
 catch err
+    #println(stacktrace(err))
     return false 
 end 
 return true 
@@ -47,8 +48,8 @@ function KinematicDependence(arge...)
             error("dependence violation:    no kinematic connection between circ and circ -> Component to long")
         end
     catch err
-        println(err)
-        println(stacktrace(err))
+        #println(err)
+        #println(stacktrace(err))
         return false 
     end
     return true 
@@ -74,6 +75,7 @@ function SingularityConstraint(arge...)
             error("constraint violation:    parameters stept over singularitay ") 
         end
     catch err
+        #println(stacktrace(err))
         return false
     end
     return true 
@@ -91,12 +93,13 @@ end
 #Returns:
 -`::Bool`
 """
-function TrackingcircleConstraint(arge...)
+function TrackingCircleConstraint(arge...)
     try 
         if !(track_circle_dependence(arge...) >= 0)
             error("tracking circle dependence violation:    vehicle coundn't drive min tracking circle ") 
         end
     catch err
+        #println(stacktrace(err))
         return false
     end
     return true 
@@ -125,7 +128,7 @@ function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::S
             kin_Bool = [KinematicDependence(θ_tuple[1,j],steering, suspension)  for j in 1:step_size:(θz_max+1)]
             angle_Bool = [angleDependence(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
             sin_Bool = [SingularityConstraint(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
-            track_Bool = TrackingcircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, chassi)
+            track_Bool = TrackingCircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, chassi)
 
             if info
                 print("\n_____________Info_____________\n")
@@ -157,7 +160,7 @@ function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::S
             sin_Bool = [SingularityConstraint(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
             sin_Bool2 = [SingularityConstraint(θ_tuple[i,j+1],steering,suspension)  for i in step_size:step_size:(θx_max+1), j in 1:step_size:(θz_max)]
 
-            track_Bool = TrackingcircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, chassi)
+            track_Bool = TrackingCircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, chassi)
 
             if info 
                 print("\n_____________Info_____________\n")
@@ -187,7 +190,7 @@ function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::S
         if info 
             println(err)
         end
-        println(stacktrace(err))
+        #println(stacktrace(err))
         return false
     end
     return true
@@ -234,47 +237,3 @@ function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,
     end
     return compLength
 end
-
-
-upper_bourder = (120.0,130.0,200.0,260.0)
-lower_bourder = (70.0,50.0, 50.0,195.0)
-
-
-
-compLength =[rand(l:u) for (l,u) in zip(lower_bourder, upper_bourder)]
-
-
-suspension = Suspension(30)
-suspension.kinematics!(suspension)
-steering = Steering(compLength...)
-#steering.kinematics!(5.0,10.0,steering,suspension)
-chassi = Chassi()
-
-random_search(upper_bourder,lower_bourder, max_angleConfig; info = true)
-
-
-step_size = 1
-max_angleConfig = (10,35)
-checkConstraints(step_size, max_angleConfig, steering, suspension, chassi; info = true)
-
-
-
-[KinematicDependence(update(θ_tuple[i,j]...,steering,suspension)) for i in 1:step_size:(θx_max+1), j in 1:step_size:(θz_max+1)]
-
-
-θx_max, θz_max = max_angleConfig 
-
-θ_tuple = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
-
-
-kin_Bool = [KinematicDependence(θ_tuple[i,j],steering,suspension) for i in 1:step_size:(θx_max+1), j in 1:step_size:(θz_max+1)]
-
-
-KinematicDependence((0,0),steering,suspension)
-angleDependence((3,2),steering,suspension)
-SingularityConstraint((3,2),steering,suspension)
-
-left_circsphere_plane_dependence((3,2),steering,suspension)
-TrackingcircleConstraint((3,2),steering,suspension, chassi)
-
-angleDependence(update((3.0,10.0)...,steering,suspension))

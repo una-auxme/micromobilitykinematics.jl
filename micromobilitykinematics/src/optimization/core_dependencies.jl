@@ -17,10 +17,10 @@ function outer_sigularity_constraint(angleConfig::Tuple{T,T},steering::Steering,
     steering_now = copy(steering)
     steering_next = copy(steering)
 
-    steeringkinematics!(θx, θz, steering_now, suspension)
-    steeringkinematics!(θx, θz+1 , steering_next, suspension)
+    steeringkinematics!((θx, θz), steering_now, suspension)
+    steeringkinematics!((θx, θz+1) , steering_next, suspension)
     
-    δo = angle_δo(steering)
+    δo = angle_δo(steering_now)
     δo_next = angle_δo(steering_next)
     return δo - δo_next
 end 
@@ -47,10 +47,10 @@ function inner_sigularity_constraint(angleConfig::Tuple{T,T},steering::Steering,
     steering_now = copy(steering)
     steering_next = copy(steering)
 
-    steeringkinematics!(θx, θz , steering_now, suspension)
-    steeringkinematics!(θx, θz+1 , steering_next, suspension)
+    steeringkinematics!((θx, θz) , steering_now, suspension)
+    steeringkinematics!((θx, θz+1) , steering_next, suspension)
     
-    δi = angle_δi(steering)
+    δi = angle_δi(steering_now)
     δi_next = angle_δi(steering_next)
     return δi - δi_next
 end
@@ -69,10 +69,9 @@ calculates the Diffrence of the front wheels steering angles.
 - Difference between the current turning angles of the front wheels
 """
 function angle_dependence(angleConfig::Tuple{T,T},steering::Steering, suspension::Suspension) where {T<:Real}
-    θx, θz = angleConfig
 
     steering_now = copy(steering)
-    steeringkinematics!(θx, θz , steering_now, suspension)
+    steeringkinematics!(angleConfig, steering_now, suspension)
 
     δo = angle_δo(steering_now)
     δi = angle_δi(steering_now)
@@ -94,10 +93,10 @@ of the tie rod. (Left side of the kinematik steering mechanism)
 
 """
 function left_circsphere_plane_dependence(angleConfig::Tuple{T,T},steering::Steering, suspension::Suspension) where {T<:Real}
-    θx, θz = angleConfig
+
 
     steering_now = copy(steering)
-    steeringkinematics!(θx, θz , steering_now, suspension)
+    steeringkinematics!(angleConfig, steering_now, suspension)
 
     circ = Circle(steering_now.track_lever_mounting_points_ucs[1],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[1][:,3])
     sphere = Sphere(steering_now.sphere_joints[1],steering_now.tie_rod.length)
@@ -123,10 +122,9 @@ of the tie rod. (Right side of the kinematik steering mechanism)
 
 """
 function right_circsphere_plane_dependence(angleConfig::Tuple{T,T},steering::Steering, suspension::Suspension) where {T<:Real}
-    θx, θz = angleConfig
 
     steering_now = copy(steering)
-    steeringkinematics!(θx, θz , steering_now, suspension)
+    steeringkinematics!(angleConfig, steering_now, suspension)
 
     circ = Circle(steering_now.track_lever_mounting_points_ucs[2],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[2][:,3])
     sphere = Sphere(steering_now.sphere_joints[2],steering_now.tie_rod.length)
@@ -151,10 +149,9 @@ If the value of d is bigger then the total length of both radii there is no inte
 """
 
 function left_circcirc_min_intersec_dependence(angleConfig::Tuple{T,T},steering::Steering, suspension::Suspension) where {T<:Real}
-    θx, θz = angleConfig
 
     steering_now = copy(steering)
-    steeringkinematics!(θx, θz , steering_now, suspension)
+    steeringkinematics!(angleConfig, steering_now, suspension)
 
 
     #  from the GeoSpatialRelations package of the intersection() function
@@ -199,10 +196,9 @@ If the value of d is bigger then the total length of both radii there is no inte
 
 function right_circcirc_min_intersec_dependence(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
     #  from the GeoSpatialRelations package of the intersection() function
-    θx, θz = angleConfig
 
     steering_now = copy(steering)
-    steeringkinematics!(θx, θz , steering_now, suspension)
+    steeringkinematics!(angleConfig, steering_now, suspension)
 
 
     circ1 = Circle(steering_now.track_lever_mounting_points_ucs[2],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[2][:,3])
@@ -242,10 +238,9 @@ If the value of the radius of circle2 is bigger then ther is no intersect posibl
 - Dependence for the maximal interaction between circle and circle of the kinematic
 """
 function left_circcirc_max_intersec_dependence(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
-    θx, θz = angleConfig
 
     steering_now = copy(steering)
-    steeringkinematics!(θx, θz , steering_now, suspension)
+    steeringkinematics!(angleConfig, steering_now, suspension)
 
 
 #  from the GeoSpatialRelations package of the intersection() function
@@ -288,10 +283,9 @@ If the value of the radius of circle2 is bigger then ther is no intersect posibl
 - Dependence for the maximal interaction between circle and circle of the kinematic
 """
 function right_circcirc_max_intersec_dependence(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
-    θx, θz = angleConfig
 
     steering_now = copy(steering)
-    steeringkinematics!(θx, θz , steering_now, suspension)
+    steeringkinematics!(angleConfig, steering_now, suspension)
 
 #  from the GeoSpatialRelations package of the intersection() function
 
@@ -332,10 +326,9 @@ calculates the diffrence of the max. ideal outer wheel angle and the current max
 - Dependence for the minmal track circle
 """
 function track_circle_dependence(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension, chassi::Chassi) where {T<:Real}
-    θx, θz = angleConfig
 
     steering_now = copy(steering)
-    steeringkinematics!(θx, θz , steering_now, suspension)
+    steeringkinematics!(angleConfig, steering_now, suspension)
 
     δo = angle_δo(steering_now)
     r_is = chassi.length / sind(δo)    

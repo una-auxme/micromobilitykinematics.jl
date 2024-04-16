@@ -1,3 +1,18 @@
+"""
+    steeringkinematicsMOVED!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+
+    for the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated
+
+#Arguemnts
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+        -`θx`: Angle of rotation of the rotation component around the x-axis
+        -`θz`: Angle of rotation of the rotation component around the z-axis
+-`steering::Steering`: Instance of a specific steering
+-`suspension::Suspension`: Instance of a specific suspension
+
+#Returns:
+- no returns becouse of in place programming
+"""
 function steeringkinematicsMOVED!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
     θx, θz = angleConfig
 
@@ -101,9 +116,24 @@ function steeringkinematicsMOVED!(angleConfig::Tuple{T,T}, steering::Steering, s
     end
     steering.track_lever_mounting_points_ucs = (collect(left_mount), collect(right_mount))
     steering.circle_joints = (collect(left_joint), collect(right_joint))
+    nothing
 end
 
+"""
+    steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
+    for the rotation component in its rest position with the angles (θx, θz) = (0,0), the kinematics of the steering is calculated
+
+#Arguemnts
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+        -`θx`: Angle of rotation of the rotation component around the x-axis
+        -`θz`: Angle of rotation of the rotation component around the z-axis
+-`steering::Steering`: Instance of a specific steering
+-`suspension::Suspension`: Instance of a specific suspension
+
+#Returns:
+- no returns becouse of in place programming
+"""
 function steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
     θx, θz = angleConfig
 
@@ -203,9 +233,26 @@ function steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T}, steering::Steering,
         end
     end
     steering.circle_joints_neutral = (collect(left_joint), collect(right_joint))
+    nothing
 end
 
-function steeringkinematics!(θx::T, θz::T, steering::Steering, suspension::Suspension) where {T<:Real}
-    steeringkinematicsMOVED!(θx, θz, steering, suspension)
-    steeringkinematicsNEUTRAL!(θx, θz, steering, suspension)
+"""
+    steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+
+    To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
+
+#Arguemnts
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+        -`θx`: Angle of rotation of the rotation component around the x-axis
+        -`θz`: Angle of rotation of the rotation component around the z-axis
+-`steering::Steering`: Instance of a specific steering
+-`suspension::Suspension`: Instance of a specific suspension
+
+#Returns:
+- no returns becouse of in place programming
+"""
+function steeringkinematics!(args...)
+    steeringkinematicsMOVED!(args...)
+    steeringkinematicsNEUTRAL!(args...)
+    nothing
 end

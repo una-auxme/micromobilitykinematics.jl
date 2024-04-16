@@ -64,6 +64,9 @@ calculates the outer steering angle of the wheel
 #Arguments
 -`steering::Steering`: Instance of a specific steering
 
+#Returns:
+- no returns becouse of in place programming
+
     
 """
 function angle_δo!(steering::Steering)
@@ -107,6 +110,8 @@ calculates the inner steering angle of the wheel
 #Arguments
 -`steering::Steering`: Instance of a specific steering
 
+#Returns:
+- no returns becouse of in place programming
     
 """
 function angle_δi!(steering::Steering)
@@ -140,32 +145,37 @@ function angle_δi(steering::Steering)
 end
 
 """
-    update!(θx::T, θz::T, steering::Steering, suspension::Suspension) where {T<:Real}
+    update!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
 #Arguemnts
--`θx`: Angle of rotation of the rotation component around the x-axis
--`θz`: Angle of rotation of the rotation component around the z-axis
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+        -`θx`: Angle of rotation of the rotation component around the x-axis
+        -`θz`: Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering
 -`suspension::Suspension`: Instance of a specific suspension
 
+#Returns:
+- no returns becouse of in place programming
 """
-function update!(θx::T, θz::T, steering::Steering, suspension::Suspension) where {T<:Real}
-    steeringkinematicsNEUTRAL!(θx, θz, steering, suspension)
-    steeringkinematicsMOVED!(θx, θz, steering, suspension)
+function update!(args...)
+    steeringkinematicsNEUTRAL!(args...)
+    steeringkinematicsMOVED!(args...)
     angle_δi!(steering)
     angle_δo!(steering)
+    nothing
 end 
 
 """
-    update!(θx::T, θz::T, steering::Steering, suspension::Suspension) where {T<:Real}
+    update!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
 #Arguemnts
--`θx`: Angle of rotation of the rotation component around the x-axis
--`θz`: Angle of rotation of the rotation component around the z-axis
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+        -`θx`: Angle of rotation of the rotation component around the x-axis
+        -`θz`: Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering
 -`suspension::Suspension`: Instance of a specific suspension
 
@@ -173,7 +183,7 @@ updates the kinematics of the given steering instance on the new angles and susp
 -`steering::Steering`: Instance of a specific steering
 
 """
-function update(θx::T, θz::T, steering::Steering, suspension::Suspension) where {T<:Real}
-    update!(θx, θz, steering, suspension)
+function update(args...)
+    update!(args...)
     return steering
 end 
