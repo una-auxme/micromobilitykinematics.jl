@@ -4,7 +4,12 @@ using docs
 makedocs(
     sitename = "docs",
     format = Documenter.HTML(),
-    modules = [docs]
+    modules = [docs],
+    checkdocs=:exports,
+    linkcheck=true,
+    pages = Any[
+            "Overview" => "index.md",
+    ]
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.
