@@ -1,2 +1,4 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+GeoSpatialRelations = "4f4b3779-db02-45a2-a250-b7461b60f8cf"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
