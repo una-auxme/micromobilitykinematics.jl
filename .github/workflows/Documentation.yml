@@ -31,7 +31,7 @@ jobs:
           arch: x64
 
       - name: "Install dependencies"
-        run: julia --project=docs/ -e 'using Pkg; using Pkg; Pkg.rm("GeoSpatialRelations"; force=true); Pkg.develop(PackageSpec(path=pwd())); Pkg.develop(PackageSpec(url="https://github.com/adribrune/GeoSpatialRelations.jl.git")); Pkg.instantiate()'
+        run: julia --project=docs/ -e 'using Pkg; using Pkg; Pkg.rm("GeoSpatialRelations"); Pkg.develop(PackageSpec(path=pwd())); Pkg.develop(PackageSpec(url="https://github.com/adribrune/GeoSpatialRelations.jl.git")); Pkg.instantiate()'
         
       - name: "Build and deploy"
         env:
