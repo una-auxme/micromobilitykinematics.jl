@@ -2,7 +2,7 @@
 
 julia_version = "1.9.4"
 manifest_format = "2.0"
-project_hash = "3ef0c7fcb125d7799b400a1c935c7ea0391adf80"
+project_hash = "63770526f2f45e7ddc2128392fe77836a9a79768"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -64,12 +64,6 @@ version = "2.5.0+0"
 
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
-
-[[deps.GeoSpatialRelations]]
-deps = ["Documenter", "LinearAlgebra", "StaticArrays"]
-path = "C:\\Users\\bruneadr\\.julia\\dev\\GeoSpatialRelations"
-uuid = "4f4b3779-db02-45a2-a250-b7461b60f8cf"
-version = "0.1.0"
 
 [[deps.Git]]
 deps = ["Git_jll"]
