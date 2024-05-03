@@ -1,20 +1,31 @@
+import Pkg; Pkg.develop(path=joinpath(@__DIR__,"../../micromobilitykinematics.jl"))
+using Documenter, micromobilitykinematics
 using Documenter
-using docs
+using Documenter: GitHubActions
 
 makedocs(
-    sitename = "docs",
-    format = Documenter.HTML(),
-    modules = [docs],
-    checkdocs=:exports,
-    linkcheck=true,
+    format = Documenter.HTML(
+        collapselevel = 1,
+        sidebar_sitename = false,
+        edit_link = nothing,
+        size_threshold = 512000,
+     ),
+     checkdocs=:exports,
+     linkcheck=true,
     pages = Any[
             "Overview" => "index.md",
+            "Function Library" => "library.md"
     ]
 )
 
-# Documenter can also automatically deploy documentation to gh-pages.
-# See "Hosting Documentation" and deploydocs() in the Documenter manual
-# for more information.
-#=deploydocs(
-    repo = "<repository url>"
-)=#
+function deployConfig()
+    github_repository = get(ENV, "GITHUB_REPOSITORY", "")
+    github_event_name = get(ENV, "GITHUB_EVENT_NAME", "")
+    if github_event_name == "workflow_run"
+        github_event_name = "push"
+    end
+    github_ref = get(ENV, "GITHUB_REF", "")
+    return GitHubActions(github_repository, github_event_name, github_ref)
+end
+
+deploydocs(repo = "github.com/adribrune/micromobilitykinematics.jl.git", devbranch = "main" , deploy_config = deployConfig())
