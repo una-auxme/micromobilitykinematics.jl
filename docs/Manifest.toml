@@ -67,9 +67,7 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.GeoSpatialRelations]]
 deps = ["Documenter", "LinearAlgebra", "StaticArrays"]
-git-tree-sha1 = "f038de2d975ba7377d3c83384d9f3dfa5616c80e"
-repo-rev = "main"
-repo-url = "C:\\Users\\bruneadr\\repos\\GeoSpatialRelations.jl"
+path = "C:\\Users\\bruneadr\\.julia\\dev\\GeoSpatialRelations"
 uuid = "4f4b3779-db02-45a2-a250-b7461b60f8cf"
 version = "0.1.0"
 
