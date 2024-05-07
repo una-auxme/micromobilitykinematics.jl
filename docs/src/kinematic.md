@@ -4,7 +4,7 @@ Within the kinematic model, the joint positions are primarily calculated, taking
 ## Initial Position of the Steering System
 The selection of a suitable reference coordinate system is crucial for defining the initial position of key points. Such a coordinate system should easily integrate predefined lengths, widths, and distances and facilitate the calculation of positioning during rotational movements. A suitable point for this purpose is the intersection point of the rotational axes of the steering geometry. Figure illustrates this coordinate system, with the corresponding axes shown in black. Overall, the figure provides a functional representation of the adjustment capability of the steering geometry, with significant information highlighted through color visualization. For determining the initial position of the key reference points, only those vectors represented by a continuous line should be considered.
 
-<img src="https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Screenshot%202024-05-07%20102221.png" alt="Bildbeschreibung" width="500" height="400">
+<img src="https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Screenshot%202024-05-07%20102221.png" width="500" height="400">
 
 The radius by which the rotational component can rotate around the x-axis lies in the rest position along the z-axis.
 rest position along the z-axis and is shown in Figure 3.4 as a red continuous vector.
@@ -45,3 +45,5 @@ $p_2 = R_{r^{(2)}_x} (\theta_x) \cdot p_1$
 ## Determination of the joint center of rotation of the track lever
 
 To enable a comprehensive modeling of the steering, the positions of the outer joint rotation centers are essential. Together, they act as a link between the tie rod and the tie rods, enabling the complete integration of the steering kinematic chain. The starting position, discussed in the previous chapter, is now to be expanded by the kinematic chain and is depicted in Figure below. The yellow vector represents the tie rod, which moves around a center on the blue visualized axis of rotation of the wheel carrier. Due to the symmetric properties of the steering geometry at rest, a complete representation was dispensed with and a one-sided representation was chosen. Also, the following calculation is only performed for one side, as an identical procedure exists for the opposite side. In this illustration, the joints are representatively replaced by circles, with the red color symbolizing the sought component.
+
+<img src="https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/rotation%20of%20track%20lever.png">
