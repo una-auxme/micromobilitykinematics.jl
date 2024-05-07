@@ -6,6 +6,6 @@ The selection of a suitable reference coordinate system is crucial for defining 
 
 ![](https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Screenshot%202024-05-07%20102221.png)
 
-
+<img src="https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Screenshot%202024-05-07%20102221.png" alt="Bildbeschreibung" width="200" height="150">
 
 ##
