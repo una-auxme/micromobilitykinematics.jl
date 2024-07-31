@@ -47,3 +47,6 @@ $p_2 = R_{r^{(2)}_x} (\theta_x) \cdot p_1$
 To enable a comprehensive modeling of the steering, the positions of the outer joint rotation centers are essential. Together, they act as a link between the tie rod and the tie rods, enabling the complete integration of the steering kinematic chain. The starting position, discussed in the previous chapter, is now to be expanded by the kinematic chain and is depicted in Figure below. The yellow vector represents the tie rod, which moves around a center on the blue visualized axis of rotation of the wheel carrier. Due to the symmetric properties of the steering geometry at rest, a complete representation was dispensed with and a one-sided representation was chosen. Also, the following calculation is only performed for one side, as an identical procedure exists for the opposite side. In this illustration, the joints are representatively replaced by circles, with the red color symbolizing the sought component.
 
 <img src="https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/rotation%20of%20track%20lever.png">
+
+
+
