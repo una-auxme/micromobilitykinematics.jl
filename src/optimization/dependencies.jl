@@ -82,13 +82,13 @@ function SingularityConstraint(arge...)
 end
 
 """
-    TrackingcircleConstraint(steering::Steering, chassi::Chassi)
+    TrackingcircleConstraint(steering::Steering, measurments::Measurements)
 
     checks tracking circle constraint
 
 #Arguments
 -`steering::Steering`: Instance of a specific steering
--`chassi::Chassi`: Instance of a specific chassi
+-`measurments::Measurements`: Instance of a specific all relevant Measurements of the vehicle
     
 #Returns:
 -`::Bool`
@@ -119,7 +119,7 @@ checkConstraints(step_size,max_angelConfig,compLength,radius)
 #Returns:
 -`::Bool`
 """
-function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension, chassi::Chassi; info = false) where {T<:Integer}
+function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension, measurments::Measurements; info = false) where {T<:Integer}
     θx_max, θz_max = max_angleConfig
 
     try
@@ -128,7 +128,7 @@ function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::S
             kin_Bool = [KinematicDependence(θ_tuple[1,j],steering, suspension)  for j in 1:step_size:(θz_max+1)]
             angle_Bool = [angleDependence(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
             sin_Bool = [SingularityConstraint(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
-            track_Bool = TrackingCircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, chassi)
+            track_Bool = TrackingCircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, measurments)
 
             if info
                 print("\n_____________Info_____________\n")
@@ -160,7 +160,7 @@ function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::S
             sin_Bool = [SingularityConstraint(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
             sin_Bool2 = [SingularityConstraint(θ_tuple[i,j+1],steering,suspension)  for i in step_size:step_size:(θx_max+1), j in 1:step_size:(θz_max)]
 
-            track_Bool = TrackingCircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, chassi)
+            track_Bool = TrackingCircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, measurments)
 
             if info 
                 print("\n_____________Info_____________\n")
@@ -228,9 +228,9 @@ function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,
 
         suspension = Suspension(30)
         steering = Steering(compLength...)
-        chassi = Chassi()
+        measurments = Measurements()
 
-        if checkConstraints(step_size, max_angleConfig,steering,suspension, chassi; info = true) == true
+        if checkConstraints(step_size, max_angleConfig,steering,suspension, measurments; info = true) == true
             return tuple(compLength...)
         end
         i +=1

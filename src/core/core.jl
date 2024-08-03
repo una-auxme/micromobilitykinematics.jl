@@ -93,7 +93,7 @@ mutable struct Steering <: AbstractSteering
     circle_joints_neutral::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}          # (SC_l, SC_r) = (left, right)
 
     ######## depends on the Suspension kinematics
-
+    wheel_ucs_position::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}
     base_vec_wheel_ucs::Union{Tuple{Matrix{<:Real}, Matrix{<:Real}},Nothing}    # Basis vectors of the wheel coordinate system
 
 
@@ -124,6 +124,7 @@ mutable struct Steering <: AbstractSteering
         inst.sphere_joints_neutral = nothing
         inst.circle_joints_neutral = nothing
 
+        inst.wheel_ucs_position = nothing
         inst.base_vec_wheel_ucs = nothing
 
         inst.wishbone_ucs_position = ([-36.0, 140.0, -139.0], [-36.0, -140.0, -139.0])
@@ -158,7 +159,7 @@ mutable struct Damper <: AbstractDamper
     travel::Union{<:Real, Nothing}                                         # Damper travel [mm]
     compression::Union{<:Real, Nothing}                                    # Damper Compression [%]
     length::Union{<:Real, Nothing}  
-    length_neutral::Union{<:Real, Nothing}                                        # Damper Length with compression as set in LEFTcompression
+    length_neutral::Union{<:Real, Nothing}                                 # Damper Length with compression as set in LEFTcompression
 
     upper_fixture::Union{Vector{<:Real}, Nothing}                          # Damper upper fixtur
     lower_fixture::Union{Vector{<:Real}, Nothing}                          # Damper lower fixture point 
@@ -270,23 +271,6 @@ mutable struct UpperWishbone <: AbstractUpperWishbone
     end
 end
 
-mutable struct Chassi
-    ##### Dimensions
-    width::Union{<:Real, Nothing}
-    length::Union{<:Real, Nothing}
-    radius::Union{<:Real, Nothing}
-
-    ##### Components
-
-
-    function Chassi()
-        inst = new()
-        inst.width = 280.0
-        inst.length = 1300.0
-        inst.radius = 3000.0            # desired track radius
-        return inst
-    end
-end
 
 mutable struct WheelMount <: AbstractWheelMount
     length::Union{<:Real, Nothing}
@@ -335,4 +319,74 @@ mutable struct Suspension <: AbstractSuspension
         return inst
     end
 
+end
+
+
+
+mutable struct Chassi
+    ##### Dimensions
+    width::Union{<:Real, Nothing}
+    length::Union{<:Real, Nothing}
+    radius::Union{<:Real, Nothing}
+
+    ##### Components
+
+
+    function Chassi()
+        inst = new()
+        inst.width = 280.0              # distance between both LowerWishbone.bearing_rear 
+        return inst
+    end
+end
+
+
+mutable struct Measurements
+
+    track_width::Union{<:Real, Nothing}
+    wheel_base::Union{<:Real, Nothing}
+    turning_radius::Union{<:Real, Nothing}
+
+
+    function Measurements(chassi::Chassi, steering::Steering)
+        inst = new()
+        inst.track_width = chassi.width + 2 * abs(steering.wheel_ucs_position[1][2])          # temporary
+        inst.wheel_base = 1000.0            
+        inst.turning_radius = 3000.0        # desired track radius
+
+        return inst
+    end
+    
+end
+
+
+mutable struct Vehicle
+
+    ##### Measurments
+    measurments::Union{Measurements,Nothing}
+
+    ##### Chassi
+    chassi::Union{Chassi, Nothing}
+    
+    ##### Steering
+    steering::Union{Steering,Nothing}
+
+    ##### Suspension
+    suspension::Union{Tuple{Suspension,Suspension},Nothing}
+
+
+    function Vehicle(measurments::Measurements, chassi::Chassi, steering::Steering, suspension::Tuple{Suspension,Suspension})
+        inst = new()
+
+        inst.track_width = 
+        inst.base = 1000.0
+
+
+        inst.measurments = measurments
+
+        inst.chassi = chassi
+
+        inst.steering = steering
+
+        inst.suspension = suspension
+    end
 end

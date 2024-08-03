@@ -314,25 +314,25 @@ end
 
 
 """
-    track_circle_dependence(steering::Steering, chassi::Chassi)
+    track_circle_dependence(steering::Steering, measurments::Measurements)
 
 calculates the diffrence of the max. ideal outer wheel angle and the current max. outer wheel angle.
 
 #Arguments
 -`steering::Steering`: Instance of a specific steering
--`chassi::Chassi`: Instance of a specific chassi
+-`measurments::Measurements`: Instance of a specific all relevant Measurements of the vehicle
 
 #Returns
 - Dependence for the minmal track circle
 """
-function track_circle_dependence(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension, chassi::Chassi) where {T<:Real}
+function track_circle_dependence(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension, measurments::Measurements) where {T<:Real}
 
     steering_now = copy(steering)
     steeringkinematics!(angleConfig, steering_now, suspension)
 
     δo = angle_δo(steering_now)
-    r_is = chassi.length / sind(δo)    
-    return chassi.radius - r_is
+    r_is = measurments.wheel_base / sind(δo)    
+    return measurments.turning_radius - r_is
 end
 
 

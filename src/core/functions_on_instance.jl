@@ -21,6 +21,14 @@ function copy(steering::Steering)
     copy.δi = steering.δi
     copy.δo = steering.δo
 
+    copy.θx_max = steering.θx_max
+    copy.θz_max = steering.θz_max
+    
+    copy.δi_max = steering.δi_max
+    copy.δo_max = steering.δo_max
+
+
+
     copy.sphere_joints = steering.sphere_joints
     copy.sphere_joints_neutral = steering.sphere_joints_neutral
 
@@ -162,8 +170,8 @@ updates the kinematics of the given steering instance on the new angles and susp
 function update!(args...)
     steeringkinematicsNEUTRAL!(args...)
     steeringkinematicsMOVED!(args...)
-    angle_δi!(steering)
-    angle_δo!(steering)
+    angle_δi!(args[2])
+    angle_δo!(args[2])
     nothing
 end 
 
