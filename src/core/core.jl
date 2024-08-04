@@ -322,8 +322,23 @@ mutable struct Suspension <: AbstractSuspension
 end
 
 
+############ micromobility vehicle ######################################
 
-mutable struct Chassi
+
+
+#########################################################################
+abstract type AbstractVehicle end
+
+abstract type AbstractChassi <: AbstractVehicle end
+abstract type AbstractMeasurements <: AbstractVehicle end
+
+
+
+
+
+
+
+mutable struct Chassi <: AbstractChassi
     ##### Dimensions
     width::Union{<:Real, Nothing}
     length::Union{<:Real, Nothing}
@@ -340,7 +355,7 @@ mutable struct Chassi
 end
 
 
-mutable struct Measurements
+mutable struct Measurements <: AbstractMeasurements
 
     track_width::Union{<:Real, Nothing}
     wheel_base::Union{<:Real, Nothing}
@@ -359,7 +374,7 @@ mutable struct Measurements
 end
 
 
-mutable struct Vehicle
+mutable struct Vehicle <: AbstractVehicle
 
     ##### Measurments
     measurments::Union{Measurements,Nothing}
@@ -376,10 +391,6 @@ mutable struct Vehicle
 
     function Vehicle(measurments::Measurements, chassi::Chassi, steering::Steering, suspension::Tuple{Suspension,Suspension})
         inst = new()
-
-        inst.track_width = 
-        inst.base = 1000.0
-
 
         inst.measurments = measurments
 

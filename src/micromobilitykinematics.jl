@@ -5,6 +5,9 @@ module micromobilitykinematic
     using GeoSpatialRelations
     using StaticArrays
 
+    using JuMP
+    using Ipopt
+
 
     include("core/core.jl")
     include("core/suspensionkinematics.jl")
