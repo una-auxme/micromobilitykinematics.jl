@@ -36,15 +36,19 @@ abstract type AbstractRotationalComponent <: AbstractComponent end
 abstract type AbstractTieRod <: AbstractComponent end
 abstract type AbstractTrackLever <: AbstractComponent end
 
+
+
+
+# Type VariableRef needed for JuMP.jl 
 mutable struct RotationalComponent <: AbstractComponent
-    x_rotational_radius::Union{<:Real, Nothing}                     # rotation around the x-axis
-    z_rotational_radius::Union{<:Real, Nothing}                     # rotation around the z-axis
-    to_joint_pivot_point::Union{<:Real, Nothing}                    # distance from the component center (z) to joint pivot
-    distance_between_joint_pivot_points::Union{<:Real, Nothing}     # distance between both pivot poits (JR_l and (JR_r)
+    x_rotational_radius::Union{<:Real, VariableRef, Nothing}                    # rotation around the x-axis  
+    z_rotational_radius::Union{<:Real, VariableRef, Nothing}                    # rotation around the z-axis
+    to_joint_pivot_point::Union{<:Real, VariableRef, Nothing}                   # distance from the component center (z) to joint pivot
+distance_between_joint_pivot_points::Union{<:Real, Nothing}                     # distance between both pivot poits (JR_l and (JR_r)
 
 
 
-    function RotationalComponent(x_rotational_radius::T, z_rotational_radius::T) where {T <: Real}
+    function RotationalComponent(x_rotational_radius::T, z_rotational_radius::T) where {T <: Union{Real, VariableRef}}
         
         inst = new()
 
@@ -59,13 +63,13 @@ mutable struct RotationalComponent <: AbstractComponent
 
 end
 
-
+# Type VariableRef needed for JuMP.jl 
 for (type, supertype) in zip([:TieRod, :TrackLever],[:AbstractTieRod, :AbstractTrackLever])
 
 
     @eval mutable struct $type <: $supertype
-        length::Union{<:Real, Nothing}     
-        function $type(length::T) where {T <: Real}
+        length::Union{<:Real, VariableRef, Nothing}     
+        function $type(length::T) where {T <: Union{Real, VariableRef}}
             new(length)
         end
     end
@@ -105,7 +109,7 @@ mutable struct Steering <: AbstractSteering
 
     kinematics!::Function
 
-    function Steering(x_rotational_radius::T, z_rotational_radius::T, track_lever_length::T, tie_rod_length::T) where {T<:Real}
+    function Steering(x_rotational_radius::T, z_rotational_radius::T, track_lever_length::T, tie_rod_length::T) where {T<:Union{Real, VariableRef}}
         inst = new()
         inst.rotational_component = RotationalComponent(x_rotational_radius, z_rotational_radius)
         inst.track_lever = TrackLever(track_lever_length)
@@ -364,7 +368,7 @@ mutable struct Measurements <: AbstractMeasurements
 
     function Measurements(chassi::Chassi, steering::Steering)
         inst = new()
-        inst.track_width = chassi.width + 2 * abs(steering.wheel_ucs_position[1][2])          # temporary
+        inst.track_width = chassi.width + 2 * abs(steering.wheel_ucs_position[1][2]) 
         inst.wheel_base = 1000.0            
         inst.turning_radius = 3000.0        # desired track radius
 

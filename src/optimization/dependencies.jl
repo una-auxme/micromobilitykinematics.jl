@@ -196,7 +196,6 @@ function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::S
     return true
 end
 
-
 """
     random_search(upper_bourder::Tuple{Float64, Float64, Float64, Float64},lower_bourder::Tuple{Float64, Float64, Float64, Float64},max_angleConfig; info = false, radius = 3500, step_size = 1 )
 
