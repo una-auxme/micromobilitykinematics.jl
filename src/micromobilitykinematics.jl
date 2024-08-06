@@ -16,4 +16,8 @@ module micromobilitykinematic
     include("custom_funcs/calc_basis_vectors.jl")
     include("core/functions_on_instance.jl")
     include("optimization/core_dependencies.jl")    
+    include("optimization/dependencies.jl")
+    include("optimization/functions_for_dependencies.jl")
+    include("optimization/objective.jl")
+
 end

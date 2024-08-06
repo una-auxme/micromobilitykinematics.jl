@@ -8,7 +8,7 @@
 -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering
+-`steering::Steering`: Instance of a specific steering with calculated kinematics
 -`suspension::Suspension`: Instance of a specific suspension
 
 #Returns:
@@ -54,7 +54,7 @@ function kinematicsUNTILmountMOVED°!(angleConfig::Tuple{T,T}, steering::Steerin
     wheel_ucs = [[1.0;0.0;0.0] [0.0;1.0;0.0] [0.0;0.0;1.0]]
 
 
-    suspension.kinematics!(suspension)
+    #suspension.kinematics!(suspension)
 
 
     wheel_ucs_position = (suspension.lowerwishbone[1].sphere_joint, suspension.lowerwishbone[2].sphere_joint)

@@ -13,7 +13,7 @@
 #Returns:
 - no returns becouse of in place programming
 """
-function steeringkinematicsMOVED!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+function steeringkinematicsMOVED!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Union{<:Real, VariableRef}}
     θx, θz = angleConfig
 
     steering.θx = θx
@@ -135,7 +135,7 @@ end
 #Returns:
 - no returns becouse of in place programming
 """
-function steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+function steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Union{<:Real, VariableRef} }
     θx, θz = angleConfig
 
     θx =    deg2rad(0.0)
@@ -261,7 +261,7 @@ function steeringkinematics!(args...)
 end
 
 
-function steeringkinematics(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+function steeringkinematics(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Union{<:Real, VariableRef}}
     cpy_steering = copy(steering)
     steeringkinematics!(angleConfig,steering,suspension)
     return cpy_steering
