@@ -44,7 +44,7 @@ mutable struct RotationalComponent <: AbstractComponent
     x_rotational_radius::Union{<:Real, VariableRef, Nothing}                    # rotation around the x-axis  
     z_rotational_radius::Union{<:Real, VariableRef, Nothing}                    # rotation around the z-axis
     to_joint_pivot_point::Union{<:Real, VariableRef, Nothing}                   # distance from the component center (z) to joint pivot
-distance_between_joint_pivot_points::Union{<:Real, Nothing}                     # distance between both pivot poits (JR_l and (JR_r)
+    distance_between_joint_pivot_points::Union{<:Real, Nothing}                     # distance between both pivot poits (JR_l and (JR_r)
 
 
 

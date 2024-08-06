@@ -44,9 +44,7 @@ The result of the subtraction should always be negativ.
 - Difference between the current outer turning angle of the wheel and the next step
 """
 function outer_sigularity_constraint(steering_now::Steering, steering_next::Steering)
-    δo = angle_δo(steering_now)
-    δo_next = angle_δo(steering_next)
-    return δo - δo_next
+    return steering_now.δo - steering_next.δo
 end
 
 #########################################################################
@@ -98,9 +96,7 @@ The result of the subtraction should always be negativ.
 - Difference between the current inner turning angle of the wheel and the next step
 """
 function inner_sigularity_constraint(steering_now::Steering, steering_next::Steering)
-    δi = angle_δi(steering_now)
-    δi_next = angle_δi(steering_next)
-    return δi - δi_next
+    return steering_now.δi - steering_next.δi
 end
 
 #########################################################################
@@ -147,9 +143,7 @@ calculates the Diffrence of the front wheels steering angles.
 - Difference between the current turning angles of the front wheels
 """
 function angle_dependence(steering_now::Steering)
-    δo = angle_δo(steering_now)
-    δi = angle_δi(steering_now)
-    return δi - δo
+    return steering_now.δi - steering_now.δo
 end
 
 #########################################################################
@@ -669,30 +663,30 @@ function track_circle_dependence(angleConfig::Tuple{T,T}, steering::Steering, su
     steering_now = copy(steering)
     steeringkinematics!(angleConfig, steering_now, suspension)
 
-    δo = angle_δo(steering_now)
-    r_is = measurments.wheel_base / sind(δo)    
+    @show δo = angle_δo(steering_now)
+    @show r_is = measurments.wheel_base / sind(δo)    
     return measurments.turning_radius - r_is
 end
 
 
 """
-    track_circle_dependence(steering_now::Steering, measurments::Measurements)
+    track_circle_dependence(steering::Steering, measurments::Measurements)
 
 calculates the diffrence of the max. ideal outer wheel angle and the current max. outer wheel angle.
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 
 #Arguments
-- `steering_now::Steering`: the current state of the steering kinematics
+- `steering::Steering`: the last state of the steering kinematics
 -`measurments::Measurements`: Instance of a specific all relevant Measurements of the vehicle
 
 #Returns
 - Dependence for the minmal track circle
 """
-function track_circle_dependence(steering_now::Steering, measurments::Measurements)
-    
-    δo = angle_δo(steering_now)
-    r_is = measurments.wheel_base / sind(δo)    
+function track_circle_dependence(steering::Steering, measurments::Measurements)
+    δo = steering.δo
+    sind(δo)
+    r_is = measurments.wheel_base / sind(δo) 
     return measurments.turning_radius - r_is
 end
 

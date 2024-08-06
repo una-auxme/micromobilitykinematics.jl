@@ -21,19 +21,14 @@ function copy(steering::Steering)
     copy.δi = steering.δi
     copy.δo = steering.δo
 
-    copy.θx_max = steering.θx_max
-    copy.θz_max = steering.θz_max
-    
-    copy.δi_max = steering.δi_max
-    copy.δo_max = steering.δo_max
-
-
-
     copy.sphere_joints = steering.sphere_joints
     copy.sphere_joints_neutral = steering.sphere_joints_neutral
 
     copy.circle_joints = steering.circle_joints
     copy.circle_joints_neutral = steering.circle_joints_neutral
+
+    copy.wheel_ucs_position = steering.wheel_ucs_position
+    copy.base_vec_wheel_ucs = steering.base_vec_wheel_ucs
 
     copy.wishbone_ucs_position = steering.wishbone_ucs_position
     copy.track_lever_mounting_points_ucs = steering.track_lever_mounting_points_ucs
@@ -195,3 +190,5 @@ function update(args...)
     update!(args...)
     return steering
 end 
+
+

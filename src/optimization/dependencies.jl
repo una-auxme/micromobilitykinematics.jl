@@ -9,16 +9,16 @@ checks angle dependence
 #Returns:
 -`::Bool`
 """
-function angleDependence(arge...)
-try
-    if !(angle_dependence(arge...) > 0)
-        error("dependence violation:    steering angle ")
-    end
-catch err
-    #println(stacktrace(err))
-    return false 
-end 
-return true 
+function AngleDependence(arge...)
+    try
+        if !(angle_dependence(arge...) > 0)
+            error("dependence violation:    steering angle ")
+        end
+    catch err
+        #println(stacktrace(err))
+        return false 
+    end 
+    return true 
 end 
 
 """
@@ -119,7 +119,7 @@ checkConstraints(step_size,max_angelConfig,compLength,radius)
 #Returns:
 -`::Bool`
 """
-function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension, measurments::Measurements; info = false) where {T<:Integer}
+function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension, measurments::Measurements; info = true) where {T<:Integer}
     θx_max, θz_max = max_angleConfig
 
     try
@@ -152,15 +152,15 @@ function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::S
               error("tracking circle constraint couldn't be matched by parameters ")
             end
         else 
-            kin_Bool = [KinematicDependence(θ_tuple[i,j],steering,suspension) for i in 1:step_size:(θx_max+1), j in 1:step_size:(θz_max+1)]
+            @show kin_Bool = [KinematicDependence(θ_tuple[i,j],steering,suspension) for i in 1:step_size:(θx_max+1), j in 1:step_size:(θz_max+1)]
 
-            angle_Bool = [angleDependence(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
-            angle_Bool2 = [angleDependence(θ_tuple[i,j+1],steering,suspension)  for i in step_size:step_size:(θx_max+1), j in 1:step_size:(θz_max)]
+            @show angle_Bool = [AngleDependence(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
+            @show angle_Bool2 = [AngleDependence(θ_tuple[i,j+1],steering,suspension)  for i in step_size:step_size:(θx_max+1), j in 1:step_size:(θz_max)]
 
-            sin_Bool = [SingularityConstraint(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
-            sin_Bool2 = [SingularityConstraint(θ_tuple[i,j+1],steering,suspension)  for i in step_size:step_size:(θx_max+1), j in 1:step_size:(θz_max)]
+            @show sin_Bool = [SingularityConstraint(θ_tuple[1,j+1],steering,suspension)  for j in 1:step_size:(θz_max)]
+            @show sin_Bool2 = [SingularityConstraint(θ_tuple[i,j+1],steering,suspension)  for i in step_size:step_size:(θx_max+1), j in 1:step_size:(θz_max)]
 
-            track_Bool = TrackingCircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, measurments)
+            @show track_Bool = TrackingCircleConstraint(θ_tuple[1,(θz_max +1)],steering, suspension, measurments)
 
             if info 
                 print("\n_____________Info_____________\n")
@@ -196,6 +196,64 @@ function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::S
     return true
 end
 
+
+function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Integer}
+    θx_max, θz_max = max_angleConfig
+
+    try
+        kin_Bool = []
+        angle_Bool = []
+        sin_Bool = []
+        track_Bool = []
+
+        # One-time calculation of the kinematics and storage in instances until the intersection needs to be checked.  
+        θ_tuples = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
+        steerings = [kinematicsUNTILmount°(θ_tuple, steering, suspension) for θ_tuple in θ_tuples]
+
+        # checks if steering.sphere_joints is calculable (intersection is posible)
+        for steering in steerings
+            push!(kin_Bool, KinematicDependence(steering))
+            update°!(steering)
+        end
+
+        # calculation of complete kinematics necessary (steering.sphere_joints)
+        for steering in steerings
+            #for (θx,θz) = (0,0) AngleDependence and SingularityConstraintis not expressive
+            if steering.θx == 0 && steering.θz == 0 
+                continue
+            end
+            push!(angle_Bool, AngleDependence(steering))
+
+            #for (θx,θz) = (n,θz_max) SingularityConstraint checks out of bounds
+            if steering.θz == θz_max
+                continue
+            end
+            θx, θz = (steering.θx, steering.θz)
+            steering_next = steerings[θx+1, θz+2]
+            push!(sin_Bool, SingularityConstraint(steering,steering_next))
+
+        end
+
+        # Is the turning circle maintained in the planar plane?
+        measurments = Measurements(Chassi(),steerings[1, end])
+        push!(track_Bool, TrackingCircleConstraint(steerings[1, end], measurments))
+
+        if nothing !== findfirst(x -> x ==false, kin_Bool)
+            error("kinematic dempendence couldn't be matched by parameters ")
+          elseif nothing !== findfirst(x -> x ==false, angle_Bool)
+            error("angle dempendence couldn't be matched by parameters ")
+          elseif nothing !== findfirst(x -> x ==false, sin_Bool)
+            error("singularity constraint couldn't be matched by parameters ")
+          elseif nothing !== findfirst(x -> x ==false, track_Bool)
+            error("tracking circle constraint couldn't be matched by parameters ")
+        end
+    catch err
+        return false
+    end
+    return true
+end
+
+
 """
     random_search(upper_bourder::Tuple{Float64, Float64, Float64, Float64},lower_bourder::Tuple{Float64, Float64, Float64, Float64},max_angleConfig; info = false, radius = 3500, step_size = 1 )
 
@@ -215,7 +273,7 @@ random search with given bourder for the parameters and given angular area for r
 #Returns:
 -`compLength`: tuple (xSteeringRadius, zSteeringRadius, TieRodLength, TrackLeverLength)
 """
-function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I} ; info = false, step_size = 1 ) where {T<:Real, I<:Integer}
+function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I} ; info = true, step_size = 1 ) where {T<:Real, I<:Integer}
     b = true 
     i = 0
     while b
@@ -227,9 +285,8 @@ function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,
 
         suspension = Suspension(30)
         steering = Steering(compLength...)
-        measurments = Measurements()
 
-        if checkConstraints(step_size, max_angleConfig,steering,suspension, measurments; info = true) == true
+        if checkConstraints(step_size, max_angleConfig,steering,suspension) == true
             return tuple(compLength...)
         end
         i +=1
