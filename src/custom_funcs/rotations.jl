@@ -16,7 +16,8 @@ calculates the Rotation matirx RM an rotation point R.
 function rotate3(A,n,alpha,shift=[0;0;0])
     # the point A is rotated (counter clockwise) by alpha degrees around vector n. 
     # shift has to be used to rotate around axes that are not going through the origin
-    n = n/norm(n)
+
+    n = n/norm°(n) # n = n/norm(n)
 
     # generate rotation matrix
     RM_1 = [(n[1]^2)*(1-cos(alpha))+cos(alpha);
@@ -51,23 +52,23 @@ end
 
 
 """
-function applyMatrixRotation(vec::AbstractVector{T}, basis1::Matrix{T}, basis2::Matrix{T}) where{T<:Real}
+function applyMatrixRotation(vec::AbstractVector{T1}, basis1::Matrix{T2}, basis2::Matrix{T3}) where{T1,T2,T3}
     if length(vec) != 3
         throw(ArgumentError("Length of AbstractVec does not match size of SVector"))
     end
-    vec =  SVector{3, T}(vec)
+    vec =  SVector{3, T1}(vec)
 
-    u1 = SVector{3, T}(basis1[:,1])
-    v1 = SVector{3, T}(basis1[:,2])
-    w1 = SVector{3, T}(basis1[:,3])
-    u2 = SVector{3, T}(basis2[:,1])
-    v2 = SVector{3, T}(basis2[:,2])
-    w2 = SVector{3, T}(basis2[:,3])
+    u1 = SVector{3, T2}(basis1[:,1])
+    v1 = SVector{3, T2}(basis1[:,2])
+    w1 = SVector{3, T2}(basis1[:,3])
+    u2 = SVector{3, T3}(basis2[:,1])
+    v2 = SVector{3, T3}(basis2[:,2])
+    w2 = SVector{3, T3}(basis2[:,3])
 
     return applyMatrixRotation(vec,u1,v1,w1,u2,v2,w2)
 end
 
-function applyMatrixRotation(vec::SVector{3,T}, u1::SVector{3,T},v1::SVector{3,T},w1::SVector{3,T},u2::SVector{3,T},v2::SVector{3,T},w2::SVector{3,T}) where{T<:Real}
+function applyMatrixRotation(vec::SVector{3,T1}, u1::SVector{3,T2},v1::SVector{3,T2},w1::SVector{3,T2},u2::SVector{3,T3},v2::SVector{3,T3},w2::SVector{3,T3}) where{T1,T2,T3}
     R = ([dot(u1, u2) dot(u1, v2) dot(u1, w2);
         dot(v1, u2) dot(v1, v2) dot(v1, w2);
         dot(w1, u2) dot(w1, v2) dot(w1, w2)])

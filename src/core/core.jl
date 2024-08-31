@@ -84,27 +84,27 @@ mutable struct Steering <: AbstractSteering
     tie_rod::Union{TieRod,Nothing}
 
     ######## depends on the kinematics
-    θx::Union{<:Real, Nothing}                  # Angle of rotation of the rotation component around the x-axis
-    θz::Union{<:Real, Nothing}                  # Angle of rotation of the rotation component around the z-axis
+    θx::Union{<:Real,VariableRef, Nothing}                  # Angle of rotation of the rotation component around the x-axis
+    θz::Union{<:Real,VariableRef, Nothing}                  # Angle of rotation of the rotation component around the z-axis
 
-    δi::Union{<:Real, Nothing}                  # inner steering angle of the wheel
-    δo::Union{<:Real, Nothing}                  # outer steering angle of the wheel
+    δi::Union{<:Real,AffExpr, Nothing}                  # inner steering angle of the wheel
+    δo::Union{<:Real,AffExpr, Nothing}                  # outer steering angle of the wheel
 
-    sphere_joints::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}          # (SJ_l, SJ_r) = (left, right)
-    circle_joints::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}          # (SC_l, SC_r) = (left, right)
+    sphere_joints::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}},Nothing}          # (SJ_l, SJ_r) = (left, right)
+    circle_joints::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}},Nothing}          # (SC_l, SC_r) = (left, right)
 
-    sphere_joints_neutral::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}          # (SJ_l, SJ_r) = (left, right)
-    circle_joints_neutral::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}          # (SC_l, SC_r) = (left, right)
+    sphere_joints_neutral::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}          # (SJ_l, SJ_r) = (left, right) VariableRef
+    circle_joints_neutral::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}          # (SC_l, SC_r) = (left, right)
 
     ######## depends on the Suspension kinematics
-    wheel_ucs_position::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}
-    base_vec_wheel_ucs::Union{Tuple{Matrix{<:Real}, Matrix{<:Real}},Nothing}    # Basis vectors of the wheel coordinate system
+    wheel_ucs_position::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}
+    base_vec_wheel_ucs::Union{Tuple{Matrix{<:Real}, Matrix{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}    # Basis vectors of the wheel coordinate system
 
 
     ######## Positions of the Userdefined Coordinate System (UCS)
 
-    wishbone_ucs_position::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}         # (left, right) in steering ucs
-    track_lever_mounting_points_ucs::Union{Tuple{Vector{<:Real},Vector{<:Real}},Nothing}     # (left, right) Mounting point of the tracklever in steering ucs
+    wishbone_ucs_position::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}         # (left, right) in steering ucs
+    track_lever_mounting_points_ucs::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}     # (left, right) Mounting point of the tracklever in steering ucs
     
 
     kinematics!::Function

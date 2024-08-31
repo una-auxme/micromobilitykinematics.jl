@@ -127,9 +127,10 @@ nothing !== findfirst(x -> x ==false, track_Bool)
 
 steering = Steering(79.0, 112.0, 138.0, 216.0)
 suspension = Suspension(30.0)
+suspensionkinematics!(suspension)
 step_size = 1
 θx_max,θz_max = (10,35)
-
+suspension
 
 
 kin_Bool = []
@@ -324,3 +325,9 @@ value(x)
 value(y)
 objectiv = objective_value(model)
 status = termination_status(model)
+
+
+
+Plane([1,3,4,2], [3,4,2])
+
+GeoSpatialRelations.abstractvec_to_svector(["d","d","d"])
