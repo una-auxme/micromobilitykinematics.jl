@@ -7,7 +7,7 @@ module micromobilitykinematic
 
     using JuMP
     using Ipopt
-
+    using NLopt
 
     include("core/core.jl")
     include("core/suspensionkinematics.jl")

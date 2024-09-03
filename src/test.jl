@@ -181,7 +181,7 @@ push!(track_Bool, TrackingCircleConstraint(steerings[1, end], measurments))
 
 
 
-
+getValue(steering)
 
 steering = Steering(50.0, 123.0, 227.0, 129.0)
 suspension = Suspension(30.0)
