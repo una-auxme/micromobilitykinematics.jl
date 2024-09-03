@@ -19,5 +19,6 @@ module micromobilitykinematic
     include("optimization/dependencies.jl")
     include("optimization/functions_for_dependencies.jl")
     include("optimization/objective.jl")
-
+    include("optimization/functions_redefinition.jl")
+    
 end

@@ -121,7 +121,7 @@ checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, 
 #Returns:
 -`::Bool`
 """
-function checkConstraints(step_size::T, max_angleConfig::Tuple{T,T} , steering::Steering, suspension::Suspension) where {T<:Number}
+function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension) 
     θx_max, θz_max = max_angleConfig
 
     try
@@ -182,7 +182,7 @@ end
 
 
 """
-function checkConstraints°(x_rotational_radius::T, z_rotational_radius::T, track_lever_length::T, tie_rod_length::T) where {T<:Real}
+function checkConstraints°(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     θx_max, θz_max  = (10,35)
     angleConfig = (θx_max, θz_max)
 
@@ -191,11 +191,7 @@ function checkConstraints°(x_rotational_radius::T, z_rotational_radius::T, trac
     suspension = Suspension(30)
     suspensionkinematics!(suspension)
 
-    if checkConstraints(1,angleConfig,steering,suspension)
-        return 1
-    end
-    return 0
-
+    return checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0
 end
 
 

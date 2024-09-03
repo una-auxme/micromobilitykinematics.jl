@@ -328,6 +328,9 @@ status = termination_status(model)
 
 
 
-Plane([1,3,4,2], [3,4,2])
+Plane([1,3,4], [3,4,2])
 
 GeoSpatialRelations.abstractvec_to_svector(["d","d","d"])
+
+
+Plane()

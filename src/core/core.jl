@@ -41,14 +41,14 @@ abstract type AbstractTrackLever <: AbstractComponent end
 
 # Type VariableRef needed for JuMP.jl 
 mutable struct RotationalComponent <: AbstractComponent
-    x_rotational_radius::Union{<:Real, VariableRef, Nothing}                    # rotation around the x-axis  
-    z_rotational_radius::Union{<:Real, VariableRef, Nothing}                    # rotation around the z-axis
-    to_joint_pivot_point::Union{<:Real, VariableRef, Nothing}                   # distance from the component center (z) to joint pivot
-    distance_between_joint_pivot_points::Union{<:Real, Nothing}                     # distance between both pivot poits (JR_l and (JR_r)
+    x_rotational_radius::Any                   # rotation around the x-axis  
+    z_rotational_radius::Any                    # rotation around the z-axis
+    to_joint_pivot_point::Any                  # distance from the component center (z) to joint pivot
+    distance_between_joint_pivot_points::Any                    # distance between both pivot poits (JR_l and (JR_r)
 
 
 
-    function RotationalComponent(x_rotational_radius::T, z_rotational_radius::T) where {T <: Union{Real, VariableRef}}
+    function RotationalComponent(x_rotational_radius, z_rotational_radius)
         
         inst = new()
 
@@ -68,8 +68,8 @@ for (type, supertype) in zip([:TieRod, :TrackLever],[:AbstractTieRod, :AbstractT
 
 
     @eval mutable struct $type <: $supertype
-        length::Union{<:Real, VariableRef, Nothing}     
-        function $type(length::T) where {T <: Union{Real, VariableRef}}
+        length::Any    
+        function $type(length)
             new(length)
         end
     end
@@ -84,32 +84,32 @@ mutable struct Steering <: AbstractSteering
     tie_rod::Union{TieRod,Nothing}
 
     ######## depends on the kinematics
-    θx::Union{<:Real,VariableRef, Nothing}                  # Angle of rotation of the rotation component around the x-axis
-    θz::Union{<:Real,VariableRef, Nothing}                  # Angle of rotation of the rotation component around the z-axis
+    θx::Any                  # Angle of rotation of the rotation component around the x-axis
+    θz::Any                  # Angle of rotation of the rotation component around the z-axis
 
-    δi::Union{<:Real,AffExpr, Nothing}                  # inner steering angle of the wheel
-    δo::Union{<:Real,AffExpr, Nothing}                  # outer steering angle of the wheel
+    δi::Any                 # inner steering angle of the wheel
+    δo::Any                   # outer steering angle of the wheel
 
-    sphere_joints::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}},Nothing}          # (SJ_l, SJ_r) = (left, right)
-    circle_joints::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}},Nothing}          # (SC_l, SC_r) = (left, right)
+    sphere_joints::Union{Tuple{Vector{Any},Vector{Any}},Nothing}          # (SJ_l, SJ_r) = (left, right)
+    circle_joints::Union{Tuple{Vector{Any},Vector{Any}},Nothing}          # (SC_l, SC_r) = (left, right)
 
-    sphere_joints_neutral::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}          # (SJ_l, SJ_r) = (left, right) VariableRef
-    circle_joints_neutral::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}          # (SC_l, SC_r) = (left, right)
+    sphere_joints_neutral::Union{Tuple{Vector{Any},Vector{Any}}, Nothing}          # (SJ_l, SJ_r) = (left, right) VariableRef
+    circle_joints_neutral::Union{Tuple{Vector{Any},Vector{Any}}, Nothing}          # (SC_l, SC_r) = (left, right)
 
     ######## depends on the Suspension kinematics
-    wheel_ucs_position::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}
-    base_vec_wheel_ucs::Union{Tuple{Matrix{<:Real}, Matrix{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}    # Basis vectors of the wheel coordinate system
+    wheel_ucs_position::Union{Tuple{Vector{Any},Vector{Any}}, Nothing}
+    base_vec_wheel_ucs::Union{Tuple{Matrix{Any},Matrix{Any}}, Nothing}    # Basis vectors of the wheel coordinate system
 
 
     ######## Positions of the Userdefined Coordinate System (UCS)
 
-    wishbone_ucs_position::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}         # (left, right) in steering ucs
-    track_lever_mounting_points_ucs::Union{Tuple{Vector{<:Real},Vector{<:Real}},Tuple{Vector{<:AffExpr},Vector{<:AffExpr}}, Nothing}     # (left, right) Mounting point of the tracklever in steering ucs
+    wishbone_ucs_position::Union{Tuple{Vector{Any},Vector{Any}}, Nothing}         # (left, right) in steering ucs
+    track_lever_mounting_points_ucs::Union{Tuple{Vector{Any},Vector{Any}}, Nothing}     # (left, right) Mounting point of the tracklever in steering ucs
     
 
     kinematics!::Function
 
-    function Steering(x_rotational_radius::T, z_rotational_radius::T, track_lever_length::T, tie_rod_length::T) where {T<:Union{Real, VariableRef}}
+    function Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) 
         inst = new()
         inst.rotational_component = RotationalComponent(x_rotational_radius, z_rotational_radius)
         inst.track_lever = TrackLever(track_lever_length)
@@ -157,19 +157,19 @@ abstract type AbstractWheelMount <: AbstractSuspension end
 
 mutable struct Damper <: AbstractDamper
 
-    id::Union{Symbol,Nothing}
+    id::Any
 
-    nominal_length::Union{<:Real, Nothing}                                 # Damper nominal length (not compressed) [mm]
-    travel::Union{<:Real, Nothing}                                         # Damper travel [mm]
-    compression::Union{<:Real, Nothing}                                    # Damper Compression [%]
-    length::Union{<:Real, Nothing}  
-    length_neutral::Union{<:Real, Nothing}                                 # Damper Length with compression as set in LEFTcompression
+    nominal_length::Any                                # Damper nominal length (not compressed) [mm]
+    travel::Any                                         # Damper travel [mm]
+    compression::Any                                    # Damper Compression [%]
+    length::Any  
+    length_neutral::Any                                 # Damper Length with compression as set in LEFTcompression
 
-    upper_fixture::Union{Vector{<:Real}, Nothing}                          # Damper upper fixtur
-    lower_fixture::Union{Vector{<:Real}, Nothing}                          # Damper lower fixture point 
-    lower_fixture_neutral::Union{Vector{<:Real}, Nothing} 
+    upper_fixture::Union{Vector{Any}, Nothing}                          # Damper upper fixtur
+    lower_fixture::Union{Vector{Any}, Nothing}                          # Damper lower fixture point 
+    lower_fixture_neutral::Union{Vector{Any}, Nothing} 
 
-    function Damper(compression::T) where {T <: Real}
+    function Damper(compression::T) where {T <: Any }
         inst = new()
 
         inst.id = nothing 
@@ -194,19 +194,19 @@ mutable struct LowerWishbone <: AbstractLowerWishbone
     ######## 
     
     ########    
-    bearing_rear::Union{Vector{<:Real}, Nothing}                               # Rear Bearing of the Wishbone -> Center CoordinateSystem 
-    bearing_distance_x::Union{<:Real, Nothing}                                 # Distance in X-Axis Lower Wishbone Bearings
-    bearing_front::Union{Vector{<:Real}, Nothing}                              # Front Bearing of the Wishbone
-    rotation_axis::Union{Vector{<:Real}, Nothing}                              # Rotation Axis Lower Wishbone UNIT VECTOR
-    distance_to_joint_y::Union{<:Real, Nothing}                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
-    distance_rotation_axis_to_lower_damper_fixure::Union{<:Real, Nothing}      # Distance LEFTrotation_axis to LowerDamperFixPoint [mm]
-    distance_to_joint_x::Union{<:Real, Nothing}                                # Distance on x-Axis bearing_rear to Joint [mm] 
+    bearing_rear::Union{Vector{Any}, Nothing}                               # Rear Bearing of the Wishbone -> Center CoordinateSystem 
+    bearing_distance_x::Any                                 # Distance in X-Axis Lower Wishbone Bearings
+    bearing_front::Union{Vector{Any}, Nothing}                              # Front Bearing of the Wishbone
+    rotation_axis::Union{Vector{Any}, Nothing}                              # Rotation Axis Lower Wishbone UNIT VECTOR
+    distance_to_joint_y::Any                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
+    distance_rotation_axis_to_lower_damper_fixure::Any      # Distance LEFTrotation_axis to LowerDamperFixPoint [mm]
+    distance_to_joint_x::Any                                # Distance on x-Axis bearing_rear to Joint [mm] 
     
-    sphere_joint_neutral::Union{Vector{<:Real}, Nothing}
-    lower_fixture_neutral::Union{Vector{<:Real}, Nothing}
+    sphere_joint_neutral::Union{Vector{Any}, Nothing}
+    lower_fixture_neutral::Union{Vector{Any}, Nothing}
     ######## depends on the kinematics
-    sphere_joint::Union{Vector{<:Real}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
-    lower_fixture::Union{Vector{<:Real}, Nothing}                              # Damper lower fixture point 
+    sphere_joint::Union{Vector{Any}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
+    lower_fixture::Union{Vector{Any}, Nothing}                              # Damper lower fixture point 
     #rotation_axis_TO_sphere_joint::Union{Vector{Float64}, Nothing}              # directuion vector to  Spherejoint from the LEFTLowerWishboneBearingRear x-Achse
 
     function LowerWishbone()
@@ -237,21 +237,21 @@ mutable struct UpperWishbone <: AbstractUpperWishbone
 
     id::Union{Symbol,Nothing}
 
-    bearing_rear::Union{Vector{<:Real}, Nothing}                               # Rear Bearing of the Wishbone -> Center CoordinateSystem 
-    bearing_distance_x::Union{<:Real, Nothing}                                 # Distance in X-Axis Lower Wishbone Bearings
-    bearing_front::Union{Vector{<:Real}, Nothing}                              # Front Bearing of the Wishbone
-    rotation_axis::Union{Vector{<:Real}, Nothing}                              # Rotation Axis Lower Wishbone UNIT VECTOR 
-    distance_to_joint_y::Union{<:Real, Nothing}                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
-    distance_to_joint_x::Union{<:Real, Nothing}                                # Distance on x-Axis bearing_rear to Joint [mm] 
+    bearing_rear::Union{Vector{Any}, Nothing}                               # Rear Bearing of the Wishbone -> Center CoordinateSystem 
+    bearing_distance_x::Any                                 # Distance in X-Axis Lower Wishbone Bearings
+    bearing_front::Union{Vector{Any}, Nothing}                              # Front Bearing of the Wishbone
+    rotation_axis::Union{Vector{Any}, Nothing}                              # Rotation Axis Lower Wishbone UNIT VECTOR 
+    distance_to_joint_y::Any                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
+    distance_to_joint_x::Any                                # Distance on x-Axis bearing_rear to Joint [mm] 
     
 
-    tiltx::Union{<:Real, Nothing}                                              # angle LEFTUpperWishboneRotationAxis to xz-plane of LEFTLowerWishboneBearingRear 
-    tilty::Union{<:Real, Nothing}                                              # angle LEFTUpperWishboneRotationAxis to xy-plane of LEFTLowerWishboneBearingRear 
-    tiltZ::Union{<:Real, Nothing}                                              # angle LEFTUpperWishboneRotationAxis to yz-plane of LEFTLowerWishboneBearingRear set to zero (here) has to be calculated after calculating bearing positions
+    tiltx::Any                                              # angle LEFTUpperWishboneRotationAxis to xz-plane of LEFTLowerWishboneBearingRear 
+    tilty::Any                                              # angle LEFTUpperWishboneRotationAxis to xy-plane of LEFTLowerWishboneBearingRear 
+    tiltZ::Any                                              # angle LEFTUpperWishboneRotationAxis to yz-plane of LEFTLowerWishboneBearingRear set to zero (here) has to be calculated after calculating bearing positions
 
     ######## depends on the kinematics
-    sphere_joint::Union{Vector{<:Real}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
-    sphere_joint_neutral::Union{Vector{<:Real}, Nothing}   
+    sphere_joint::Union{Vector{Any}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
+    sphere_joint_neutral::Union{Vector{Any}, Nothing}   
 
     function UpperWishbone()
         inst = new()
@@ -277,12 +277,12 @@ end
 
 
 mutable struct WheelMount <: AbstractWheelMount
-    length::Union{<:Real, Nothing}
-    camper_angle::Union{<:Real, Nothing}
-    offset_x::Union{<:Real, Nothing}
-    offset_y::Union{<:Real, Nothing}
-    offset_z::Union{<:Real, Nothing}
-    to_angle::Union{<:Real, Nothing}
+    length::Any
+    camper_angle::Any
+    offset_x::Any
+    offset_y::Any
+    offset_z::Any
+    to_angle::Any
 
     function WheelMount()
         inst = new()
@@ -307,7 +307,7 @@ mutable struct Suspension <: AbstractSuspension
     
     kinematics!::Function
 
-    function Suspension(compression::T) where {T <: Real} 
+    function Suspension(compression)
         inst = new()
 
         inst.lowerwishbone = (LowerWishbone(),LowerWishbone())      # (left, right)
@@ -344,9 +344,9 @@ abstract type AbstractMeasurements <: AbstractVehicle end
 
 mutable struct Chassi <: AbstractChassi
     ##### Dimensions
-    width::Union{<:Real, Nothing}
-    length::Union{<:Real, Nothing}
-    radius::Union{<:Real, Nothing}
+    width::Any
+    length::Any
+    radius::Any
 
     ##### Components
 
@@ -361,9 +361,9 @@ end
 
 mutable struct Measurements <: AbstractMeasurements
 
-    track_width::Union{<:Real, Nothing}
-    wheel_base::Union{<:Real, Nothing}
-    turning_radius::Union{<:Real, Nothing}
+    track_width::Any
+    wheel_base::Any
+    turning_radius::Any
 
 
     function Measurements(chassi::Chassi, steering::Steering)

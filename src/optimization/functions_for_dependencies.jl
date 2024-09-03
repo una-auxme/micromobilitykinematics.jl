@@ -14,7 +14,7 @@
 #Returns:
 - no returns becouse of in place programming
 """
-function kinematicsUNTILmountMOVED°!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+function kinematicsUNTILmountMOVED°!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
 
     θx, θz = angleConfig
 
@@ -54,7 +54,7 @@ function kinematicsUNTILmountMOVED°!(angleConfig::Tuple{T,T}, steering::Steerin
     wheel_ucs = [[1.0;0.0;0.0] [0.0;1.0;0.0] [0.0;0.0;1.0]]
 
 
-    #suspension.kinematics!(suspension)
+    #suspension.kinematics!(suspension) #not necessary 
 
 
     wheel_ucs_position = (suspension.lowerwishbone[1].sphere_joint, suspension.lowerwishbone[2].sphere_joint)
@@ -142,13 +142,13 @@ function kinematicsUNTILmountNEUTRAL°!(steering::Steering)
 end
 
 
-function kinematicsUNTILmount°!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+function kinematicsUNTILmount°!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
     kinematicsUNTILmountMOVED°!(angleConfig, steering, suspension)
     kinematicsUNTILmountNEUTRAL°!(steering)
     nothing
 end
 
-function kinematicsUNTILmount°(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+function kinematicsUNTILmount°(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
     cpy_steering = copy(steering)
     kinematicsUNTILmount°!(angleConfig, cpy_steering, suspension)
     return cpy_steering

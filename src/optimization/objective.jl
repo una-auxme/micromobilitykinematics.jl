@@ -14,7 +14,7 @@
     #Returns
     - Distance between optimal and current intersection point
 """
-function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::Steering, suspension::Suspension) where {T<:Union{<:Real, VariableRef} }
+function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::Steering, suspension::Suspension) where {T<:Any}
     # calculate the kinematics in respect of the given angles
     update!(angleConfig, steering, suspension)
 
@@ -54,13 +54,12 @@ function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::St
 end
 
 
-function objective(θx,θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+function objective(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     ################## 
     # Supsystems
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     suspension = Suspension(30.0)
     chassi = Chassi()
-    @show typeof(θx)
     # Calculation of objective function 
     return steering_objective((θx,θz),chassi,steering,suspension)
 
