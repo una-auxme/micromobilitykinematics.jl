@@ -15,7 +15,9 @@
     - Distance between optimal and current intersection point
 """
 function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::Steering, suspension::Suspension) where {T<:Any}
+    println(":> objective")
     # calculate the kinematics in respect of the given angles
+    #println("$(steering.rotational_component.x_rotational_radius), $(steering.rotational_component.z_rotational_radius), $(steering.track_lever.length), $(steering.tie_rod.length)\n  ")
     update!(angleConfig, steering, suspension)
 
     # unpack important measurments
@@ -49,9 +51,16 @@ function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::St
     x2 = (b)/ (mi - mo)
     #->y-Coordinate
     y = mo * x2 + b
-
     return abs(y)
 end
+
+#checkConstraints°(95.89, 127.07, 148.26, 222.42)
+#checkConstraints°(76.94354047075339, 127.81902521153052, 125.95663054465159, 195.302056058715642)
+#
+#objective(1,30,95.89, 127.07, 148.26, 222.42)
+#
+#objective(0,20,79.72433062896792, 122.04062852415808, 134.14620864478988, 229.13168306790027)
+
 
 
 function objective(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
@@ -64,3 +73,5 @@ function objective(θx, θz, x_rotational_radius, z_rotational_radius, track_lev
     return steering_objective((θx,θz),chassi,steering,suspension)
 
 end
+
+

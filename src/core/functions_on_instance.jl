@@ -137,15 +137,16 @@ calculates the inner steering angle of the wheel
     
 """
 function angle_δi(steering::Steering)
-
     a = steering.circle_joints[2] - steering.track_lever_mounting_points_ucs[2] 
 
     b = steering.circle_joints_neutral[2] - steering.track_lever_mounting_points_ucs[2]
-    
-    δ = acosd(dot(a,b)/(norm(a) * norm(b)))
 
+    δ = acosd(dot(a,b)/(norm(a) * norm(b)))
     return δ
 end
+
+
+
 
 """
     update!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}

@@ -104,9 +104,7 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
         #Sphere
         sphere = Sphere(steering.sphere_joints[index],steering.tie_rod.length)
 
-
         circle_joints_1, circle_joints_2 = intersection(circ, sphere)
-        
 
         if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          
             @eval $circle_joint = $circle_joints_2

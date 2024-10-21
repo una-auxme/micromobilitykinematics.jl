@@ -123,6 +123,7 @@ checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, 
 """
 function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension) 
     θx_max, θz_max = max_angleConfig
+    #println("$(steering.rotational_component.x_rotational_radius), $(steering.rotational_component.z_rotational_radius), $(steering.track_lever.length), $(steering.tie_rod.length)\n  ")
 
     try
         kin_Bool = []
@@ -137,7 +138,11 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         # checks if steering.sphere_joints is calculable (intersection is posible)
         for steering in steerings
             push!(kin_Bool, KinematicDependence(steering))
-            update°!(steering)
+            if steering.θx == 0 && steering.θz == 0 
+                continue
+            else 
+                update°!(steering)
+            end 
         end
 
         # calculation of complete kinematics necessary (steering.sphere_joints)
@@ -146,21 +151,29 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
             if steering.θx == 0 && steering.θz == 0 
                 continue
             end
+
             push!(angle_Bool, AngleDependence(steering))
 
-            #for (θx,θz) = (n,θz_max) SingularityConstraint checks out of bounds
+            # for (θx,θz) = (n,θz_max) SingularityConstraint checks out of bounds
             if steering.θz == θz_max
                 continue
             end
             θx, θz = (steering.θx, steering.θz)
             steering_next = steerings[θx+1, θz+2]
             push!(sin_Bool, SingularityConstraint(steering,steering_next))
-
         end
 
         # Is the turning circle maintained in the planar plane?
         measurments = Measurements(Chassi(),steerings[1, end])
         push!(track_Bool, TrackingCircleConstraint(steerings[1, end], measurments))
+
+         
+        # @show kin_Bool 
+        # @show angle_Bool 
+        # @show sin_Bool 
+        # @show track_Bool 
+
+
 
         if nothing !== findfirst(x -> x ==false, kin_Bool)
             error("kinematic dempendence couldn't be matched by parameters ")
@@ -172,6 +185,8 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
             error("tracking circle constraint couldn't be matched by parameters ")
         end
     catch err
+        #println("\n\n\n $(err.stack) \n\n\n")
+        println("$err")
         return false
     end
     return true
@@ -183,14 +198,19 @@ end
 
 """
 function checkConstraints°(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    println(":> checkConstraints°")
+
+    if typeof(x_rotational_radius) == Float64
+        println(":> ($(x_rotational_radius), $(z_rotational_radius), $(track_lever_length), $(tie_rod_length))")
+    end
     θx_max, θz_max  = (10,35)
     angleConfig = (θx_max, θz_max)
 
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
-
+    
     suspension = Suspension(30)
     suspensionkinematics!(suspension)
-
+    println(":> $(checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0)")
     return checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0
 end
 

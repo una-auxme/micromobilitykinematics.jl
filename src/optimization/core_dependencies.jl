@@ -18,6 +18,30 @@ function outer_sigularity_constraint(steering_now::Steering, steering_next::Stee
 end
 
 
+function outer_sigularity_constraint°(θx,θz,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> outer_sigularity_constraint°")
+    θ_tuple_now = θx,θz
+    
+    θ_tuple_next = θx,θz+1
+    #println(":> $θ_tuple_next")
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    steering_next = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+    kinematicsUNTILmount°!(θ_tuple_next, steering_next, suspension)
+    #println(":> ($x_rotational_radius, $z_rotational_radius, $track_lever_length, $tie_rod_length)")
+    update°!(steering_now)
+    update°!(steering_next)
+
+    return outer_sigularity_constraint(steering_now, steering_next)
+end
+
+
+
 
 """
     inner_sigularity_constraint(steering_now::Steering, steering_next::Steering)
@@ -38,6 +62,28 @@ function inner_sigularity_constraint(steering_now::Steering, steering_next::Stee
     return steering_now.δi - steering_next.δi
 end
 
+function inner_sigularity_constraint°(θx,θz,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> inner_sigularity_constraint°")
+    θ_tuple_now = θx,θz
+
+    θ_tuple_next = θx,θz+1
+
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    steering_next = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+    kinematicsUNTILmount°!(θ_tuple_next, steering_next, suspension)
+    
+    update°!(steering_now)
+    update°!(steering_next)
+
+    return inner_sigularity_constraint(steering_now, steering_next)
+end
+
 
 """
     angle_dependence(steering_now::Steering)
@@ -56,6 +102,25 @@ calculates the Diffrence of the front wheels steering angles.
 function angle_dependence(steering_now::Steering)
     return steering_now.δi - steering_now.δo
 end
+
+function angle_dependence°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> angle_dependence°")
+    θ_tuple_now = θx,θz
+
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+
+    update°!(steering_now)
+
+
+    return angle_dependence(steering_now)
+end
+
 
 
 """
@@ -81,9 +146,24 @@ function left_circsphere_plane_dependence(steering_now::Steering)
     normal = circ.normal/norm(circ.normal)        #circ.normal must be a unit vector
     d = (normal[1]*sphere.center[1] + normal[2]*sphere.center[2] + normal[3]*sphere.center[3] - sum(normal.*circ.center))
 
-    return abs(d) > sphere.radius
+    return abs(d) - sphere.radius
 end
 
+function left_circsphere_plane_dependence°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> left_circsphere_plane_dependence°")
+    θ_tuple_now = θx,θz
+
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+
+
+    return left_circsphere_plane_dependence(steering_now)
+end
 
 """
     right_circsphere_plane_dependence(steering_now::Steering)
@@ -108,7 +188,23 @@ function right_circsphere_plane_dependence(steering_now::Steering)
 
     normal = circ.normal/norm(circ.normal)        #circ.normal must be a unit vector
     d = (normal[1]*sphere.center[1] + normal[2]*sphere.center[2] + normal[3]*sphere.center[3] - sum(normal.*circ.center))
-    return abs(d) > sphere.radius
+    return abs(d) - sphere.radius
+end
+
+function right_circsphere_plane_dependence°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> right_circsphere_plane_dependence°")
+    θ_tuple_now = θx,θz
+
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+
+
+    return right_circsphere_plane_dependence(steering_now)
 end
 
 """
@@ -153,6 +249,23 @@ function left_circcirc_min_intersec_dependence(steering_now::Steering)
     return abs(d) - (abs(circ1.radius) + abs(circ2.radius))
 end 
 
+function left_circcirc_min_intersec_dependence°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> left_circcirc_min_intersec_dependence°")
+
+    θ_tuple_now = θx,θz
+
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+
+
+    return left_circcirc_min_intersec_dependence(steering_now)
+end
+
 
 """
     left_circcirc_min_intersec_dependence(steering_now::Steering)
@@ -195,6 +308,22 @@ function right_circcirc_min_intersec_dependence(steering_now::Steering)
     return abs(d) - (abs(circ1.radius) + abs(circ2.radius))
 end 
 
+function right_circcirc_min_intersec_dependence°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> right_circcirc_min_intersec_dependence°")
+
+    θ_tuple_now = θx,θz
+
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+
+
+    return right_circcirc_min_intersec_dependence(steering_now)
+end
 
 """
     left_circcirc_max_intersec_dependence(steering_now::Steering)
@@ -236,6 +365,23 @@ function left_circcirc_max_intersec_dependence(steering_now::Steering)
 
     return abs(circ2.radius)-(abs(d) + abs(circ1.radius))
 end 
+
+function left_circcirc_max_intersec_dependence°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> left_circcirc_max_intersec_dependence°")
+
+    θ_tuple_now = θx,θz
+
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+
+
+    return left_circcirc_max_intersec_dependence(steering_now)
+end
 
 
 """
@@ -279,6 +425,23 @@ function right_circcirc_max_intersec_dependence(steering_now::Steering)
     return abs(circ2.radius)-(abs(d) + abs(circ1.radius))
 end 
 
+function right_circcirc_max_intersec_dependence°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> right_circcirc_max_intersec_dependence°")
+
+    θ_tuple_now = θx,θz
+
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+
+
+    return right_circcirc_max_intersec_dependence(steering_now)
+end
+
 
 """
     track_circle_dependence(steering::Steering, measurments::Measurements)
@@ -302,4 +465,22 @@ function track_circle_dependence(steering::Steering, measurments::Measurements)
 end
 
 
+function track_circle_dependence°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    #println(":> track_circle_dependence°")
 
+    θ_tuple_now = θx,θz
+
+    steering_now = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+
+    kinematicsUNTILmount°!(θ_tuple_now, steering_now, suspension)
+
+    update°!(steering_now)
+
+    measurments = Measurements(Chassi(),steering_now)
+
+    return track_circle_dependence(steering_now, measurments)
+end

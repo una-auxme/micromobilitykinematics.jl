@@ -1,3 +1,5 @@
+############ TODO ###################
+
 ############ Steering Component Positions #############################
 #
 #                                           
@@ -107,6 +109,13 @@ mutable struct Steering <: AbstractSteering
     track_lever_mounting_points_ucs::Union{Tuple{Vector{Any},Vector{Any}}, Nothing}     # (left, right) Mounting point of the tracklever in steering ucs
     
 
+    ######## objectve 
+
+    objective::Union{Any, Nothing}
+
+
+    ######## function 
+
     kinematics!::Function
 
     function Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) 
@@ -133,6 +142,9 @@ mutable struct Steering <: AbstractSteering
 
         inst.wishbone_ucs_position = ([-36.0, 140.0, -139.0], [-36.0, -140.0, -139.0])
         inst.track_lever_mounting_points_ucs = nothing
+
+
+        inst.objective = nothing
 
         inst.kinematics! = steeringkinematics!
 
