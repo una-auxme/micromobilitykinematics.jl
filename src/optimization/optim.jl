@@ -116,13 +116,13 @@ end
 
 
 θx_max, θz_max  = (10,35)
-start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = (96.0, 134.0, 146.0, 235.0)
+start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = (67.0, 158.0, 195.0, 196.0)
 θx_,θz_ = (1,20)
-model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e-2, 
-                                                        "acceptable_tol" => 1e-2, 
-                                                        "dual_inf_tol" =>1e-2, 
-                                                        "compl_inf_tol"=>  1e-2,
-                                                        "constr_viol_tol"=> 1e-2,
+model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e0, 
+                                                        "acceptable_tol" => 1e0, 
+                                                        "dual_inf_tol" =>1e0, 
+                                                        "compl_inf_tol"=>  1e0,
+                                                        "constr_viol_tol"=> 1e0,
                                                         "max_iter" => 600))
                                                         
 #model = Model(NLopt.Optimizer)
@@ -207,7 +207,7 @@ steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length
 
 register(model, :objective, 6, objective, autodiff=true)
 
-register(model, :angle_dependence°, 6, angle_dependence°, autodiff=true)
+
 register(model, :left_circsphere_plane_dependence°, 6, left_circsphere_plane_dependence°, autodiff=true)
 register(model, :right_circsphere_plane_dependence°, 6, right_circsphere_plane_dependence°, autodiff=true)
 register(model, :left_circcirc_min_intersec_dependence°, 6, left_circcirc_min_intersec_dependence°, autodiff=true)
@@ -217,7 +217,7 @@ register(model, :right_circcirc_max_intersec_dependence°, 6, right_circcirc_max
 register(model, :outer_sigularity_constraint°, 6, outer_sigularity_constraint°, autodiff=true)
 register(model, :inner_sigularity_constraint°, 6, inner_sigularity_constraint°, autodiff=true)
 register(model, :track_circle_dependence°, 6, track_circle_dependence°, autodiff=true)
-
+register(model, :angle_dependence°, 6, angle_dependence°, autodiff=true)
 
 
 step_size = 1
@@ -233,15 +233,14 @@ step_size = 1
 @NLconstraint(model, C2_1[i=0:step_size:θx_max, j=0:step_size:θz_max],  left_circcirc_min_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
 @NLconstraint(model, C2_2[i=0:step_size:θx_max, j=0:step_size:θz_max],  right_circcirc_min_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
 
-
 @NLconstraint(model, C3_1[i=0:step_size:θx_max, j=0:step_size:θz_max],  left_circcirc_max_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
 @NLconstraint(model, C3_2[i=0:step_size:θx_max, j=0:step_size:θz_max],  right_circcirc_max_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
 
-@NLconstraint(model, C4_1[i=step_size:step_size:θx_max, j=0:step_size:(θz_max-1)], outer_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01 ) 
-@NLconstraint(model, C4_2[i=0, j=step_size:step_size:(θz_max-1)], outer_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01) 
+@NLconstraint(model, C4_1[i=step_size:step_size:θx_max, j=0:step_size:(θz_max-2)], outer_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01 ) 
+@NLconstraint(model, C4_2[i=0, j=step_size:step_size:(θz_max-2)], outer_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01) 
 
-@NLconstraint(model, C5_1[i=step_size:step_size:θx_max, j=0:step_size:(θz_max-1)], inner_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01 ) 
-@NLconstraint(model, C5_2[i=0, j=step_size:step_size:(θz_max-1)], inner_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01) 
+@NLconstraint(model, C5_1[i=step_size:step_size:θx_max, j=0:step_size:(θz_max-2)], inner_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01 ) 
+@NLconstraint(model, C5_2[i=0, j=step_size:step_size:(θz_max-2)], inner_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01) 
 
 @NLconstraint(model, C6_1[i=step_size:step_size:θx_max, j=0:step_size:θz_max], angle_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) >= 0.01 )
 @NLconstraint(model, C6_2[i=0, j=step_size:step_size:θz_max],  angle_dependence°(θx, θz,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) >= 0.01 )
@@ -411,3 +410,10 @@ max_angleConfig = (10,35)
 random_search(upper_bourder, lower_bourder, max_angleConfig)
 
 objective(1,20,99.0, 138.0, 179.0, 195.0)
+
+
+
+checkConstraints°(125.8391621794173, 122.33674484085564, 138.92104776793516, 224.38308699244647)
+
+
+right_circcirc_min_intersec_dependence°(10,35, 125.8391621794173, 122.33674484085564, 138.92104776793516, 224.38308699244647)
