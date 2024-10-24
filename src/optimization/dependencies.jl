@@ -123,8 +123,6 @@ checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, 
 """
 function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension) 
     θx_max, θz_max = max_angleConfig
-    #println("$(steering.rotational_component.x_rotational_radius), $(steering.rotational_component.z_rotational_radius), $(steering.track_lever.length), $(steering.tie_rod.length)\n  ")
-
     try
         kin_Bool = []
         angle_Bool = []
@@ -167,13 +165,6 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         measurments = Measurements(Chassi(),steerings[1, end])
         push!(track_Bool, TrackingCircleConstraint(steerings[1, end], measurments))
 
-         
-        # @show kin_Bool 
-        # @show angle_Bool 
-        # @show sin_Bool 
-        # @show track_Bool 
-
-
 
         if nothing !== findfirst(x -> x ==false, kin_Bool)
             error("kinematic dempendence couldn't be matched by parameters ")
@@ -210,7 +201,7 @@ function checkConstraints°(x_rotational_radius, z_rotational_radius, track_leve
     
     suspension = Suspension(30)
     suspensionkinematics!(suspension)
-    println(":> $(checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0)")
+    #println(":> $(checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0)")
     return checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0
 end
 
