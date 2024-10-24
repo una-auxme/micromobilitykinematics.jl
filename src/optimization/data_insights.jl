@@ -11,7 +11,6 @@ function get_insights(steering::Steering)
     δi = steering.δi
     δo = steering.δo
 
-    objective = steering.objective
 
     x_rotational_radius = steering.rotational_component.x_rotational_radius
     z_rotational_radius = steering.rotational_component.z_rotational_radius
@@ -21,12 +20,15 @@ function get_insights(steering::Steering)
 
     # Erstelle eine Tabelle (DataFrame)
     df = DataFrame(
-        Parameter = ["objective","θx", "θz", "δi", "δo", "x_rotational_radius", "z_rotational_radius", "track_lever.length", "tie_rod.length"],
-        Value = [objective, θx, θz, δi, δo, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length]
+        Parameter = ["θx", "θz", "δi", "δo", "x_rotational_radius", "z_rotational_radius", "track_lever.length", "tie_rod.length"],
+        Value = [θx, θz, δi, δo, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length]
     )
 
     return df
 end 
+
+
+
 
 
 steering = Steering(67.81046805148522, 167.30863368855432, 189.543745568373, 210.17730740659428)

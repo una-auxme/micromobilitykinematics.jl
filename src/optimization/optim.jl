@@ -17,14 +17,19 @@ function create_model(θ::Tuple{T,T}, steering::Steering) where {T<:Number}
     start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = getValue(steering)
 
     #selection of the used solver
-    model = Model(NLopt.Optimizer)
-    set_optimizer_attribute(model, "algorithm", :LD_MMA)
+    model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e0, 
+                                                        "acceptable_tol" => 1e0, 
+                                                        "dual_inf_tol" =>1e0, 
+                                                        "compl_inf_tol"=>  1e0,
+                                                        "constr_viol_tol"=> 1e0,
+                                                        "max_iter" => 600))
+    #set_optimizer_attribute(model, "algorithm", :LD_MMA)
 
 
     # define the parameters to be optimised
-    @variable(model, 50.0 <= x_rotational_radius <= 100.0)
-    @variable(model, 50.0 <= z_rotational_radius <= 100.0)
-    @variable(model, 70.0 <= track_lever_length <= 100.0)
+    @variable(model, 50.0 <= x_rotational_radius <= 200.0)
+    @variable(model, 50.0 <= z_rotational_radius <= 200.0)
+    @variable(model, 70.0 <= track_lever_length <= 200.0)
     @variable(model, 195.0 <= tie_rod_length <= 260.0)
 
     # fixed variables used in optimisation
@@ -35,7 +40,6 @@ function create_model(θ::Tuple{T,T}, steering::Steering) where {T<:Number}
     # used and unknown functions must be registered for optimisation
     register(model, :objective, 6, objective, autodiff=true)
     register(model, :checkConstraints°, 4, checkConstraints°, autodiff=true)
-    register(model, :Steering, 4, Steering, autodiff=true)
 
     # define the objectie of the given NL-Problem
     @NLobjective(model, Min, objective(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length))
@@ -83,15 +87,16 @@ end
 
 
 
-function optim(θ::Tuple{T,T},steerings::Vector{Steering}) where {T<:Number}
+function optim(θ::Tuple{T,T},vec_steerings::Vector{Steering}) where {T<:Number}
     b = true
     lk = ReentrantLock()
-    @threats for steering in steerings
+    @threats for steering in vec_steerings
         try 
             model = create_model(θ, steering)
             optimize!(model)
             objectiv,solution,status = get_model_solution(model)
 
+            
             lock(lk) do 
                 
 
@@ -116,8 +121,8 @@ end
 
 
 θx_max, θz_max  = (10,35)
-start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = (67.0, 158.0, 195.0, 196.0)
-θx_,θz_ = (1,20)
+start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = (54.0, 157.0, 189.0, 196.0) #(69.0, 144.0, 180.0, 200.0) (106.0, 146.0, 188.0, 200.0)# (67.0, 158.0, 195.0, 196.0)
+θx_,θz_ = (10,20)
 model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e0, 
                                                         "acceptable_tol" => 1e0, 
                                                         "dual_inf_tol" =>1e0, 
@@ -176,7 +181,7 @@ JuMP.optimize!(model)
 
 
 θx_max, θz_max  = (10,35)
-start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = (96.0, 134.0, 146.0, 235.0)
+start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = (106.0, 146.0, 188.0, 200.0) #(96.0, 134.0, 146.0, 235.0)
 θx_,θz_ = (1,20)
 model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e-2, 
                                                         "acceptable_tol" => 1e-2, 
@@ -266,10 +271,13 @@ JuMP.optimize!(model)
 
 
 
+mkdir()
 
 
 
-solution = [value(x_rotational_radius);value(z_rotational_radius);value(track_lever_length);value(tie_rod_length)]
+
+
+solution = (value(x_rotational_radius),value(z_rotational_radius),value(track_lever_length),value(tie_rod_length))
 objectiv = objective_value(model)
 status = termination_status(model)
 
@@ -284,13 +292,50 @@ objective(10,20,100.36,
 
 
 
-steering = Steering(79.72433062896792, 122.04062852415808, 134.14620864478988, 229.13168306790027)
+    steering = Steering(79.72433062896792, 122.04062852415808, 134.14620864478988, 229.13168306790027)
     suspension = Suspension(30.0)
     chassi = Chassi()
+    suspensionkinematics!(suspension)
+
+
+    update!((1,10),steering, suspension)
 
 
 
 
+
+
+
+    @save pathTOdata steering
+
+
+
+    @load "steering.jld2" steering 
+
+    print(steering)
+    
+    
+    s
+    
+    struct MyClass
+        x::Int
+        y::String
+    end
+
+    obj = MyClass(42, "Hallo Welt")
+
+# Speichern
+@save "myclass.jld2" obj
+
+# Laden
+@load "myclass.jld2" obj
+
+println(obj)
+
+
+    pathTOdata = joinpath(@__DIR__,"data\\steering.jld2")
+
+    CSV.write(pathTOdata, df, delim=`\t`)
 
 
     θx_max, θz_max  = (10,35)
@@ -303,6 +348,7 @@ steering = Steering(79.72433062896792, 122.04062852415808, 134.14620864478988, 2
     checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0
 
     objective(0,1,79.72433062896792, 122.04062852415808, 134.14620864478988, 229.13168306790027)
+
 
 
 
@@ -396,11 +442,12 @@ objective(1, 20, (96.0, 134.0, 146.0, 235.0)...)
 
 
 
+
 lower_bourder = (50.0,
 50.0, 
 70.0, 
 195.0)
-upper_bourder = (200.0,
+upper_bourder = (100.0,
 200.0,
 200.0,
 200.0

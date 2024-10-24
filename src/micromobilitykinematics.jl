@@ -4,6 +4,9 @@ module micromobilitykinematic
     using LinearAlgebra
     using GeoSpatialRelations
     using StaticArrays
+    using DataFrames
+    using JLD2
+
 
     using JuMP
     using Ipopt
