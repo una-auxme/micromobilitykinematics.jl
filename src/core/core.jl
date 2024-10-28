@@ -143,7 +143,6 @@ mutable struct Steering <: AbstractSteering
         inst.wishbone_ucs_position = ([-36.0, 140.0, -139.0], [-36.0, -140.0, -139.0])
         inst.track_lever_mounting_points_ucs = nothing
 
-
         inst.objective = nothing
 
         inst.kinematics! = steeringkinematics!
@@ -415,5 +414,32 @@ mutable struct Vehicle <: AbstractVehicle
         inst.steering = steering
 
         inst.suspension = suspension
+    end
+end
+
+
+
+############ Optimisation  ######################################
+
+
+
+#########################################################################
+
+
+mutable struct OptDa # optimisation data
+    θ::Union{Tuple{Int64,Int64},Nothing}
+    input::Union{Tuple{<:Number,<:Number,<:Number,<:Number},Nothing}
+    steering::Union{Steering, Nothing}
+    objective::Union{<:Number, Nothing}
+    status::Union{Any,Nothing}
+
+    function OptDa(input::Tuple{<:Number,<:Number,<:Number,<:Number}, steering::Steering, objective::Any, status::Any)
+        inst = new()
+        inst.θ = (steering.θx, steering.θz)
+        inst.input = input
+        inst.steering = steering
+        inst.objective = objective 
+        inst.status = status
+        return inst
     end
 end

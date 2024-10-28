@@ -51,19 +51,39 @@ function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::St
     x2 = (b)/ (mi - mo)
     #->y-Coordinate
     y = mo * x2 + b
+
+    # saves the current best value
+    # -> 
+    if typeof(y) == Float64
+        save_current_objective°(steering,abs(y))
+    end
+
     return abs(y)
 end
 
-#checkConstraints°(95.89, 127.07, 148.26, 222.42)
-#checkConstraints°(76.94354047075339, 127.81902521153052, 125.95663054465159, 195.302056058715642)
-#
-#objective(1,30,95.89, 127.07, 148.26, 222.42)
-#
-#objective(0,20,79.72433062896792, 122.04062852415808, 134.14620864478988, 229.13168306790027)
 
 
+"""
+    objective°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 
-function objective(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    Calculates the distance between the optimum point of intersection of the wheel axis (normally on the rear wheel axis) and the current point of intersection of the axis.
+
+    !wrapperfunction of steering_objective for optimization!
+
+
+#Arguments
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+    -`θx`: Angle of rotation of the rotation component around the x-axis
+    -`θz`: Angle of rotation of the rotation component around the z-axis
+-`measurments::Measurements`: Instance of a specific all relevant Measurements of the vehicle
+-`steering::Steering`: Instance of a specific steering
+-`suspension::Suspension`: Instance of a specific suspension
+
+#Returns
+- Distance between optimal and current intersection point
+
+"""
+function objective°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     ################## 
     # Supsystems
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)

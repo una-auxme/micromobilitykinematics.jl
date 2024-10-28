@@ -1,4 +1,3 @@
-
 """
 
 
@@ -27,19 +26,29 @@ function get_insights(steering::Steering)
     return df
 end 
 
+"""
+    save(steering::Steering, objective::T) where {T<:Number}
 
+    saves the current best objective of the optimaization
 
+#Arguments
+-`steering::Steering`: Instance of a specific steering
+-`objective`: objective value of the current Iteration
 
+#Returns
+-`nothing`
+"""
+function save_current_objective°(steering::Steering, objective::T) where {T<:Number}
 
-steering = Steering(67.81046805148522, 167.30863368855432, 189.543745568373, 210.17730740659428)
-    
-suspension = Suspension(30)
-suspensionkinematics!(suspension)
-#angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension
-update!((1,10),steering,suspension)
-chassi = Chassi()
-steering_objective((1,10),chassi,steering,suspension)
-
-
-
-get_insights(steering)
+    pathTOdata = joinpath(@__DIR__,"data\\current_obj.jld2")
+    try    
+        @load pathTOdata obj
+        if objective < obj
+            @show obj = objective
+            @save pathTOdata steering obj
+        end
+    catch
+        @show obj = objective
+        @save pathTOdata steering obj
+    end
+end

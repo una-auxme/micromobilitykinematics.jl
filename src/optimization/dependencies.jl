@@ -233,7 +233,7 @@ function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,
         compLength =[rand(l:u) for (l,u) in zip(lower_bourder, upper_bourder)]
         if info 
             print("\n\n\n------| Iteration $i |-------\n") 
-            print("Parmeters: $compLength")
+            println("Parmeters: $compLength")
         end
 
         suspension = Suspension(30)
