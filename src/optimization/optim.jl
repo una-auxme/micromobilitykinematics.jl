@@ -17,13 +17,15 @@ function create_model(θ::Tuple{T,T}, steering::Steering) where {T<:Number}
     start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = getValue(steering)
 
     #selection of the used solver
-    model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e-3, 
+    model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e-3, #1e-2,
                                                              "acceptable_tol" => 1e-1, 
                                                              "dual_inf_tol" =>1e-1, 
-                                                            # "compl_inf_tol"=>  1e-9,
-                                                            # "constr_viol_tol"=> 1e-9,
-                                                             "max_iter" => 100))
-   
+                                                             "compl_inf_tol"=>  1e-6,
+                                                             "constr_viol_tol"=> 1e-6,
+                                                             "max_iter" => 70)
+                                                             #"hessian_approximation" => "limited-memory")
+                )
+
     # define the parameters to be optimised
     @variable(model, 50.0 <= x_rotational_radius <= 200.0)
     @variable(model, 50.0 <= z_rotational_radius <= 200.0)
@@ -88,13 +90,15 @@ end
 -`lower_bourder::Tuple{Float64, Float64, Float64, Float64}`: lower bourder Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
 -`max_angleConfig`: maximal angular area for rotary component (defult: (0,35))
 
+#Keywords
+-`param::Tuple{I,I,I,I}`: If necessary, the components can be initialised individually, otherwise the values are randomised by the function that was checked for kinematic conditions.
+
 #Returns:
 -`opda`: instance of OptDa (optimization Data)
 """
-function optim(θ::Tuple{T,T},args...) where {T<:Number}
+function optim(θ::Tuple{T,T}, param::Union{Tuple{I,I,I,I},Nothing}) where {T<:Integer, I<:Float64}
 
-    # Find initial values that fulfil all dependences
-    param = random_search(args...)
+
     steering = Steering(param...) # param = x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length
     
     suspension = Suspension(30)
@@ -133,18 +137,22 @@ end
 
 """
 function optim_IN_LOOP(args...)
-    sol = ["solutions"]
-    i = 0
-    while i < 100
+    sol_dict = Dict{Int,Any}()
+    id = 0
+    while id < 100
+        try
         
-        optda = optim(args...)
-    
-        if optda.status ==  MOI.LOCALLY_SOLVED || optda.status ==  MOI.NUMERICAL_ERROR
-            sol = hcat(sol, optda)
-            i += 1
-        end
 
-    end
+            optda = optim(args...)
+        
+            if optda.status == MOI.OPTIMAL && optda.status == MOI.LOCALLY_SOLVED && optda.status == MOI.NUMERICAL_ERROR && opta.status == MOI.ALMOST_LOCALLY_SOLVED && optda.status != MOI.NUMERICAL_ERROR
+                sol = hcat(sol, optda)
+                id += 1
+            end
+
+        catch err
+        end
+    end 
     return sol
 end
 
@@ -168,26 +176,36 @@ end
 
 
 """
-function n_times_parallel_optim(num::Int64, args...)
-    θx, θz = args[1]
-
+function optim_series(num::Int64, θ, args...)
+    θx, θz = θ
     sol_dict = Dict{Int,Any}()
 
     lk = ReentrantLock()
     for id in 1:num
         valid = true 
+        param = ()
         while valid
-            optda = optim(args...)
-            # status check 
-            if optda.status != MOI.OPTIMAL && optda.status != MOI.LOCALLY_SOLVED && optda.status != MOI.NUMERICAL_ERROR && optda.status != MOI.ITERATION_LIMIT
-                continue
-            else
-                valid = false
+            try
+                # Find initial values that fulfil all dependences
+                lock(lk) do 
+                    param = random_search(args...)
+                end
+                println(":> $param  $(typeof(param))")
+                optda = optim(θ,param)
+                # status check 
+                if optda.status != MOI.OPTIMAL && optda.status != MOI.LOCALLY_SOLVED && optda.status != MOI.NUMERICAL_ERROR && optda.status != MOI.ITERATION_LIMIT && opta.status != MOI.ALMOST_LOCALLY_SOLVED
+                    continue
+                else
+                    valid = false
+                end
+                # write in Dict
+                lock(lk) do 
+                    sol_dict[id] = optda
+                    save_best_objective()
+                end 
+            catch err
             end
-            # write in Dict
-            lock(lr) do 
-                sol_dict[id] = optda
-            end 
+
         end
     end 
 
@@ -219,21 +237,18 @@ function grid_optim(upper_bourder::Tuple{T, T, T, T},lower_bourder::Tuple{T, T, 
 
         for θ in θ_tuple[i,:] 
             if θ != (0,0)
-                sol_dict =  n_times_parallel_optim(2,θ,upper_bourder,lower_bourder,max_angleConfig)
+                θx,θz = θ
+                opt_series = optim_series(10,θ,upper_bourder,lower_bourder,max_angleConfig)
+                pathTOdata = joinpath(path_data,"opt_series($(θx),$(θz)).jld2")
+                @save pathTOdata opt_series
 
-                pathTOdata = joinpath(path_data,"optda($(θx),$(θz)).jld2")
-
-                @save pathTOdata sol_dict
-
-
-                path = joinpath(@__DIR__,"data\\current_obj.jld2")
-
-                @load path steering obj
-
-                pathTOdata = joinpath(path_data,"optda_min($(θx),$(θz)).jld2")
-
-                @save pathTOdata steering obj
             end   
         end
     end 
 end
+
+
+
+
+
+

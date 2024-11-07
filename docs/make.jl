@@ -15,6 +15,7 @@ makedocs(
     pages = Any[
             "Overview" => "index.md",
             "Function Library" => "library.md"
+            "Kinematic" => "kinematic.md"
     ]
 )
 

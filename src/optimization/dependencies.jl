@@ -132,7 +132,6 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         # One-time calculation of the kinematics and storage in instances until the intersection needs to be checked.  
         θ_tuples = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
         steerings = [kinematicsUNTILmount°(θ_tuple, steering, suspension) for θ_tuple in θ_tuples]
-
         # checks if steering.sphere_joints is calculable (intersection is posible)
         for steering in steerings
             push!(kin_Bool, KinematicDependence(steering))
@@ -227,23 +226,24 @@ random search with given bourder for the parameters and given angular area for r
 -`compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
 """
 function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I} ; info = true, step_size = 1 ) where {T<:Real, I<:Integer}
-    b = true 
+    param = ()
+    valid_param = false
+
     i = 0
-    while b
-        compLength =[rand(l:u) for (l,u) in zip(lower_bourder, upper_bourder)]
+    while !valid_param
+        param =[rand(l:u) for (l,u) in zip(lower_bourder, upper_bourder)]
+
         if info 
-            print("\n\n\n------| Iteration $i |-------\n") 
-            println("Parmeters: $compLength")
+            println(":>Ramdom Search Iteration $i") 
+            println(":>Parmeters: $param \n")
         end
 
         suspension = Suspension(30)
         suspensionkinematics!(suspension)
-        steering = Steering(compLength...)
+        steering = Steering(param...)
 
-        if checkConstraints(step_size, max_angleConfig,steering,suspension) == true
-            return tuple(compLength...)
-        end
+        valid_param = checkConstraints(step_size, max_angleConfig,steering,suspension)
         i +=1
     end
-    return compLength
+    return Tuple(param)
 end

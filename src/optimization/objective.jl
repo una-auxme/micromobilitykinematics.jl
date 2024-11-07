@@ -55,7 +55,7 @@ function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::St
     # saves the current best value
     # -> 
     if typeof(y) == Float64
-        save_current_objective°(steering,abs(y))
+        save_current_best_objective°(steering,abs(y))
     end
 
     return abs(y)

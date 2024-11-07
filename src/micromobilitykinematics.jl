@@ -7,10 +7,12 @@ module micromobilitykinematic
     using DataFrames
     using JLD2
     using Base.Threads
+    using Plots;gr()
 
     using JuMP
     using Ipopt
     using NLopt
+    using Juniper
 
     include("core/core.jl")
     include("core/suspensionkinematics.jl")

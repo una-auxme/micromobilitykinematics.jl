@@ -562,15 +562,7 @@ objective(10,20,100.36,
     
     
     s
-    
-    struct MyClass
-        x::Int
-        y::String
-    end
 
-    obj = MyClass(42, "Hallo Welt")
-
-    b = 10.0123123
 
 # Speichern
 @save "myclass.jld2" obj b
@@ -703,20 +695,73 @@ lower_bourder = (50.0,
 upper_bourder = (100.0,
 200.0,
 200.0,
-200.0
+260.0
 )
 max_angleConfig = (10,35)
 
+@thread
 
+random_search(upper_bourder, lower_bourder, max_angleConfig)
+optim((1,20), upper_bourder, lower_bourder, max_angleConfig)
 
 grid_optim(upper_bourder, lower_bourder, max_angleConfig)
 
-n_times_parallel_optim(2, (1,10), upper_bourder, lower_bourder, max_angleConfig)
+sol_dict = optim_series(6, (1,20), upper_bourder, lower_bourder, max_angleConfig)
+
+steering = sol_dict[1].steering
 
 
-sol = optim_IN_LOOP((1,30), upper_bourder, lower_bourder, max_angleConfig)
+suspension = Suspension(30.0)
+    chassi = Chassi()
 
-optda = optim((1,10), upper_bourder, lower_bourder, max_angleConfig)
+    steering_objective((1,35),chassi,st, suspension)
+
+param = steering.rotational_component.x_rotational_radius,steering.rotational_component.z_rotational_radius, steering.track_lever.length, steering.tie_rod.length 
+
+objective°(10,20,round(param[1]),round(param[2]),round(param[3]),round(param[4]))
+
+
+opt_seires_times_6 = sol_dict
+
+pathTOdata = joinpath(@__DIR__,"optimization\\data\\data(0,n)\\opt_series(0,23).jld2")
+@save pathTOdata opt_seires_times_6
+
+@load pathTOdata opt_series
+
+plot_optda_series(opt_series)
+
+
+
+opt_series[9].status
+
+
+
+sol = optim_IN_LOOP((1,20), upper_bourder, lower_bourder, max_angleConfig)
+
+optda = optim((1,20), upper_bourder, lower_bourder, max_angleConfig)
+
+optda = optim((1,20), upper_bourder, lower_bourder, max_angleConfig, param = (106.0, 146.0, 188.0, 200.0))
+
+
+
+
+
+optda.objective
+
+
+pathTOdata = joinpath(@__DIR__,"optimization\\data\\backup\\current_obj.jld2")
+@load pathTOdata steering obj
+
+obj
+pathTOdata = joinpath(@__DIR__,"optimization\\data\\backup\\best_obj(1.0, 20.0).jld2")
+@load pathTOdata data
+
+
+steering, objective = data["(1.0, 20.0)"]
+
+steering 
+
+objective
 
 optda.input
 
@@ -748,7 +793,7 @@ s = [1]
 
 s = hcat(s, [1])
 
-random_search(upper_bourder, lower_bourder, max_angleConfig)
+
 
 objective(1,20,99.0, 138.0, 179.0, 195.0)
 
