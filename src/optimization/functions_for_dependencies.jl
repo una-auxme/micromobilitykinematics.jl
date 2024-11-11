@@ -1,5 +1,5 @@
 """
-    kinematicsUNTILmount!°(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    kinematicsUNTILmountMOVED°!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
     for the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated until `track_lever_mounting_points_ucs` 
     ! function°(): symbolises that this function should only be used within the optimisation !
@@ -107,7 +107,22 @@ end
 
 
 
+"""
+    kinematicsUNTILmountNEUTRAL°!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
+    for the moving rotational component with the angles (θx, θz) = (0,0), the kinematics of the steering is calculated until `track_lever_mounting_points_ucs` 
+    ! function°(): symbolises that this function should only be used within the optimisation !
+
+#Arguemnts
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+        -`θx`: Angle of rotation of the rotation component around the x-axis
+        -`θz`: Angle of rotation of the rotation component around the z-axis
+-`steering::Steering`: Instance of a specific steering with calculated kinematics
+-`suspension::Suspension`: Instance of a specific suspension
+
+#Returns:
+- no returns becouse of in place programming
+"""
 function kinematicsUNTILmountNEUTRAL°!(steering::Steering)
 
     θx =    deg2rad(0.0)
@@ -156,10 +171,11 @@ end
 
 
 """
-    kinematicsASOFmount!°(steering::Steering)
+    kinematicsASOFmount°!(steering::Steering)
 
 for the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated as of `track_lever_mounting_points_ucs` 
 ! function°(): symbolises that this function should only be used within the optimisation !
+! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
 
 #Arguemnts
 -`steering::Steering`: Instance of a specific steering where the function was previously called
@@ -194,6 +210,19 @@ function kinematicsASOFmountMOVED°!(steering::Steering)
     nothing
 end
 
+"""
+    kinematicsASOFmountNEUTRAL°!(steering::Steering)
+
+for the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated as of `track_lever_mounting_points_ucs` 
+! function°(): symbolises that this function should only be used within the optimisation !
+! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
+
+#Arguemnts
+-`steering::Steering`: Instance of a specific steering where the function was previously called
+
+#Returns:
+- no returns becouse of in place programming
+"""
 function kinematicsASOFmountNEUTRAL°!(steering::Steering)
 
     for (circle_joint,index,shift) in zip([:left_joint, :right_joint], [1,2], [[1,1,1],[1,-1,1]])
@@ -223,7 +252,19 @@ end
 
 
 
+"""
+    kinematicsASOFmount°!(steering::Steering)
 
+For the moving rotational component with angles (θx, θz) and the neutral position of the rotational component, the steering kinematics are calculated from `track_lever_mounting_points_ucs`. 
+! function°(): symbolises that this function should only be used within the optimisation !
+! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
+
+#Arguemnts
+-`steering::Steering`: Instance of a specific steering where the function was previously called
+
+#Returns:
+- no returns becouse of in place programming
+"""
 function kinematicsASOFmount°!(steering::Steering)
     kinematicsASOFmountMOVED°!(steering)
     kinematicsASOFmountNEUTRAL°!(steering)
@@ -232,9 +273,21 @@ end
 
 
 
+"""
+    update°!(steering::Steering)
 
+    Determines the further kinematic calculation and determines the turning angles of the wheels
+! function°(): symbolises that this function should only be used within the optimisation !
+! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
+
+#Arguemnts
+-`steering::Steering`: Instance of a specific steering where the function was previously called
+
+#Returns:
+- no returns becouse of in place programming
+"""
 function update°!(steering::Steering)
-    kinematicsASOFmount°!(steering::Steering)
+    kinematicsASOFmount°!(steering)
     angle_δi!(steering)
     angle_δo!(steering)
     nothing

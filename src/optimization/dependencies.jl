@@ -135,6 +135,15 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         # checks if steering.sphere_joints is calculable (intersection is posible)
         for steering in steerings
             push!(kin_Bool, KinematicDependence(steering))
+        end
+
+        if nothing !== findfirst(x -> x ==false, kin_Bool)
+            error("Thread $(Threads.threadid()):> kinematic dempendence couldn't be matched by parameters ")
+        end
+
+
+        # calculate the further kinematc for all angular positions of the steering system
+        for steering in steerings
             if steering.θx == 0 && steering.θz == 0 
                 continue
             else 
@@ -148,7 +157,6 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
             if steering.θx == 0 && steering.θz == 0 
                 continue
             end
-
             push!(angle_Bool, AngleDependence(steering))
 
             # for (θx,θz) = (n,θz_max) SingularityConstraint checks out of bounds
@@ -157,6 +165,7 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
             end
             θx, θz = (steering.θx, steering.θz)
             steering_next = steerings[θx+1, θz+2]
+          	
             push!(sin_Bool, SingularityConstraint(steering,steering_next))
         end
 
@@ -164,15 +173,12 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         measurments = Measurements(Chassi(),steerings[1, end])
         push!(track_Bool, TrackingCircleConstraint(steerings[1, end], measurments))
 
-
-        if nothing !== findfirst(x -> x ==false, kin_Bool)
-            error("kinematic dempendence couldn't be matched by parameters ")
-          elseif nothing !== findfirst(x -> x ==false, angle_Bool)
-            error("angle dempendence couldn't be matched by parameters ")
+        if nothing !== findfirst(x -> x ==false, angle_Bool)
+            error("Thread $(Threads.threadid()):> angle dempendence couldn't be matched by parameters ")
           elseif nothing !== findfirst(x -> x ==false, sin_Bool)
-            error("singularity constraint couldn't be matched by parameters ")
+            error("Thread $(Threads.threadid()):> singularity constraint couldn't be matched by parameters ")
           elseif nothing !== findfirst(x -> x ==false, track_Bool)
-            error("tracking circle constraint couldn't be matched by parameters ")
+            error("Thread $(Threads.threadid()):> tracking circle constraint couldn't be matched by parameters ")
         end
     catch err
         #println("\n\n\n $(err.stack) \n\n\n")

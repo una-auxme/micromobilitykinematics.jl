@@ -824,4 +824,126 @@ end
 result_dict
 
 
+lower_bourder = (50.0,
+50.0, 
+70.0, 
+195.0)
+upper_bourder = (100.0,
+200.0,
+200.0,
+260.0
+)
+max_angleConfig = (10,35)
+step_size = 1
 
+valid_param = []
+param = []
+lk = ReentrantLock()
+
+@threads for i in 1:4 
+    
+    param_ =[rand(l:u) for (l,u) in zip(lower_bourder, upper_bourder)]
+    println("Thread $(Threads.threadid()):> $param_")
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+    steering = Steering(param_...)
+    valid_param_ = checkConstraints(step_size, max_angleConfig,steering,suspension)
+    println("Thread $(Threads.threadid()):> $valid_param_")
+    lock(lk) do
+        push!(param,param_)
+        push!(valid_param, valid_param_) 
+    end
+end 
+
+checkConstraints°([87.0, 95.0, 168.0, 239.0]...)
+
+valid_param
+
+steerings_ = []
+valid_param = []
+param = []
+lk = ReentrantLock()
+
+
+@threads for i in 1:4 
+    
+    param_ =[rand(l:u) for (l,u) in zip(lower_bourder, upper_bourder)]
+    println("Thread $(Threads.threadid()):> $param_")
+    suspension = Suspension(30)
+    suspensionkinematics!(suspension)
+    steering = Steering(param_...)
+    
+
+    try
+        kin_Bool = []
+        angle_Bool = []
+        sin_Bool = []
+        track_Bool = []
+
+        # One-time calculation of the kinematics and storage in instances until the intersection needs to be checked.  
+        θ_tuples = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
+        steerings = [kinematicsUNTILmount°(θ_tuple, steering, suspension) for θ_tuple in θ_tuples]
+        # checks if steering.sphere_joints is calculable (intersection is posible)
+        for steering in steerings
+            push!(kin_Bool, KinematicDependence(steering))
+
+        end
+
+        if nothing !== findfirst(x -> x ==false, kin_Bool)
+            error("Thread $(Threads.threadid()):> kinematic dempendence couldn't be matched by parameters ")
+        end
+
+
+        for steering in steerings
+            #for (θx,θz) = (0,0) AngleDependence and SingularityConstraintis not expressive
+            if steering.θx == 0 && steering.θz == 0 
+                continue
+            else 
+            
+                update°!(steering)
+            end 
+
+            push!(angle_Bool, AngleDependence(steering))
+
+            # for (θx,θz) = (n,θz_max) SingularityConstraint checks out of bounds
+            if steering.θz == θz_max
+                continue
+            end
+            θx, θz = (steering.θx, steering.θz)
+            steering_next = steerings[θx+1, θz+2]
+            push!(sin_Bool, SingularityConstraint(steering,steering_next))
+        end
+
+
+
+
+
+
+    println("Thread $(Threads.threadid()):> $valid_param_")
+    lock(lk) do
+        push!(param,param_)
+        push!(valid_param, valid_param_) 
+    end
+end 
+
+
+
+
+
+end
+
+
+steering = Steering([70.0, 91.0, 114.0, 258.0]...)
+
+suspension = Suspension(30)
+suspensionkinematics!(suspension)
+
+update!((2,3), steering, suspension)
+
+
+steering.δi
+steering.δo
+
+
+steering.δi
+steering.δo
