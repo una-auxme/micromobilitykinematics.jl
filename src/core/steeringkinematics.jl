@@ -1,7 +1,7 @@
 """
     steeringkinematicsMOVED!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
-    for the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated
+For the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated
 
 #Arguemnts
 -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
@@ -87,7 +87,8 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
     
     track_lever_mount = [0.0; 0.0; offset_length]
 
-    
+    circle_joints_dict = Dict(:left_joint => Vector{<:Any}(), :right_joint => Vector{<:Any}()) 
+    mount_dict = Dict(:left_mount => Vector{<:Any}(), :right_mount => Vector{<:Any}())
 
     for (circle_joint,mount,index,shift) in zip([:left_joint, :right_joint],[:left_mount, :right_mount], [1,2], [[1,1,1],[1,-1,1]])
 
@@ -96,8 +97,8 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
         track_lever_mount_IN_wishbone_ucs = wheel_ucs_position[index] + track_lever_mount_IN_wheel_ucs
         track_lever_mount_IN_steering_ucs = steering.wishbone_ucs_position[index] + track_lever_mount_IN_wishbone_ucs.*(shift)
 
-        @eval $mount = $track_lever_mount_IN_steering_ucs 
-
+        #@eval $mount = $track_lever_mount_IN_steering_ucs                          # Not compatible with threading
+        mount_dict[mount] = track_lever_mount_IN_steering_ucs
         #Circle 
         circ = Circle(track_lever_mount_IN_steering_ucs,steering.track_lever.length,steering.base_vec_wheel_ucs[index][:,3])
 
@@ -107,13 +108,17 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
         circle_joints_1, circle_joints_2 = intersection(circ, sphere)
 
         if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          
-            @eval $circle_joint = $circle_joints_2
+            #@eval $circle_joint = $circle_joints_2                                  # Not compatible with threading
+            circle_joints_dict[circle_joint] = circle_joints_2
         else
-            @eval $circle_joint = $circle_joints_1
+            #@eval $circle_joint = $circle_joints_1                                  # Not compatible with threading
+            circle_joints_dict[circle_joint] = circle_joints_1
         end
     end
-    steering.track_lever_mounting_points_ucs = (collect(left_mount), collect(right_mount))
-    steering.circle_joints = (collect(left_joint), collect(right_joint))
+    #steering.track_lever_mounting_points_ucs = (collect(left_mount), collect(right_mount))
+    #steering.circle_joints = (collect(left_joint), collect(right_joint))
+    steering.track_lever_mounting_points_ucs = (mount_dict[:left_mount], mount_dict[:right_mount])
+    steering.circle_joints = (circle_joints_dict[:left_joint],circle_joints_dict[:right_joint])
     nothing
 end
 
@@ -121,7 +126,7 @@ end
 """
     steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
-    for the rotation component in its rest position with the angles (θx, θz) = (0,0), the kinematics of the steering is calculated
+For the rotation component in its rest position with the angles (θx, θz) = (0,0), the kinematics of the steering is calculated
 
 #Arguemnts
 -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
@@ -205,6 +210,9 @@ function steeringkinematicsNEUTRAL!(angleConfig::Tuple, steering::Steering, susp
     track_lever_mount = [0.0; 0.0; offset_length]
 
     
+    circle_joints_dict = Dict(:left_joint => Vector{<:Any}(), :right_joint => Vector{<:Any}()) 
+    mount_dict = Dict(:left_mount => Vector{<:Any}(), :right_mount => Vector{<:Any}())
+
 
     for (circle_joint,mount,index,shift) in zip([:left_joint, :right_joint],[:left_mount, :right_mount], [1,2], [[1,1,1],[1,-1,1]])
 
@@ -213,8 +221,8 @@ function steeringkinematicsNEUTRAL!(angleConfig::Tuple, steering::Steering, susp
         track_lever_mount_IN_wishbone_ucs = wheel_ucs_position[index] + track_lever_mount_IN_wheel_ucs
         track_lever_mount_IN_steering_ucs = steering.wishbone_ucs_position[index] + track_lever_mount_IN_wishbone_ucs.*(shift)
 
-        @eval $mount = $track_lever_mount_IN_steering_ucs 
-
+        #@eval $mount = $track_lever_mount_IN_steering_ucs                                  # Not compatible with threading
+        mount_dict[mount] = track_lever_mount_IN_steering_ucs
         #Circle 
         circ = Circle(track_lever_mount_IN_steering_ucs,steering.track_lever.length,base_vec_wheel_ucs[index][:,3])
 
@@ -226,12 +234,15 @@ function steeringkinematicsNEUTRAL!(angleConfig::Tuple, steering::Steering, susp
         
 
         if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          
-            @eval $circle_joint = $circle_joints_2
+            #@eval $circle_joint = $circle_joints_2                                          # Not compatible with threading
+            circle_joints_dict[circle_joint] = circle_joints_2
         else
-            @eval $circle_joint = $circle_joints_1
+            #@eval $circle_joint = $circle_joints_1                                          # Not compatible with threading
+            circle_joints_dict[circle_joint] = circle_joints_1
         end
     end
-    steering.circle_joints_neutral = (collect(left_joint), collect(right_joint))
+    #steering.circle_joints_neutral = (collect(left_joint), collect(right_joint))                   # Not compatible with threading
+    steering.circle_joints_neutral = (circle_joints_dict[:left_joint],circle_joints_dict[:right_joint])
     nothing
 end
 
@@ -240,7 +251,7 @@ end
 """
     steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
-    To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
+To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
 
 #Arguemnts
 -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated

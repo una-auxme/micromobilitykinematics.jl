@@ -96,9 +96,9 @@ end
 #Returns:
 -`opda`: instance of OptDa (optimization Data)
 """
-function optim(θ::Tuple{T,T}, param::Union{Tuple{I,I,I,I},Nothing}) where {T<:Integer, I<:Float64}
+function optim(θ::Tuple{T,T}, args...) where {T<:Integer}
 
-
+    param = random_search(args...)
     steering = Steering(param...) # param = x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length
     
     suspension = Suspension(30)
@@ -106,6 +106,7 @@ function optim(θ::Tuple{T,T}, param::Union{Tuple{I,I,I,I},Nothing}) where {T<:I
 
 
     # optimization
+    println("Thread $(Threads.threadid()):> optimization begin")
     model = create_model(θ,steering)
     
     JuMP.optimize!(model)
@@ -121,40 +122,6 @@ function optim(θ::Tuple{T,T}, param::Union{Tuple{I,I,I,I},Nothing}) where {T<:I
     return optda
 
 end 
-
-"""
-    optim_IN_LOOP(θ::Tuple{T,T},upper_bourder::Tuple{Float64, Float64, Float64, Float64},lower_bourder::Tuple{Float64, Float64, Float64, Float64},max_angleConfig)
-
-
-#Arguments:
--`θ::Tuple{T,T}`: angle pair to be considered
--`upper_bourder::Tuple{Float64, Float64, Float64, Float64}`: upper bourder Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
--`lower_bourder::Tuple{Float64, Float64, Float64, Float64}`: lower bourder Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
--`max_angleConfig`: maximal angular area for rotary component (defult: (0,35))
-
-#Returns:
--`opda`: instance of OptDa (optimization Data)
-
-"""
-function optim_IN_LOOP(args...)
-    sol_dict = Dict{Int,Any}()
-    id = 0
-    while id < 100
-        try
-        
-
-            optda = optim(args...)
-        
-            if optda.status == MOI.OPTIMAL && optda.status == MOI.LOCALLY_SOLVED && optda.status == MOI.NUMERICAL_ERROR && opta.status == MOI.ALMOST_LOCALLY_SOLVED && optda.status != MOI.NUMERICAL_ERROR
-                sol = hcat(sol, optda)
-                id += 1
-            end
-
-        catch err
-        end
-    end 
-    return sol
-end
 
 
 
@@ -176,43 +143,38 @@ end
 
 
 """
-function optim_series(num::Int64, θ, args...)
-    θx, θz = θ
+function optim_series(num::Int64,args...)
     sol_dict = Dict{Int,Any}()
 
     lk = ReentrantLock()
-    for id in 1:num
-        valid = true 
-        param = ()
-        while valid
+    @threads for id in 1:num
+        success = false
+        while !success
             try
                 # Find initial values that fulfil all dependences
-                lock(lk) do 
-                    param = random_search(args...)
-                end
-                println(":> $param  $(typeof(param))")
-                optda = optim(θ,param)
+                optda = optim(args...)
                 # status check 
-                if optda.status != MOI.OPTIMAL && optda.status != MOI.LOCALLY_SOLVED && optda.status != MOI.NUMERICAL_ERROR && optda.status != MOI.ITERATION_LIMIT && opta.status != MOI.ALMOST_LOCALLY_SOLVED
-                    continue
-                else
-                    valid = false
+                if (optda.status != MOI.OPTIMAL &&
+                     optda.status != MOI.LOCALLY_SOLVED && 
+                     optda.status != MOI.NUMERICAL_ERROR && 
+                     optda.status != MOI.ITERATION_LIMIT && 
+                     optda.status != MOI.ALMOST_LOCALLY_SOLVED )
+
+                     error("Thread $(Threads.threadid()):> $(optda.status))")
                 end
                 # write in Dict
                 lock(lk) do 
                     sol_dict[id] = optda
-                    save_best_objective()
+                    #save_best_objective()
                 end 
-            catch err
+
+                success = true
+            catch err  
+                println(err)
             end
-
-        end
+        end 
     end 
-
-    # save Dict
-
     return sol_dict
-
 end 
 
 
@@ -238,7 +200,7 @@ function grid_optim(upper_bourder::Tuple{T, T, T, T},lower_bourder::Tuple{T, T, 
         for θ in θ_tuple[i,:] 
             if θ != (0,0)
                 θx,θz = θ
-                opt_series = optim_series(10,θ,upper_bourder,lower_bourder,max_angleConfig)
+                opt_series = optim_series(5,θ,upper_bourder,lower_bourder,max_angleConfig)
                 pathTOdata = joinpath(path_data,"opt_series($(θx),$(θz)).jld2")
                 @save pathTOdata opt_series
 

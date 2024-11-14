@@ -12,7 +12,6 @@ module micromobilitykinematic
     using JuMP
     using Ipopt
     using NLopt
-    using Juniper
 
     include("core/core.jl")
     include("core/suspensionkinematics.jl")

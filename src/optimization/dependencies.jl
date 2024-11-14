@@ -106,7 +106,7 @@ function TrackingCircleConstraint(arge...)
 end
 
 """
-checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension)
+checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension)
 
     checks  all constraints and dependences
 
@@ -119,7 +119,9 @@ checkConstraints(step_size::T, max_angleConfig::Tuple{T,T}, steering::Steering, 
 -`suspension::Suspension`: Instance of a specific suspension
 
 #Returns:
--`::Bool`
+-`::Bool`:
+        -`false`: It is not possible to match the constraints in a satisfactory manner
+        -`true`: It is possible to match the constraints in a satisfactory manner
 """
 function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension) 
     θx_max, θz_max = max_angleConfig
@@ -142,7 +144,7 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         end
 
 
-        # calculate the further kinematc for all angular positions of the steering system
+        # Calculate the further kinematics for all angular positions of the steering system.
         for steering in steerings
             if steering.θx == 0 && steering.θz == 0 
                 continue
@@ -189,17 +191,32 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
 end
 
 """
-    checkConstraints°(θx_max::T, θz_max::T, x_rotational_radius::T, z_rotational_radius::T, track_lever_length::T, tie_rod_length::T) where {T<:Real}
+    checkConstraints°(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 
+The wrapper function of the checkConstraints procedure is employed for the purposes of optimisation.
+! function°(): symbolises that this function should only be used within the optimisation !
+
+#Arguments
+-`x_rotational_radius`: Length of the rotational component around the x-axis. (detailed info in doc)
+-`z_rotational_radius`: Length of the rotational component around the z-axis. (detailed info in doc)
+-`track_lever_length`: Length of the track lever. (detailed info in doc)
+-`tie_rod_length`: Length of tie rod. (detailed info in doc)
+
+#Returns
+-`binary`:
+        -`0`: It is not possible to match the constraints in a satisfactory manner.
+        -`1`: It is possible to match the constraints in a satisfactory manner.
 
 """
 function checkConstraints°(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
-    println(":> checkConstraints°")
+    θx_max, θz_max  = (10,35)
+
+    println("Thread $(Threads.threadid()):> checkConstraints°")
 
     if typeof(x_rotational_radius) == Float64
-        println(":> ($(x_rotational_radius), $(z_rotational_radius), $(track_lever_length), $(tie_rod_length))")
+        println("Thread $(Threads.threadid()):> ($(x_rotational_radius), $(z_rotational_radius), $(track_lever_length), $(tie_rod_length))")
     end
-    θx_max, θz_max  = (10,35)
+
     angleConfig = (θx_max, θz_max)
 
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
@@ -231,17 +248,17 @@ random search with given bourder for the parameters and given angular area for r
 #Returns:
 -`compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
 """
-function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I} ; info = true, step_size = 1 ) where {T<:Real, I<:Integer}
-    param = ()
+function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I} ; info = false, step_size = 1 ) where {T<:Real, I<:Integer}
+    param = nothing
     valid_param = false
 
     i = 0
     while !valid_param
-        param =[rand(l:u) for (l,u) in zip(lower_bourder, upper_bourder)]
+        param = [rand(l:u) for (l,u) in zip(lower_bourder, upper_bourder)]
 
         if info 
-            println(":>Ramdom Search Iteration $i") 
-            println(":>Parmeters: $param \n")
+            println("Thread $(Threads.threadid()):> Ramdom Search Iteration $i") 
+            println("Thread $(Threads.threadid()):> Parmeters: $param \n")
         end
 
         suspension = Suspension(30)

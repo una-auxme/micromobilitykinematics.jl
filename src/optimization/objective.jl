@@ -15,7 +15,7 @@
     - Distance between optimal and current intersection point
 """
 function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::Steering, suspension::Suspension) where {T<:Any}
-    println(":> objective")
+    println("Thread $(Threads.threadid()):> objective")
     # calculate the kinematics in respect of the given angles
     #println("$(steering.rotational_component.x_rotational_radius), $(steering.rotational_component.z_rotational_radius), $(steering.track_lever.length), $(steering.tie_rod.length)\n  ")
     update!(angleConfig, steering, suspension)
@@ -54,9 +54,9 @@ function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::St
 
     # saves the current best value
     # -> 
-    if typeof(y) == Float64
-        save_current_best_objective°(steering,abs(y))
-    end
+    #if typeof(y) == Float64
+    #    save_current_best_objective°(steering,abs(y))
+    #end
 
     return abs(y)
 end
@@ -66,9 +66,8 @@ end
 """
     objective°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 
-    Calculates the distance between the optimum point of intersection of the wheel axis (normally on the rear wheel axis) and the current point of intersection of the axis.
-
-    !wrapperfunction of steering_objective for optimization!
+The wrapper function of the steering_objective procedure is employed for the purposes of optimisation.
+! function°(): symbolises that this function should only be used within the optimisation !
 
 
 #Arguments
