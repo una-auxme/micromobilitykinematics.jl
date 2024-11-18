@@ -43,10 +43,10 @@ abstract type AbstractTrackLever <: AbstractComponent end
 
 # Type VariableRef needed for JuMP.jl 
 mutable struct RotationalComponent <: AbstractComponent
-    x_rotational_radius::Any                   # rotation around the x-axis  
-    z_rotational_radius::Any                    # rotation around the z-axis
-    to_joint_pivot_point::Any                  # distance from the component center (z) to joint pivot
-    distance_between_joint_pivot_points::Any                    # distance between both pivot poits (JR_l and (JR_r)
+    x_rotational_radius::Any                                        # rotation around the x-axis  
+    z_rotational_radius::Any                                        # rotation around the z-axis
+    to_joint_pivot_point::Any                                       # distance from the component center (z) to joint pivot
+    distance_between_joint_pivot_points::Any                        # distance between both pivot poits (JR_l and (JR_r)
 
 
 
@@ -105,7 +105,7 @@ mutable struct Steering <: AbstractSteering
 
     ######## Positions of the Userdefined Coordinate System (UCS)
 
-    wishbone_ucs_position::Union{Tuple{Vector{Any},Vector{Any}}, Nothing}         # (left, right) in steering ucs
+    wishbone_ucs_position::Union{Tuple{Vector{Any},Vector{Any}}, Nothing}               # (left, right) in steering ucs
     track_lever_mounting_points_ucs::Union{Tuple{Vector{Any},Vector{Any}}, Nothing}     # (left, right) Mounting point of the tracklever in steering ucs
     
 
@@ -170,13 +170,13 @@ mutable struct Damper <: AbstractDamper
 
     id::Any
 
-    nominal_length::Any                                # Damper nominal length (not compressed) [mm]
+    nominal_length::Any                                 # Damper nominal length (not compressed) [mm]
     travel::Any                                         # Damper travel [mm]
     compression::Any                                    # Damper Compression [%]
     length::Any  
     length_neutral::Any                                 # Damper Length with compression as set in LEFTcompression
 
-    upper_fixture::Union{Vector{Any}, Nothing}                          # Damper upper fixtur
+    upper_fixture::Union{Vector{Any}, Nothing}                          # Damper upper fixture
     lower_fixture::Union{Vector{Any}, Nothing}                          # Damper lower fixture point 
     lower_fixture_neutral::Union{Vector{Any}, Nothing} 
 
@@ -205,13 +205,13 @@ mutable struct LowerWishbone <: AbstractLowerWishbone
     ######## 
     
     ########    
-    bearing_rear::Union{Vector{Any}, Nothing}                               # Rear Bearing of the Wishbone -> Center CoordinateSystem 
-    bearing_distance_x::Any                                 # Distance in X-Axis Lower Wishbone Bearings
-    bearing_front::Union{Vector{Any}, Nothing}                              # Front Bearing of the Wishbone
+    bearing_rear::Union{Vector{Any}, Nothing}                                 # Rear Bearing of the Wishbone -> Center CoordinateSystem 
+    bearing_distance_x::Any                                                   # Distance in X-Axis Lower Wishbone Bearings
+    bearing_front::Union{Vector{Any}, Nothing}                                # Front Bearing of the Wishbone
     rotation_axis::Union{Vector{Any}, Nothing}                              # Rotation Axis Lower Wishbone UNIT VECTOR
-    distance_to_joint_y::Any                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
-    distance_rotation_axis_to_lower_damper_fixure::Any      # Distance LEFTrotation_axis to LowerDamperFixPoint [mm]
-    distance_to_joint_x::Any                                # Distance on x-Axis bearing_rear to Joint [mm] 
+    distance_to_joint_y::Any                                                # Distance LEFTrotation_axis to LEFTsphere_joint [mm] in Wishbone CoordinateSystem
+    distance_rotation_axis_to_lower_damper_fixure::Any                      # Distance LEFTrotation_axis to LowerDamperFixPoint [mm]
+    distance_to_joint_x::Any                                                # Distance on x-Axis bearing_rear to Joint [mm] 
     
     sphere_joint_neutral::Union{Vector{Any}, Nothing}
     lower_fixture_neutral::Union{Vector{Any}, Nothing}
@@ -404,7 +404,7 @@ mutable struct Vehicle <: AbstractVehicle
     suspension::Union{Tuple{Suspension,Suspension},Nothing}
 
 
-    function Vehicle(measurments::Measurements, chassi::Chassi, steering::Steering, suspension::Tuple{Suspension,Suspension})
+    function Vehicle(measurments::Measurements, chassi::Chassi, steering::Steering, suspensions::Tuple{Suspension,Suspension})
         inst = new()
 
         inst.measurments = measurments
@@ -413,7 +413,7 @@ mutable struct Vehicle <: AbstractVehicle
 
         inst.steering = steering
 
-        inst.suspension = suspension
+        inst.suspension = suspensions
     end
 end
 

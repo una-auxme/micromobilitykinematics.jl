@@ -169,17 +169,41 @@ optim((1,20), upper_bourder, lower_bourder, max_angleConfig)
 
 grid_optim(upper_bourder, lower_bourder, max_angleConfig)
 
-sol_dict = optim_series(6, (1,20), upper_bourder, lower_bourder, max_angleConfig)
+sol_dict = optim_series(2, (1,1), upper_bourder, lower_bourder, max_angleConfig)
 
-optda = sol_dict[6]
+optda = sol_dict[2]
 
 optda.objective
 
 
 
+@__DIR__
+path = joinpath(@__DIR__, "optimization\\data\\data(7,n)\\opt_series(7,5).jld2") # [4] ALMOST_LOCALLY_SOLVED
+path = joinpath(@__DIR__, "optimization\\data\\data(9,n)\\opt_series(9,11).jld2") # [2] ALMOST_LOCALLY_SOLVED
+path = joinpath(@__DIR__, "optimization\\data\\data(10,n)\\opt_series(10,11).jld2")
 
 
+@load path opt_series
 
 
+opt_series
 
-sol_dict
+plot_optda_series(opt_series)
+
+optda = opt_series[2]
+
+
+optda.objective
+optda.status
+
+
+steering = optda.steering
+
+chassi = Chassi()
+
+suspension = Suspension(30)
+suspensionkinematics!(suspension)
+
+plot_optda_gird_δ((10,35), steering)
+
+plot_optda_gird_obj((10,35), steering, suspension, chassi)

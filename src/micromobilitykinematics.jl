@@ -1,6 +1,5 @@
 module micromobilitykinematic
-
-    using Documenter
+    using Documenter    
     using LinearAlgebra
     using GeoSpatialRelations
     using StaticArrays
@@ -8,6 +7,8 @@ module micromobilitykinematic
     using JLD2
     using Base.Threads
     using Plots;gr()
+    using PlotlyJS
+    using LightXML
 
     using JuMP
     using Ipopt
@@ -16,8 +17,8 @@ module micromobilitykinematic
     include("core/core.jl")
     include("core/suspensionkinematics.jl")
     include("core/steeringkinematics.jl")
-    include("custom_funcs/rotations.jl") 
-    include("custom_funcs/calc_basis_vectors.jl")
+    include("extras/rotations.jl") 
+    include("extras/calc_basis_vectors.jl")
     include("core/functions_on_instance.jl")
     include("optimization/core_dependencies.jl")    
     include("optimization/dependencies.jl")
@@ -25,5 +26,5 @@ module micromobilitykinematic
     include("optimization/objective.jl")
     include("optimization/data_insights.jl")
     include("optimization/optim.jl")
-    
+    include("utils/insights.jl")    
 end

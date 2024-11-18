@@ -187,9 +187,10 @@ updates the kinematics of the given steering instance on the new angles and susp
 -`steering::Steering`: Instance of a specific steering
 
 """
-function update(args...)
-    update!(args...)
-    return steering
+function update(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    cpy_steering = deepcopy(steering)
+    update!(angleConfig, cpy_steering, suspension)
+    return cpy_steering
 end 
 
 """
