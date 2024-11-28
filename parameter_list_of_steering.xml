@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<list_of_parameters>
+  <parameter>
+    <properties>
+      <name>RotationalComponent_x_rotational_radius</name>
+      <typeCode>mm</typeCode>
+      <value>68.86430882176059 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>RotationalComponent_z_rotational_radius</name>
+      <typeCode>mm</typeCode>
+      <value>101.30108039042462 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>RotationalComponent_to_joint_pivot_point</name>
+      <typeCode>mm</typeCode>
+      <value>23.5 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>RotationalComponent_distance_between_joint_pivot_points</name>
+      <typeCode>mm</typeCode>
+      <value>47.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>TrackLever_length</name>
+      <typeCode>mm</typeCode>
+      <value>126.75317738834576 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>TieRod_length</name>
+      <typeCode>mm</typeCode>
+      <value>219.94479938867312 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Steering_θx</name>
+      <typeCode>deg</typeCode>
+      <value>9 deg</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Steering_θz</name>
+      <typeCode>mm</typeCode>
+      <value>11 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Steering_δi</name>
+      <typeCode>deg</typeCode>
+      <value>14.428415328610448 deg</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Steering_δo</name>
+      <typeCode>deg</typeCode>
+      <value>12.71868317393103 deg</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_sphere_joints_x</name>
+      <typeCode>mm</typeCode>
+      <value>-94.9558828325091 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_sphere_joints_y</name>
+      <typeCode>mm</typeCode>
+      <value>52.64816520021794 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_sphere_joints_z</name>
+      <typeCode>mm</typeCode>
+      <value>-61.38406091417747 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_sphere_joints_x</name>
+      <typeCode>mm</typeCode>
+      <value>-103.9239056152067 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_sphere_joints_y</name>
+      <typeCode>mm</typeCode>
+      <value>7.079704176800334 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_sphere_joints_z</name>
+      <typeCode>mm</typeCode>
+      <value>-68.60139610982192 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_circle_joints_x</name>
+      <typeCode>mm</typeCode>
+      <value>-125.72675097702177 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_circle_joints_y</name>
+      <typeCode>mm</typeCode>
+      <value>270.3013626106805 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_circle_joints_z</name>
+      <typeCode>mm</typeCode>
+      <value>-68.86430882176059 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_circle_joints_x</name>
+      <typeCode>mm</typeCode>
+      <value>-110.58536706357845 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_circle_joints_y</name>
+      <typeCode>mm</typeCode>
+      <value>-212.76403711778693 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_circle_joints_z</name>
+      <typeCode>mm</typeCode>
+      <value>-68.8643088217606 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_sphere_joints_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>-101.30108039042462 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_sphere_joints_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>23.5 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_sphere_joints_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-68.86430882176059 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_sphere_joints_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>-101.30108039042462 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_sphere_joints_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>-23.5 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_sphere_joints_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-68.86430882176059 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_circle_joints_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>-122.04741173227781 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_circle_joints_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>242.46416262479508 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_circle_joints_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-68.86430882176059 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_circle_joints_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>-122.04741173227781 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_circle_joints_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>-242.46416262479508 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_circle_joints_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-68.86430882176059 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_wheel_ucs_position_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_wheel_ucs_position_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340925 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_wheel_ucs_position_z</name>
+      <typeCode>mm</typeCode>
+      <value>-44.049689635529006 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_wheel_ucs_position_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_wheel_ucs_position_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340925 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_wheel_ucs_position_z</name>
+      <typeCode>mm</typeCode>
+      <value>-44.049689635529006 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_base_vec_wheel_ucs_x</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_base_vec_wheel_ucs_y</name>
+      <typeCode>mm</typeCode>
+      <value>-1.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_base_vec_wheel_ucs_z</name>
+      <typeCode>mm</typeCode>
+      <value>2.0447272971513675e-16 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_base_vec_wheel_ucs_x</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_base_vec_wheel_ucs_y</name>
+      <typeCode>mm</typeCode>
+      <value>-1.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_base_vec_wheel_ucs_z</name>
+      <typeCode>mm</typeCode>
+      <value>2.0447272971513675e-16 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_wishbone_ucs_position_x</name>
+      <typeCode>mm</typeCode>
+      <value>-36.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_wishbone_ucs_position_y</name>
+      <typeCode>mm</typeCode>
+      <value>140.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_wishbone_ucs_position_z</name>
+      <typeCode>mm</typeCode>
+      <value>-139.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_wishbone_ucs_position_x</name>
+      <typeCode>mm</typeCode>
+      <value>-36.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_wishbone_ucs_position_y</name>
+      <typeCode>mm</typeCode>
+      <value>-140.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_wishbone_ucs_position_z</name>
+      <typeCode>mm</typeCode>
+      <value>-139.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_track_lever_mounting_points_ucs_x</name>
+      <typeCode>mm</typeCode>
+      <value>1.0000000000000213 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_track_lever_mounting_points_ucs_y</name>
+      <typeCode>mm</typeCode>
+      <value>272.8895211934092 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Steering_track_lever_mounting_points_ucs_z</name>
+      <typeCode>mm</typeCode>
+      <value>-68.86430882176059 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_track_lever_mounting_points_ucs_x</name>
+      <typeCode>mm</typeCode>
+      <value>1.0000000000000213 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_track_lever_mounting_points_ucs_y</name>
+      <typeCode>mm</typeCode>
+      <value>-272.8895211934092 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Steering_track_lever_mounting_points_ucs_z</name>
+      <typeCode>mm</typeCode>
+      <value>-68.86430882176059 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+  </parameter>
+</list_of_parameters>

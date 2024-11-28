@@ -276,9 +276,9 @@ mutable struct UpperWishbone <: AbstractUpperWishbone
         inst.distance_to_joint_y = 140.0  
         inst.distance_to_joint_x =  37.00 
         
-        tiltx = 0.0
-        tilty = 90-acosd(abs(dot([0;1;0],inst.rotation_axis)))
-        tiltZ = -90+acosd(abs(dot([0;0;1],inst.rotation_axis)))
+        inst.tiltx = 0.0
+        inst.tilty = 90-acosd(abs(dot([0;1;0],inst.rotation_axis)))
+        inst.tiltZ = -90+acosd(abs(dot([0;0;1],inst.rotation_axis)))
 
         inst.sphere_joint = nothing
         inst.sphere_joint_neutral = nothing
@@ -414,6 +414,8 @@ mutable struct Vehicle <: AbstractVehicle
         inst.steering = steering
 
         inst.suspension = suspensions
+        
+        return inst
     end
 end
 

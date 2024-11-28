@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="utf-8"?>
+<list_of_parameters>
+  <parameter>
+    <properties>
+      <name>Left_LowerWishbone_id</name>
+      <typeCode>mm</typeCode>
+      <value>Left mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_bearing_rear_x</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_bearing_rear_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_bearing_rear_z</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_bearing_distance_x</name>
+      <typeCode>mm</typeCode>
+      <value>74.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_bearing_front_x</name>
+      <typeCode>mm</typeCode>
+      <value>74.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_bearing_front_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_bearing_front_z</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_rotation_axis_x</name>
+      <typeCode>mm</typeCode>
+      <value>1.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_rotation_axis_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_rotation_axis_z</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_distance_to_joint_y</name>
+      <typeCode>mm</typeCode>
+      <value>140.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_distance_rotation_axis_to_lower_damper_fixure</name>
+      <typeCode>mm</typeCode>
+      <value>85.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_distance_to_joint_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_sphere_joint_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_sphere_joint_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340925 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_sphere_joint_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-44.049689635529006 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_lower_fixture_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_lower_fixture_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>80.68292358171273 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_lower_fixture_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-26.74445442157117 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_sphere_joint_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_sphere_joint_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340925 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_sphere_joint_z</name>
+      <typeCode>mm</typeCode>
+      <value>-44.049689635529006 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_lower_fixture_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_lower_fixture_y</name>
+      <typeCode>mm</typeCode>
+      <value>80.68292358171273 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_LowerWishbone_lower_fixture_z</name>
+      <typeCode>mm</typeCode>
+      <value>-26.74445442157117 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_id</name>
+      <typeCode>mm</typeCode>
+      <value>Right mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_bearing_rear_x</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_bearing_rear_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_bearing_rear_z</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_bearing_distance_x</name>
+      <typeCode>mm</typeCode>
+      <value>74.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_bearing_front_x</name>
+      <typeCode>mm</typeCode>
+      <value>74.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_bearing_front_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_bearing_front_z</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_rotation_axis_x</name>
+      <typeCode>mm</typeCode>
+      <value>1.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_rotation_axis_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_rotation_axis_z</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_distance_to_joint_y</name>
+      <typeCode>mm</typeCode>
+      <value>140.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_distance_rotation_axis_to_lower_damper_fixure</name>
+      <typeCode>mm</typeCode>
+      <value>85.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_distance_to_joint_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_sphere_joint_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_sphere_joint_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340925 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_sphere_joint_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-44.049689635529006 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_lower_fixture_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_lower_fixture_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>80.68292358171273 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_lower_fixture_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-26.74445442157117 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_sphere_joint_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_sphere_joint_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340925 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_sphere_joint_z</name>
+      <typeCode>mm</typeCode>
+      <value>-44.049689635529006 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_lower_fixture_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_lower_fixture_y</name>
+      <typeCode>mm</typeCode>
+      <value>80.68292358171273 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_LowerWishbone_lower_fixture_z</name>
+      <typeCode>mm</typeCode>
+      <value>-26.74445442157117 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_id</name>
+      <typeCode>mm</typeCode>
+      <value>Left mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_bearing_rear_x</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_bearing_rear_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_bearing_rear_z</name>
+      <typeCode>mm</typeCode>
+      <value>139.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_bearing_distance_x</name>
+      <typeCode>mm</typeCode>
+      <value>74.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_bearing_front_x</name>
+      <typeCode>mm</typeCode>
+      <value>74.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_bearing_front_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_bearing_front_z</name>
+      <typeCode>mm</typeCode>
+      <value>139.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_rotation_axis_x</name>
+      <typeCode>mm</typeCode>
+      <value>1.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_rotation_axis_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_rotation_axis_z</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_distance_to_joint_y</name>
+      <typeCode>mm</typeCode>
+      <value>140.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_distance_to_joint_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_tiltx</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_tilty</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_tiltZ</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_sphere_joint_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_sphere_joint_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340928 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_sphere_joint_z</name>
+      <typeCode>mm</typeCode>
+      <value>94.950310364471 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_sphere_joint_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_sphere_joint_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340928 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_UpperWishbone_sphere_joint_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>94.950310364471 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_id</name>
+      <typeCode>mm</typeCode>
+      <value>Right mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_bearing_rear_x</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_bearing_rear_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_bearing_rear_z</name>
+      <typeCode>mm</typeCode>
+      <value>139.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_bearing_distance_x</name>
+      <typeCode>mm</typeCode>
+      <value>74.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_bearing_front_x</name>
+      <typeCode>mm</typeCode>
+      <value>74.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_bearing_front_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_bearing_front_z</name>
+      <typeCode>mm</typeCode>
+      <value>139.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_rotation_axis_x</name>
+      <typeCode>mm</typeCode>
+      <value>1.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_rotation_axis_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_rotation_axis_z</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_distance_to_joint_y</name>
+      <typeCode>mm</typeCode>
+      <value>140.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_distance_to_joint_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_tiltx</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_tilty</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_tiltZ</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_sphere_joint_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_sphere_joint_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340928 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_sphere_joint_z</name>
+      <typeCode>mm</typeCode>
+      <value>94.950310364471 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_sphere_joint_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_sphere_joint_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>132.88952119340928 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_UpperWishbone_sphere_joint_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>94.950310364471 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_id</name>
+      <typeCode>mm</typeCode>
+      <value>Left mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_nominal_length</name>
+      <typeCode>mm</typeCode>
+      <value>210.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_travel</name>
+      <typeCode>mm</typeCode>
+      <value>55.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_compression</name>
+      <typeCode>mm</typeCode>
+      <value>30 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_length</name>
+      <typeCode>mm</typeCode>
+      <value>193.5 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_length_neutral</name>
+      <typeCode>mm</typeCode>
+      <value>193.5 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_upper_fixture_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_upper_fixture_y</name>
+      <typeCode>mm</typeCode>
+      <value>30.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_upper_fixture_z</name>
+      <typeCode>mm</typeCode>
+      <value>160.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_lower_fixture_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_lower_fixture_y</name>
+      <typeCode>mm</typeCode>
+      <value>80.68292358171273 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_lower_fixture_z</name>
+      <typeCode>mm</typeCode>
+      <value>-26.74445442157117 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_lower_fixture_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_lower_fixture_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>80.68292358171273 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Left_Damper_lower_fixture_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-26.74445442157117 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_id</name>
+      <typeCode>mm</typeCode>
+      <value>Right mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_nominal_length</name>
+      <typeCode>mm</typeCode>
+      <value>210.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_travel</name>
+      <typeCode>mm</typeCode>
+      <value>55.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_compression</name>
+      <typeCode>mm</typeCode>
+      <value>30 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_length</name>
+      <typeCode>mm</typeCode>
+      <value>193.5 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_length_neutral</name>
+      <typeCode>mm</typeCode>
+      <value>193.5 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_upper_fixture_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_upper_fixture_y</name>
+      <typeCode>mm</typeCode>
+      <value>30.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_upper_fixture_z</name>
+      <typeCode>mm</typeCode>
+      <value>160.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_lower_fixture_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_lower_fixture_y</name>
+      <typeCode>mm</typeCode>
+      <value>80.68292358171273 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_lower_fixture_z</name>
+      <typeCode>mm</typeCode>
+      <value>-26.74445442157117 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_lower_fixture_neutral_x</name>
+      <typeCode>mm</typeCode>
+      <value>37.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_lower_fixture_neutral_y</name>
+      <typeCode>mm</typeCode>
+      <value>80.68292358171273 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>Right_Damper_lower_fixture_neutral_z</name>
+      <typeCode>mm</typeCode>
+      <value>-26.74445442157117 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>WheelMount_length</name>
+      <typeCode>mm</typeCode>
+      <value>139.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>WheelMount_camper_angle</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>WheelMount_offset_x</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>WheelMount_offset_y</name>
+      <typeCode>mm</typeCode>
+      <value>50.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>WheelMount_offset_z</name>
+      <typeCode>mm</typeCode>
+      <value>69.5 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+    <properties>
+      <name>WheelMount_to_angle</name>
+      <typeCode>mm</typeCode>
+      <value>0.0 mm</value>
+      <comment></comment>
+      <key></key>
+      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
+    </properties>
+  </parameter>
+</list_of_parameters>

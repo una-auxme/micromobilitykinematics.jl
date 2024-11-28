@@ -207,3 +207,166 @@ suspensionkinematics!(suspension)
 plot_optda_gird_δ((10,35), steering)
 
 plot_optda_gird_obj((10,35), steering, suspension, chassi)
+
+
+
+
+exportXML(steering)
+exportXML(suspension)
+
+measurements = Measurements(chassi, steering)
+
+vehicle = Vehicle(measurements, chassi, steering, (suspension, suspension))
+
+
+exportXML(vehicle)
+
+doc = XMLDocument()
+root = create_root(doc, "list of parameters")
+child = new_child(root, "parameter")
+
+
+typeof(child)
+
+
+# Hauptcode
+doc = XMLDocument()
+root = create_root(doc, "list of parameters")
+child = new_child(root, "parameter")
+
+for field in fieldnames(typeof(steering))
+    value = getfield(steering, field)
+
+    if typeof(value) <: Tuple
+        handle_tuple(child, field, steering)
+    elseif typeof(value) <: Vector
+        handle_vector(child, field, steering)
+    elseif typeof(value) <: AbstractSteering || typeof(value) <: AbstractSuspension || typeof(value) <: AbstractVehicle
+        handle_instance(child, value)
+    else 
+        handle_other(child, field, steering)
+    end
+end
+
+save_file(doc,"ParamList.xml")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function handle_instance(child, inst)
+    for field in fieldnames(typeof(inst))
+        value = getfield(inst, field)
+        if typeof(value) <: Tuple
+            for (side, param_index) in zip(["left_", "right_"], [1,2])
+                for (dim, vec_index) in zip(["x_","y_","z_"],[1,2,3])
+                    properties_child = new_child(child,"properties")
+                    name_child = new_child(properties_child, "name")
+                    field_name = String(field)
+                    name = side*dim*field_name
+                    add_text(name_child, name)
+                    
+                    typeCode_child = new_child(properties_child, "typeCode")
+                    add_text(typeCode_child, "mm")
+    
+                    value_child = new_child(properties_child, "value")
+                    value = getfield(inst, field)[param_index][vec_index]
+                    add_text(value_child, "$value mm")
+    
+                    comment_child = new_child(properties_child, "comment")
+                    add_text(comment_child, "")
+    
+                    key_child = new_child(properties_child, "key")
+                    add_text(key_child, "")
+    
+                    tolerance_child = new_child(properties_child, "tolerance")
+                    add_text(tolerance_child, "Vorgabe;Nennwert;Präzise Zeichnungen")
+    
+                end
+            end
+        elseif typeof(value) <: Vector
+            for (dim, vec_index) in zip(["x_","y_","z_"],[1,2,3])
+                properties_child = new_child(child,"properties")
+                name_child = new_child(properties_child, "name")
+                field_name = String(field)
+                name = dim*field_name
+                add_text(name_child, name)
+                
+                typeCode_child = new_child(properties_child, "typeCode")
+                add_text(typeCode_child, "mm")
+    
+                value_child = new_child(properties_child, "value")
+                value = getfield(inst, field)[vec_index]
+                add_text(value_child, "$value mm")
+    
+                comment_child = new_child(properties_child, "comment")
+                add_text(comment_child, "")
+    
+                key_child = new_child(properties_child, "key")
+                add_text(key_child, "")
+    
+                tolerance_child = new_child(properties_child, "tolerance")
+                add_text(tolerance_child, "Vorgabe;Nennwert;Präzise Zeichnungen")
+    
+            end
+        elseif typeof(value) <: AbstractSteering || typeof(value) <: AbstractSuspension || typeof(value) <: AbstractVehicle
+            handel_class(child,value)
+        else
+            properties_child = new_child(child,"properties")
+            name_child = new_child(properties_child, "name")
+            field_name = String(field)
+            add_text(name_child, field_name)
+    
+            unit = ""
+            if field == :δi || field == :δo || field == :θx || field == :θy
+                unit = "deg"
+            else
+                unit = "mm"
+            end
+            typeCode_child = new_child(properties_child, "typeCode")
+            add_text(typeCode_child, unit)
+    
+            value_child = new_child(properties_child, "value")
+            value = getfield(inst, field)
+            add_text(value_child, "$value $unit")
+    
+            comment_child = new_child(properties_child, "comment")
+            add_text(comment_child, "")
+    
+            key_child = new_child(properties_child, "key")
+            add_text(key_child, "")
+    
+            tolerance_child = new_child(properties_child, "tolerance")
+            add_text(tolerance_child, "Vorgabe;Nennwert;Präzise Zeichnungen")
+        end
+    end
+end

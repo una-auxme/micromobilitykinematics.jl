@@ -1,4 +1,4 @@
-module micromobilitykinematic
+#module micromobilitykinematic
     using Documenter    
     using LinearAlgebra
     using GeoSpatialRelations
@@ -24,7 +24,7 @@ module micromobilitykinematic
     include("optimization/dependencies.jl")
     include("optimization/functions_for_dependencies.jl")
     include("optimization/objective.jl")
-    include("optimization/data_insights.jl")
+    include("utils/insights.jl")
     include("optimization/optim.jl")
     include("utils/insights.jl")    
-end
+#end
