@@ -112,6 +112,11 @@ Vectors that exist in the core.jl module are transferred to the XML file.
 
 """
 function handle_vector(child::XMLElement, field::Symbol, inst::Union{T,D}) where {T<:AbstractSteering, D <:AbstractSuspension}
+    #It is unnecessary to include ID as an export parameter, as it serves no purpose in this context.
+    if field == :id 
+        return nothing
+    end
+
     for (dim, vec_index) in zip(["_x","_y","_z"],[1,2,3])
         properties_child = new_child(child,"properties")
 
@@ -160,6 +165,11 @@ Single values that exist in the core.jl module are transferred to the XML file.
 
 """
 function handle_single(child::XMLElement, field::Symbol, inst::Union{T,D}) where {T<:AbstractSteering, D <:AbstractSuspension}
+    #It is unnecessary to include ID as an export parameter, as it serves no purpose in this context.
+    if field == :id 
+        return nothing
+    end
+
     properties_child = new_child(child,"properties")
 
     name_child = new_child(properties_child, "name")

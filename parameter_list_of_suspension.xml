@@ -2,14 +2,6 @@
 <list_of_parameters>
   <parameter>
     <properties>
-      <name>Left_LowerWishbone_id</name>
-      <typeCode>mm</typeCode>
-      <value>Left mm</value>
-      <comment></comment>
-      <key></key>
-      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
-    </properties>
-    <properties>
       <name>Left_LowerWishbone_bearing_rear_x</name>
       <typeCode>mm</typeCode>
       <value>0.0 mm</value>
@@ -205,14 +197,6 @@
       <name>Left_LowerWishbone_lower_fixture_z</name>
       <typeCode>mm</typeCode>
       <value>-26.74445442157117 mm</value>
-      <comment></comment>
-      <key></key>
-      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
-    </properties>
-    <properties>
-      <name>Right_LowerWishbone_id</name>
-      <typeCode>mm</typeCode>
-      <value>Right mm</value>
       <comment></comment>
       <key></key>
       <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
@@ -418,14 +402,6 @@
       <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
     </properties>
     <properties>
-      <name>Left_UpperWishbone_id</name>
-      <typeCode>mm</typeCode>
-      <value>Left mm</value>
-      <comment></comment>
-      <key></key>
-      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
-    </properties>
-    <properties>
       <name>Left_UpperWishbone_bearing_rear_x</name>
       <typeCode>mm</typeCode>
       <value>0.0 mm</value>
@@ -589,14 +565,6 @@
       <name>Left_UpperWishbone_sphere_joint_neutral_z</name>
       <typeCode>mm</typeCode>
       <value>94.950310364471 mm</value>
-      <comment></comment>
-      <key></key>
-      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
-    </properties>
-    <properties>
-      <name>Right_UpperWishbone_id</name>
-      <typeCode>mm</typeCode>
-      <value>Right mm</value>
       <comment></comment>
       <key></key>
       <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
@@ -770,14 +738,6 @@
       <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
     </properties>
     <properties>
-      <name>Left_Damper_id</name>
-      <typeCode>mm</typeCode>
-      <value>Left mm</value>
-      <comment></comment>
-      <key></key>
-      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
-    </properties>
-    <properties>
       <name>Left_Damper_nominal_length</name>
       <typeCode>mm</typeCode>
       <value>210.0 mm</value>
@@ -885,14 +845,6 @@
       <name>Left_Damper_lower_fixture_neutral_z</name>
       <typeCode>mm</typeCode>
       <value>-26.74445442157117 mm</value>
-      <comment></comment>
-      <key></key>
-      <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
-    </properties>
-    <properties>
-      <name>Right_Damper_id</name>
-      <typeCode>mm</typeCode>
-      <value>Right mm</value>
       <comment></comment>
       <key></key>
       <tolerance>Vorgabe;Nennwert;Präzise Zeichnungen</tolerance>
