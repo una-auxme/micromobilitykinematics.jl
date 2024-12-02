@@ -199,6 +199,9 @@ optda.status
 
 steering = optda.steering
 
+get_insights(steering)
+
+
 chassi = Chassi()
 
 suspension = Suspension(30)
