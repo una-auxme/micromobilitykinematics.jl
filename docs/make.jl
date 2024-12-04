@@ -10,12 +10,16 @@ makedocs(
         edit_link = nothing,
         size_threshold = 512000,
      ),
-     checkdocs=:exports,
-     linkcheck=true,
+    checkdocs=:exports,
+    linkcheck=true,
     pages = Any[
             "Overview" => "index.md",
+            "Examples" => Any[
+                            "Changing steering position" => "Examples/changing_steering_position.md",
+                            "Optimising the steering" => "Examples/optimising_the_steering.md",
+                            ],
+
             "Function Library" => "library.md"
-            "Kinematic" => "kinematic.md"
     ]
 )
 
