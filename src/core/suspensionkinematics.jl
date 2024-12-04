@@ -5,7 +5,7 @@
 calculates all the movement-dependent positions of the joints in MOVED-Position
 
 #Arguments:
--`suspension::Suspension`: Suspension of the micromobility vihicle
+-`suspension::Suspension`: Suspension of the micromobility vehicle
 
 
 """
@@ -24,17 +24,17 @@ function suspensionkinematicsMOVED!(suspension::Suspension)
 
 
         center = [suspension.damper[index].upper_fixture[1]; suspension.lowerwishbone[index].bearing_rear[2]; suspension.lowerwishbone[index].bearing_rear[3]]
-        radius = suspension.lowerwishbone[index].distance_rotation_axis_to_lower_damper_fixure
+        radius = suspension.lowerwishbone[index].distance_rotation_axis_to_lower_damper_fixture
         normal =  suspension.lowerwishbone[index].rotation_axis
         circ_lowerwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, convert(Vector{Real},normal))
 
-        dampel_lower_fixure = intersection(circ_damper, circ_lowerwishbone)
+        damper_lower_fixture = intersection(circ_damper, circ_lowerwishbone)
     
 
 
-        dampel_lower_fixure = dampel_lower_fixure[1]
-        suspension.damper[index].lower_fixture = collect(dampel_lower_fixure)
-        suspension.lowerwishbone[index].lower_fixture = collect(dampel_lower_fixure)
+        damper_lower_fixture = damper_lower_fixture[1]
+        suspension.damper[index].lower_fixture = collect(damper_lower_fixture)
+        suspension.lowerwishbone[index].lower_fixture = collect(damper_lower_fixture)
     
         rotation_axis_TO_sphere_joint = [0;suspension.damper[index].lower_fixture[2]; suspension.damper[index].lower_fixture[3]]
         rotation_axis_TO_sphere_joint =  (-suspension.lowerwishbone[index].bearing_rear + rotation_axis_TO_sphere_joint) / norm(-suspension.lowerwishbone[index].bearing_rear + rotation_axis_TO_sphere_joint)
@@ -64,7 +64,7 @@ end
 calculates all the movement-dependent positions of the joints in NEUTRAL-Position
 
 #Arguemnts:
--`suspension::Suspension`: Suspension of the micromobility vihicle
+-`suspension::Suspension`: Suspension of the micromobility vehicle
 
 
 """
@@ -84,17 +84,17 @@ function suspensionkinematicsNEUTRAL!(suspension::Suspension)
 
         #circle 2
         center = [suspension.damper[index].upper_fixture[1]; suspension.lowerwishbone[index].bearing_rear[2]; suspension.lowerwishbone[index].bearing_rear[3]]
-        radius = suspension.lowerwishbone[index].distance_rotation_axis_to_lower_damper_fixure
+        radius = suspension.lowerwishbone[index].distance_rotation_axis_to_lower_damper_fixture
         normal =  suspension.lowerwishbone[index].rotation_axis
         circ_lowerwishbone = Circle(convert(Vector{Real},center), radius, convert(Vector{Real},normal))
 
-        dampel_lower_fixure = intersection(circ_damper, circ_lowerwishbone)
+        damper_lower_fixture = intersection(circ_damper, circ_lowerwishbone)
     
 
 
-        dampel_lower_fixure = dampel_lower_fixure[1]
-        suspension.damper[index].lower_fixture_neutral = collect(dampel_lower_fixure)
-        suspension.lowerwishbone[index].lower_fixture_neutral = collect(dampel_lower_fixure)
+        damper_lower_fixture = damper_lower_fixture[1]
+        suspension.damper[index].lower_fixture_neutral = collect(damper_lower_fixture)
+        suspension.lowerwishbone[index].lower_fixture_neutral = collect(damper_lower_fixture)
     
         rotation_axis_TO_sphere_joint = [0;suspension.damper[index].lower_fixture_neutral[2]; suspension.damper[index].lower_fixture_neutral[3]]
         rotation_axis_TO_sphere_joint =  (-suspension.lowerwishbone[index].bearing_rear + rotation_axis_TO_sphere_joint) / norm(-suspension.lowerwishbone[index].bearing_rear + rotation_axis_TO_sphere_joint)
@@ -124,7 +124,7 @@ end
     calculates all the movement-dependent positions of the joints in NEUTRAL- and MOVED-Postion
     
 #Arguments:
--`suspension::Suspension`: Suspension of the micromobility vihicle
+-`suspension::Suspension`: Suspension of the micromobility vehicle
 """
 function suspensionkinematics!(suspension::Suspension)
     suspensionkinematicsNEUTRAL!(suspension)

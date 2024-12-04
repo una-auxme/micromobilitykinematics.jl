@@ -1,27 +1,27 @@
 """
-    steering_objective(angleConfig::Tuple{T,T}, measurments::Measurements, steering::Steering, suspension::Suspension)
+    steering_objective(angleConfig::Tuple{T,T}, measurements::Measurements, steering::Steering, suspension::Suspension)
 
     Calculates the distance between the optimum point of intersection of the wheel axis (normally on the rear wheel axis) and the current point of intersection of the axis.
 
     #Arguments
-    -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+    -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
-    -`measurments::Measurements`: Instance of a specific all relevant Measurements of the vehicle
+    -`measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
     -`steering::Steering`: Instance of a specific steering
     -`suspension::Suspension`: Instance of a specific suspension
 
     #Returns
     - Distance between optimal and current intersection point
 """
-function steering_objective(angleConfig::Tuple{T,T},chassi::Chassi, steering::Steering, suspension::Suspension) where {T<:Any}
+function steering_objective(angleConfig::Tuple{T,T},chassis::Chassis, steering::Steering, suspension::Suspension) where {T<:Any}
     println("Thread $(Threads.threadid()):> objective")
     # calculate the kinematics in respect of the given angles
     #println("$(steering.rotational_component.x_rotational_radius), $(steering.rotational_component.z_rotational_radius), $(steering.track_lever.length), $(steering.tie_rod.length)\n  ")
     update!(angleConfig, steering, suspension)
 
-    # unpack important measurments
-    measurements = Measurements(chassi, steering)
+    # unpack important measurements
+    measurements = Measurements(chassis, steering)
     wheel_base = measurements.wheel_base
     track_width = measurements.track_width
 
@@ -71,10 +71,10 @@ The wrapper function of the steering_objective procedure is employed for the pur
 
 
 #Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
     -`θx`: Angle of rotation of the rotation component around the x-axis
     -`θz`: Angle of rotation of the rotation component around the z-axis
--`measurments::Measurements`: Instance of a specific all relevant Measurements of the vehicle
+-`measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
 -`steering::Steering`: Instance of a specific steering
 -`suspension::Suspension`: Instance of a specific suspension
 
@@ -87,9 +87,9 @@ function objective°(θx, θz, x_rotational_radius, z_rotational_radius, track_l
     # Supsystems
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     suspension = Suspension(30.0)
-    chassi = Chassi()
+    chassis = Chassis()
     # Calculation of objective function 
-    return steering_objective((θx,θz),chassi,steering,suspension)
+    return steering_objective((θx,θz),chassis,steering,suspension)
 
 end
 

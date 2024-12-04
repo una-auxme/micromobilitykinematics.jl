@@ -15,7 +15,7 @@ function calc_basis_vectors(v)
 
     z = v / norm(v)
     x = cross(z,[0, 0, 1])
-    #Nullvektor überpfrüfung
+    #Nullvektor Überprüfung
     if norm(x) < 1e-10
         x = cross(v, [0, 1, 0])
     end

@@ -4,15 +4,15 @@
 For the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated until `track_lever_mounting_points_ucs` 
 ! function°(): symbolises that this function should only be used within the optimisation !
 
-#Arguemnts
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+#Arguments
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering
 -`suspension::Suspension`: Instance of a specific suspension
 
 #Returns:
-- no returns becouse of in place programming
+- No return value due to in-place computation.
 """
 function kinematicsUNTILmountMOVED°!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
 
@@ -114,11 +114,11 @@ end
 For the rotation component with the neutral position, the steering kinematics are calculated until 'track_lever_mounting_points_ucs'. 
 ! function°(): symbolises that this function should only be used within the optimisation !
 
-#Arguemnts
+#Arguments
 -`steering::Steering`: Instance of a specific steering 
 
 #Returns:
-- no returns becouse of in place programming
+- No return value due to in-place computation.
 """
 function kinematicsUNTILmountNEUTRAL°!(steering::Steering)
 
@@ -159,15 +159,15 @@ end
 For the moving rotation component with the angles (θx, θz) and the neutral position of the rotation component, the steering kinematics are calculated until `track_lever_mounting_points_ucs`.    
     ! function°(): symbolises that this function should only be used within the optimisation !
 
-#Arguemnts
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+#Arguments
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering 
 -`suspension::Suspension`: Instance of a specific suspension
 
 #Returns:
-- no returns becouse of in place programming
+- No return value due to in-place computation.
 """
 function kinematicsUNTILmount°!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
     kinematicsUNTILmountMOVED°!(angleConfig, steering, suspension)
@@ -181,8 +181,8 @@ end
 For the moving rotation component with the angles (θx, θz) and the neutral position of the rotation component, the steering kinematics are calculated until `track_lever_mounting_points_ucs`.    
 ! function°(): symbolises that this function should only be used within the optimisation !
 
-#Arguemnts
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+#Arguments
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering 
@@ -205,11 +205,11 @@ For the moving rotational component with angles (θx, θz) and the neutral posit
 ! function°(): symbolises that this function should only be used within the optimisation !
 ! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
 
-#Arguemnts
+#Arguments
 -`steering::Steering`: Instance of a specific steering where the function was previously called
 
 #Returns:
-- no returns becouse of in place programming
+- No return value due to in-place computation.
 """
 function kinematicsASOFmountMOVED°!(steering::Steering)
 
@@ -249,11 +249,11 @@ for the moving rotational component with the angles (θx, θz), the kinematics o
 ! function°(): symbolises that this function should only be used within the optimisation !
 ! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
 
-#Arguemnts
+#Arguments
 -`steering::Steering`: Instance of a specific steering where the function `kinematicsUNTILmount°!` was previously called
 
 #Returns:
-- no returns becouse of in place programming
+- No return value due to in-place computation.
 """
 function kinematicsASOFmountNEUTRAL°!(steering::Steering)
 
@@ -294,11 +294,11 @@ For the moving rotational component with angles (θx, θz) and the neutral posit
 ! function°(): symbolises that this function should only be used within the optimisation !
 ! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
 
-#Arguemnts
+#Arguments
 -`steering::Steering`: Instance of a specific steering where the function `kinematicsUNTILmount°!` was previously called
 
 #Returns:
-- no returns becouse of in place programming
+- No return value due to in-place computation.
 """
 function kinematicsASOFmount°!(steering::Steering)
     kinematicsASOFmountMOVED°!(steering)
@@ -315,11 +315,11 @@ end
 ! function°(): symbolises that this function should only be used within the optimisation !
 ! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
 
-#Arguemnts
+#Arguments
 -`steering::Steering`: Instance of a specific steering where the function `kinematicsUNTILmount°!` was previously called
 
 #Returns:
-- no returns becouse of in place programming
+- No return value due to in-place computation.
 """
 function update°!(steering::Steering)
     kinematicsASOFmount°!(steering)

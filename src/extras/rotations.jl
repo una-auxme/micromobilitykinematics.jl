@@ -1,7 +1,7 @@
 """
     rotate3(A,n,alpha,shift=[0;0;0])
 
-calculates the Rotation matirx RM an rotation point R.
+calculates the Rotation matrix RM an rotation point R.
 
 #Arguments
 - `A`: Point to be rotated
@@ -89,7 +89,7 @@ calculates the Euler angles of rotation
 - `u2`: base vector Coordinate System 2
 - `v2`: base vector Coordinate System 2
 - `w2`: base vector Coordinate System 2
-- `sequence`: vector as a sequencs of (x,y,z) to be rotated from System 1 to System 2
+- `sequence`: vector as a sequence of (x,y,z) to be rotated from System 1 to System 2
 
 
 # Returns
@@ -126,9 +126,9 @@ function EulerRotationAngles(u1,v1,w1,u2,v2,w2; konvention = "z-y-x")
             dot(w1, u2) dot(w1, v2) dot(w1, w2)])
 
     if konvention == "z-y-x" 
-        θ = rad2deg(-asin(R[1,3]))  #um y-Achse
-        ϕ = rad2deg(asin((R[2,3])/(cos(-asin(R[1,3]))))) #um x-Achse
-        ψ = rad2deg(asin((R[1,2])/(cos(-asin(R[1,3]))))) #um z-Achse
+        θ = rad2deg(-asin(R[1,3]))  #around y-Achse
+        ϕ = rad2deg(asin((R[2,3])/(cos(-asin(R[1,3]))))) #around x-Achse
+        ψ = rad2deg(asin((R[1,2])/(cos(-asin(R[1,3]))))) #around z-Achse
     end
 
 return ψ, θ, ϕ

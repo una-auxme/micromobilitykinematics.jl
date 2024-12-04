@@ -16,7 +16,7 @@ makedocs(
             "Overview" => "index.md",
             "Examples" => Any[
                             "Changing steering position" => "Examples/changing_steering_position.md",
-                            "Optimising the steering" => "Examples/optimising_the_steering.md",
+                            "Optimizing the steering" => "Examples/optimizing_the_steering.md",
                             ],
 
             "Function Library" => "library.md"

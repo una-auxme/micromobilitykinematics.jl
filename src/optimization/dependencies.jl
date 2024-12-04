@@ -1,7 +1,7 @@
 """
-angleDependence(steering::Steering)
+AngleDependency(steering::Steering)
 
-checks angle dependence
+checks angle dependency
 
 #Arguments 
 - `steering::Steering`: Instance of a specific steering
@@ -9,10 +9,10 @@ checks angle dependence
 #Returns:
 -`::Bool`
 """
-function AngleDependence(arge...)
+function AngleDependency(arge...)
     try
-        if !(angle_dependence(arge...) > 0)
-            error("dependence violation:    steering angle ")
+        if !(angle_dependency(arge...) > 0)
+            error("dependency violation:    steering angle ")
         end
     catch err
         #println(stacktrace(err))
@@ -22,30 +22,30 @@ function AngleDependence(arge...)
 end 
 
 """
-    KinematicDependence(steering::Steering)
+    KinematicDependency(steering::Steering)
 
-checks kinematic dependence
+checks kinematic dependency
 
 #Arguments
--`steering::Steering`: Instance of a specific steerin
+-`steering::Steering`: Instance of a specific steering
 
 #Returns:
 -`::Bool`
 """
-function KinematicDependence(arge...)
+function KinematicDependency(arge...)
     try
-        if !(left_circsphere_plane_dependence(arge...)  <= 0)
-            error("dependence violation:    no kinematic connection between circsphere and plane ")       
-        elseif !(right_circsphere_plane_dependence(arge...) <= 0)
-            error("dependence violation:    no kinematic connection between circsphere and plan")
-        elseif !(left_circcirc_min_intersec_dependence(arge...) <= 0)
-            error("dependence violation:    no kinematic connection between circ and circ -> Component to short")
-        elseif !(right_circcirc_min_intersec_dependence(arge...) <= 0)
-            error("dependence violation:    no kinematic connection between circ and circ -> Component to short")
-        elseif !(left_circcirc_max_intersec_dependence(arge...) <= 0)
-            error("dependence violation:    no kinematic connection between circ and circ -> Component to long")
-        elseif !(right_circcirc_max_intersec_dependence(arge...) <= 0)
-            error("dependence violation:    no kinematic connection between circ and circ -> Component to long")
+        if !(left_circsphere_plane_dependency(arge...)  <= 0)
+            error("dependency violation:    no kinematic connection between circsphere and plane ")       
+        elseif !(right_circsphere_plane_dependency(arge...) <= 0)
+            error("dependency violation:    no kinematic connection between circsphere and plan")
+        elseif !(left_circcirc_min_intersec_dependency(arge...) <= 0)
+            error("dependency violation:    no kinematic connection between circ and circ -> Component to short")
+        elseif !(right_circcirc_min_intersec_dependency(arge...) <= 0)
+            error("dependency violation:    no kinematic connection between circ and circ -> Component to short")
+        elseif !(left_circcirc_max_intersec_dependency(arge...) <= 0)
+            error("dependency violation:    no kinematic connection between circ and circ -> Component to long")
+        elseif !(right_circcirc_max_intersec_dependency(arge...) <= 0)
+            error("dependency violation:    no kinematic connection between circ and circ -> Component to long")
         end
     catch err
         #println(err)
@@ -69,10 +69,10 @@ checks singularity constraints
 """
 function SingularityConstraint(arge...)
     try 
-        if !(outer_sigularity_constraint(arge...) < 0)
-            error("constraint violation:    parameters stept over singularitay ") 
-        elseif !(inner_sigularity_constraint(arge...) < 0)
-            error("constraint violation:    parameters stept over singularitay ") 
+        if !(outer_singularity_constraint(arge...) < 0)
+            error("constraint violation:    parameters stepped over singularitay ") 
+        elseif !(inner_singularity_constraint(arge...) < 0)
+            error("constraint violation:    parameters stepped over singularitay ") 
         end
     catch err
         #println(stacktrace(err))
@@ -82,21 +82,21 @@ function SingularityConstraint(arge...)
 end
 
 """
-    TrackingcircleConstraint(steering::Steering, measurments::Measurements)
+    TrackingcircleConstraint(steering::Steering, measurements::Measurements)
 
     checks tracking circle constraint
 
 #Arguments
 -`steering::Steering`: Instance of a specific steering
--`measurments::Measurements`: Instance of a specific all relevant Measurements of the vehicle
+-`measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
     
 #Returns:
 -`::Bool`
 """
 function TrackingCircleConstraint(arge...)
     try 
-        if !(track_circle_dependence(arge...) >= 0)
-            error("tracking circle dependence violation:    vehicle coundn't drive min tracking circle ") 
+        if !(track_circle_Dependency(arge...) >= 0)
+            error("tracking circle dependency violation:    vehicle couldn't drive min tracking circle ") 
         end
     catch err
         #println(stacktrace(err))
@@ -108,11 +108,11 @@ end
 """
 checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension)
 
-    checks  all constraints and dependences
+    checks  all constraints and dependencies
 
 #Arguments 
 -`step_size`: step_size in which the angular area should be checked
--`maxangleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+-`maxangleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: maximal Angle of rotation of the rotation component around the x-axis
         -`θz`: maximal Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering
@@ -136,11 +136,11 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         steerings = [kinematicsUNTILmount°(θ_tuple, steering, suspension) for θ_tuple in θ_tuples]
         # checks if steering.sphere_joints is calculable (intersection is posible)
         for steering in steerings
-            push!(kin_Bool, KinematicDependence(steering))
+            push!(kin_Bool, KinematicDependency(steering))
         end
 
         if nothing !== findfirst(x -> x ==false, kin_Bool)
-            error("Thread $(Threads.threadid()):> kinematic dempendence couldn't be matched by parameters ")
+            error("Thread $(Threads.threadid()):> kinematic dependency couldn't be matched by parameters ")
         end
 
 
@@ -155,11 +155,11 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
 
         # calculation of complete kinematics necessary (steering.sphere_joints)
         for steering in steerings
-            #for (θx,θz) = (0,0) AngleDependence and SingularityConstraintis not expressive
+            #for (θx,θz) = (0,0) AngleDependency and SingularityConstraintis not expressive
             if steering.θx == 0 && steering.θz == 0 
                 continue
             end
-            push!(angle_Bool, AngleDependence(steering))
+            push!(angle_Bool, AngleDependency(steering))
 
             # for (θx,θz) = (n,θz_max) SingularityConstraint checks out of bounds
             if steering.θz == θz_max
@@ -172,11 +172,11 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         end
 
         # Is the turning circle maintained in the planar plane?
-        measurments = Measurements(Chassi(),steerings[1, end])
-        push!(track_Bool, TrackingCircleConstraint(steerings[1, end], measurments))
+        measurements = Measurements(Chassi(),steerings[1, end])
+        push!(track_Bool, TrackingCircleConstraint(steerings[1, end], measurements))
 
         if nothing !== findfirst(x -> x ==false, angle_Bool)
-            error("Thread $(Threads.threadid()):> angle dempendence couldn't be matched by parameters ")
+            error("Thread $(Threads.threadid()):> angle dependency couldn't be matched by parameters ")
           elseif nothing !== findfirst(x -> x ==false, sin_Bool)
             error("Thread $(Threads.threadid()):> singularity constraint couldn't be matched by parameters ")
           elseif nothing !== findfirst(x -> x ==false, track_Bool)
@@ -230,13 +230,13 @@ end
 
 
 """
-    random_search(upper_bourder::Tuple{Float64, Float64, Float64, Float64},lower_bourder::Tuple{Float64, Float64, Float64, Float64},max_angleConfig; info = false, radius = 3500, step_size = 1 )
+    random_search(upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},max_angleConfig; info = false, radius = 3500, step_size = 1 )
 
-random search with given bourder for the parameters and given angular area for rotary component 
+random search with given border for the parameters and given angular area for rotary component 
 
 #Arguments:
--`upper_bourder::Tuple{Float64, Float64, Float64, Float64}`: upper bourder Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
--`lower_bourder::Tuple{Float64, Float64, Float64, Float64}`: lower bourder Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
+-`upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
+-`lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
 -`max_angleConfig`: maximal angular area for rotary component (defult: (0,35))
 
 #Keywords:
@@ -248,17 +248,17 @@ random search with given bourder for the parameters and given angular area for r
 #Returns:
 -`compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
 """
-function random_search(upper_bourder::Tuple{T,T,T,T},lower_bourder::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I} ; info = false, step_size = 1 ) where {T<:Real, I<:Integer}
+function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I} ; info = false, step_size = 1 ) where {T<:Real, I<:Integer}
     param = nothing
     valid_param = false
 
     i = 0
     while !valid_param
-        param = [rand(l:u) for (l,u) in zip(lower_bourder, upper_bourder)]
+        param = [rand(l:u) for (l,u) in zip(lower_border, upper_border)]
 
         if info 
-            println("Thread $(Threads.threadid()):> Ramdom Search Iteration $i") 
-            println("Thread $(Threads.threadid()):> Parmeters: $param \n")
+            println("Thread $(Threads.threadid()):> Random Search Iteration $i") 
+            println("Thread $(Threads.threadid()):> Parameters: $param \n")
         end
 
         suspension = Suspension(30)

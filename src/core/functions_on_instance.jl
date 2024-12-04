@@ -62,13 +62,13 @@ end
     angle_δo!(steering::Steering)
     
 calculates the outer steering angle of the wheel
-!only posible after using function kinematics!
+!only possible after using function kinematics!
 
 #Arguments
 -`steering::Steering`: Instance of a specific steering
 
 #Returns:
-- no returns becouse of in place programming
+- no returns because of in place programming
 
     
 """
@@ -81,7 +81,7 @@ end
     angle_δo(steering::Steering)
     
 calculates the outer steering angle of the wheel
-!only posible after using function kinematics!
+!only possible after using function kinematics!
 
 #Arguments
 -`steering::Steering`: Instance of a specific steering
@@ -108,13 +108,13 @@ end
     angle_δi!(steering::Steering)
 
 calculates the inner steering angle of the wheel
-!only posible after using function kinematics!
+!only possible after using function kinematics!
 
 #Arguments
 -`steering::Steering`: Instance of a specific steering
 
 #Returns:
-- no returns becouse of in place programming
+- no returns because of in place programming
     
 """
 function angle_δi!(steering::Steering)
@@ -127,7 +127,7 @@ end
     angle_δi(steering::Steering)
 
 calculates the inner steering angle of the wheel
-!only posible after using function kinematics!
+!only possible after using function kinematics!
 
 #Arguments
 -`steering::Steering`: Instance of a specific steering
@@ -153,15 +153,15 @@ end
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
-#Arguemnts
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+#Arguments
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering
 -`suspension::Suspension`: Instance of a specific suspension
 
 #Returns:
-- no returns becouse of in place programming
+- no returns because of in place programming
 """
 function update!(args...)
     steeringkinematicsNEUTRAL!(args...)
@@ -176,8 +176,8 @@ end
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
-#Arguemnts
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component ist rotated
+#Arguments
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering
@@ -198,7 +198,7 @@ end
 
 Returns important length values of steering components
 
-#Arguemnts
+#Arguments
 -`steering::Steering`:  Instance of a specific steering
 
 #Returns

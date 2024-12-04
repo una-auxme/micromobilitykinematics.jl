@@ -1,7 +1,7 @@
 """
     create_sphere_model(θ::Tuple{T,T})
 
-    creats model for optimization with sphere dependences
+    creates model for optimization with sphere dependencies
 
     #Arguments
     -`θ::Tuple{T,T}`: tuple of Angles (θx, θz)
@@ -67,8 +67,8 @@ end
 #Arguments:
 -`model`: jump model
 
-#Reruns:
--`objectiv`: value of the final objectiv
+#Returns:
+-`objectiv`: value of the final objective
 """
 function get_model_solution(model)
     x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length, ~ = all_variables(model)
@@ -81,14 +81,14 @@ end
 
 
 """
-    optim(θ::Tuple{T,T},upper_bourder::Tuple{Float64, Float64, Float64, Float64},lower_bourder::Tuple{Float64, Float64, Float64, Float64},max_angleConfig)
+    optim(θ::Tuple{T,T},upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},max_angleConfig)
 
 
 #Arguments:
 -`θ::Tuple{T,T}`: angle pair to be considered
--`upper_bourder::Tuple{Float64, Float64, Float64, Float64}`: upper bourder Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
--`lower_bourder::Tuple{Float64, Float64, Float64, Float64}`: lower bourder Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
--`max_angleConfig`: maximal angular area for rotary component (defult: (0,35))
+-`upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
+-`lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
+-`max_angleConfig`: maximal angular area for rotary component (default: (0,35))
 
 #Keywords
 -`param::Tuple{I,I,I,I}`: If necessary, the components can be initialised individually, otherwise the values are randomised by the function that was checked for kinematic conditions.
@@ -126,7 +126,7 @@ end
 
 
 """
-    n_times_parallel_optim(num::Int64, θ::Tuple{T,T},upper_bourder::Tuple{Float64, Float64, Float64, Float64},lower_bourder::Tuple{Float64, Float64, Float64, Float64},max_angleConfig)
+    n_times_parallel_optim(num::Int64, θ::Tuple{T,T},upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},max_angleConfig)
 
     Executes an optimisation 'n' times in parallel using threads.
 
@@ -134,11 +134,11 @@ end
 
 #Arguments:
 -`θ::Tuple{T,T}`: angle pair to be considered
--`upper_bourder::Tuple{Float64, Float64, Float64, Float64}`: upper bourder Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
--`lower_bourder::Tuple{Float64, Float64, Float64, Float64}`: lower bourder Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
--`max_angleConfig`: maximal angular area for rotary component (defult: (0,35))
+-`upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
+-`lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
+-`max_angleConfig`: maximal angular area for rotary component (default: (0,35))
 
-#Rerturns:
+#Returns:
 -`sol_dict`: Dict which contains the optimal solutions.
 
 
@@ -151,7 +151,7 @@ function optim_series(num::Int64,args...)
         success = false
         while !success
             try
-                # Find initial values that fulfil all dependences
+                # Find initial values that fulfil all dependencies
                 optda = optim(args...)
                 # status check 
                 if (optda.status != MOI.OPTIMAL &&
@@ -180,15 +180,15 @@ end
 
 
 """
-    grid_optim(upper_bourder::Tuple{Float64, Float64, Float64, Float64},lower_bourder::Tuple{Float64, Float64, Float64, Float64}, max_angleConfig::Tuple{I,I}) where {I::Int64}
+    grid_optim(upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64}, max_angleConfig::Tuple{I,I}) where {I::Int64}
 
 
 
 """
-function grid_optim(upper_bourder::Tuple{T, T, T, T},lower_bourder::Tuple{T, T, T, T}, max_angleConfig) where {T<:Number}
+function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T, T}, max_angleConfig) where {T<:Number}
     θx_max , θz_max = max_angleConfig
     step_size = 1
-    #initialisieren aller Winkelmäglichkeiten
+    #initialisieren aller Winkelmöglichkeiten
     θ_tuple = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
 
     ######## starting Optimization #########
@@ -200,7 +200,7 @@ function grid_optim(upper_bourder::Tuple{T, T, T, T},lower_bourder::Tuple{T, T, 
         for θ in θ_tuple[i,:] 
             if θ != (0,0)
                 θx,θz = θ
-                opt_series = optim_series(5,θ,upper_bourder,lower_bourder,max_angleConfig)
+                opt_series = optim_series(5,θ,upper_border,lower_border,max_angleConfig)
                 pathTOdata = joinpath(path_data,"opt_series($(θx),$(θz)).jld2")
                 @save pathTOdata opt_series
 

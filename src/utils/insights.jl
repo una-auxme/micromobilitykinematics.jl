@@ -42,12 +42,12 @@ end
 
 
 """
-    gird_data_obj(θ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassi; step_size = 1) where {I <: Any}
+    grid_data_obj(θ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassis; step_size = 1) where {I <: Any}
 
 calculates the objective of the given 
 
 """
-function gird_data_obj(θ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassi; step_size = 1) where {I <: Any}
+function grid_data_obj(θ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassis; step_size = 1) where {I <: Any}
     θx_max, θz_max = θ_max
     
     
@@ -68,7 +68,7 @@ end
 
 
 """
-    gird_data_δ(θ_max::Tuple{I,I}, steering::Steering; step_size = 1) where {I <: Any}
+    grid_data_δ(θ_max::Tuple{I,I}, steering::Steering; step_size = 1) where {I <: Any}
 
 Calculates the turning angles of the vehicle for each turning angles of the rotation component (θx, θz) of the steering system.
 
@@ -84,7 +84,7 @@ Calculates the turning angles of the vehicle for each turning angles of the rota
 
 
 """
-function gird_data_δ(θ_max::Tuple{I,I}, steering::Steering; step_size = 1) where {I <: Any}
+function grid_data_δ(θ_max::Tuple{I,I}, steering::Steering; step_size = 1) where {I <: Any}
     θx_max, θz_max = θ_max
     
     
@@ -127,7 +127,7 @@ function plot_optda_series(optda_dict::Dict{Int64,Any})
 
     # 
     println(keys)
-    plt_param = Plots.plot(title = "components lenghts ", xlabel = "set ID", ylabel = "[mm]", legend = true, background_color_legend = RGBA(255,255,255, .01))
+    plt_param = Plots.plot(title = "components lengths ", xlabel = "set ID", ylabel = "[mm]", legend = true, background_color_legend = RGBA(255,255,255, .01))
     plt_objective = Plots.plot(title = "objective", xlabel = "set ID", ylabel = "[mm]", legend = true, background_color_legend = RGBA(255,255,255, .01))  
     plt_δo = Plots.plot(title = "turning angle", xlabel = "set ID", ylabel = "[°]", legend = true, background_color_legend = RGBA(255,255,255, .01))
 
@@ -146,7 +146,7 @@ end
 
 
 """
-    plot_optda_gird_obj(θ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassi) where {I <: Any}
+    plot_optda_gird_obj(θ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassis) where {I <: Any}
 
 Create a plot in which the objective (Ackermann ratio) are mapped to the turning angles of the rotation component (θx, θz) of the steering system.   
 
@@ -154,7 +154,7 @@ Create a plot in which the objective (Ackermann ratio) are mapped to the turning
 -`θ_max::Tuple{I,I}`: maximal turning angles of the rotation component
 -`steering::Steering`: Instance of a specific steering mechanism in which the kinematics were previously calculated.
 -`suspension::Suspension`: Instance of a specific suspension in which the kinematics were previously calculated.
--`chassi::Chassi`: Instance of a Chassi
+-`chassi::Chassis`: Instance of a Chassis
 
 #Returns
 
@@ -164,7 +164,7 @@ function plot_optda_gird_obj(args...)
     θx = 0:1:θx_max
     θz = 0:1:θz_max
 
-    objective = gird_data_obj(args...)
+    objective = grid_data_obj(args...)
 
     sur_obj = PlotlyJS.surface(;x=θx, y=θz, z=objective)
     #title="Lenkabweichung in Abhängigkeit der Stellwinkel (θx, θz) der Rotationskomponente der Lenkgeometrie"
@@ -202,7 +202,7 @@ function plot_optda_gird_δ(args...)
     θz = 0:1:θz_max
 
 
-    δi, δo  = gird_data_δ(args...)
+    δi, δo  = grid_data_δ(args...)
 
     sur_δi = PlotlyJS.surface(;x=θx, y=θz, z=δi)
     sur_δo = PlotlyJS.surface(;x=θx, y=θz, z=δo)
