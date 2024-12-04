@@ -172,7 +172,7 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         end
 
         # Is the turning circle maintained in the planar plane?
-        measurements = Measurements(Chassi(),steerings[1, end])
+        measurements = Measurements(Chassis(),steerings[1, end])
         push!(track_Bool, TrackingCircleConstraint(steerings[1, end], measurements))
 
         if nothing !== findfirst(x -> x ==false, angle_Bool)
