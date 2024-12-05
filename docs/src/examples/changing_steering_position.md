@@ -37,7 +37,7 @@ compression = 30 # neutral damper positioning
 suspension = Suspension(compression)
 ```
 
-### Chassi
+### Chassis
 The chassis class includes the fundamental dimensions of the vehicle's chassis. These parameters are instrumental in calculating kinematic variables.
 ```julia
 # Initialisation of the Chassi
@@ -45,7 +45,7 @@ chassi = Chassi()
 ```
 
 ## 2. Calculation of the kinematics
-Once the individual components have been initialised, the steering geometry can be calculated depending on a steering setting     `angelConfig`. However, prior to this, the kinematics of the suspension must be calculated, as this has a direct influence on the subsequent calculation by changing the positions of the wishbones.
+Once the individual components have been initialised, the steering geometry can be calculated depending on a steering setting `angelConfig`. However, prior to this, the kinematics of the suspension must be calculated, as this has a direct influence on the subsequent calculation by changing the positions of the wishbones.
 
 
 ```julia

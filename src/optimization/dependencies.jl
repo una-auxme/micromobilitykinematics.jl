@@ -38,13 +38,13 @@ function KinematicDependency(arge...)
             error("dependency violation:    no kinematic connection between circsphere and plane ")       
         elseif !(right_circsphere_plane_dependency(arge...) <= 0)
             error("dependency violation:    no kinematic connection between circsphere and plan")
-        elseif !(left_circcirc_min_intersec_dependency(arge...) <= 0)
+        elseif !(left_circcirc_min_intersection_dependency(arge...) <= 0)
             error("dependency violation:    no kinematic connection between circ and circ -> Component to short")
-        elseif !(right_circcirc_min_intersec_dependency(arge...) <= 0)
+        elseif !(right_circcirc_min_intersection_dependency(arge...) <= 0)
             error("dependency violation:    no kinematic connection between circ and circ -> Component to short")
-        elseif !(left_circcirc_max_intersec_dependency(arge...) <= 0)
+        elseif !(left_circcirc_max_intersection_dependency(arge...) <= 0)
             error("dependency violation:    no kinematic connection between circ and circ -> Component to long")
-        elseif !(right_circcirc_max_intersec_dependency(arge...) <= 0)
+        elseif !(right_circcirc_max_intersection_dependency(arge...) <= 0)
             error("dependency violation:    no kinematic connection between circ and circ -> Component to long")
         end
     catch err
@@ -95,7 +95,7 @@ end
 """
 function TrackingCircleConstraint(arge...)
     try 
-        if !(track_circle_Dependency(arge...) >= 0)
+        if !(track_circle_dependency(arge...) >= 0)
             error("tracking circle dependency violation:    vehicle couldn't drive min tracking circle ") 
         end
     catch err
