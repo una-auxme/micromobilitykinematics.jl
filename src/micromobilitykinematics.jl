@@ -1,8 +1,6 @@
 module micromobilitykinematic
     using Documenter    
     using LinearAlgebra
-    include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
-    using .GeoSpatialRelations
     using StaticArrays
     using DataFrames
     using JLD2
@@ -10,12 +8,14 @@ module micromobilitykinematic
     using Plots;gr()
     using PlotlyJS
     using LightXML
+    include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
+    #using .GeoSpatialRelations
 
     using JuMP
     using Ipopt
     using NLopt
 
-  
+    
     include("core/core.jl")
     include("core/suspensionkinematics.jl")
     include("core/steeringkinematics.jl")
