@@ -27,6 +27,8 @@ function get_insights(steering::Steering)
     return df
 end 
 
+
+
 function get_components_lengths(steering::Steering)
 
     x_rotational_radius = steering.rotational_component.x_rotational_radius

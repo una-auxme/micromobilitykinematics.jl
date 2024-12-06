@@ -249,7 +249,7 @@ end
 
 
 """
-    steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    steeringkinematics!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
 
@@ -269,7 +269,21 @@ function steeringkinematics!(args...)
     nothing
 end
 
+"""
+    steeringkinematics(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
+To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
+
+#Arguments
+-`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+        -`θx`: Angle of rotation of the rotation component around the x-axis
+        -`θz`: Angle of rotation of the rotation component around the z-axis
+-`steering::Steering`: Instance of a specific steering
+-`suspension::Suspension`: Instance of a specific suspension
+
+#Returns:
+- "steering::Steering": Instance of a steering
+"""
 function steeringkinematics(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
     cpy_steering = copy(steering)
     steeringkinematics!(angleConfig,steering,suspension)

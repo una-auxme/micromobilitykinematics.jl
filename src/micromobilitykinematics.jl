@@ -1,7 +1,8 @@
-#module micromobilitykinematic
+module micromobilitykinematic
     using Documenter    
     using LinearAlgebra
-    using GeoSpatialRelations
+    include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
+    using .GeoSpatialRelations
     using StaticArrays
     using DataFrames
     using JLD2
@@ -14,6 +15,7 @@
     using Ipopt
     using NLopt
 
+  
     include("core/core.jl")
     include("core/suspensionkinematics.jl")
     include("core/steeringkinematics.jl")
@@ -27,4 +29,4 @@
     include("utils/insights.jl")
     include("optimization/optim.jl")
     include("utils/insights.jl")    
-#end
+end

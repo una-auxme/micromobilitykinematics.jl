@@ -13,7 +13,7 @@ makedocs(
     checkdocs=:exports,
     linkcheck=true,
     pages = Any[
-            "Overview" => "index.md",
+            "Introduction" => "index.md",
             "Examples" => Any[
                             "Changing steering position" => "Examples/changing_steering_position.md",
                             "Optimizing the steering" => "Examples/optimizing_the_steering.md",
