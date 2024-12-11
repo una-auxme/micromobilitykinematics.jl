@@ -15,8 +15,8 @@ makedocs(
     pages = Any[
             "Introduction" => "index.md",
             "Examples" => Any[
-                            "Changing steering position" => "Examples/changing_steering_position.md",
-                            "Optimizing the steering" => "Examples/optimizing_the_steering.md",
+                            "Changing steering position" => joinpath("examples", "changing_steering_position.md"),
+                            "Optimizing the steering" => joinpath("examples", "optimizing_the_steering.md"),
                             ],
 
             "Function Library" => "library.md"
