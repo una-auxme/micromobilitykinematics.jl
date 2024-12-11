@@ -22,6 +22,8 @@ module micromobilitykinematics
     export angle_δi!, angle_δi, angle_δo!, angle_δo
     export random_search
 
+    export exportXML
+
     export optim_series, optim, grid_optim
     export checkConstraints, checkConstraints°, steering_objective, objective°
 

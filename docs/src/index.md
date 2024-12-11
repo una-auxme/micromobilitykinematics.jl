@@ -4,6 +4,10 @@ Introduction
 
 # micromobilitykinematics.jl
 
+| | |
+|---|---|
+| Documentation | [![Build Docs](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://thummeto.github.io/FMI.jl/dev/) |
+
 ## What is micromobilitykinematics.jl?
 The fundamental operations of the micromobilitykinematics.jl library serve as the foundation for kinematic calculations and updates to a self-developed steering geometry of a micromobility vehicle. 
 
@@ -16,12 +20,8 @@ Furthermore, the steering geometry can be modified by altering the parameter val
 Collectively, these tools provide a robust framework for analysing and simulating this mechanical system. 
 
 
-| | |
-|---|---|
-| Documentation | [![Build Docs](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://thummeto.github.io/FMI.jl/dev/) |
-|
 
-## How can I use micromobilitykinematics?
+## How can I use micromobilitykinematics.jl?
 The code presented here is intended for illustrative purposes only. The accompanying documentation provides illustrative examples of potential applications, which offer a more comprehensive understanding of the package's functionality.
 
 ```julia 
@@ -54,4 +54,7 @@ update!(new_angleConfig, steering, suspension)
 exportXML(steering)
 exportXML(suspension)
 ```
+
+## How is micromobilitykinematics.jl structured?
+
 
