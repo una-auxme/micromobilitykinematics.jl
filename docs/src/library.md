@@ -5,7 +5,7 @@ This section outlines the library's functions along with their doc strings, enab
 The User Level functions offer an intuitive interface tailored for non-expert users. These functions simplify complex kinematic computations and visualizations, making the library accessible for practical applications in micromobility design, simulation, and optimization. By organizing functions into categories such as core calculations, plotting, and data export, this section helps users quickly locate the tools they need.
 
 ### core functions
-The core functions in the FMI.jl library form the foundation for kinematic calculations and updates. They include functions for computing steering and suspension kinematics in both neutral and moved states. Additionally, the library provides angle_δi and angle_δo functions to calculate the steering angles of the inner and outer wheels, respectively. Together, these tools offer a robust framework for analyzing and simulating mechanical systems.
+The core functions in the micromobilitykinematics.jl library form the foundation for kinematic calculations and updates. They include functions for computing steering and suspension kinematics in both neutral and moved states. Additionally, the library provides angle_δi and angle_δo functions to calculate the steering angles of the inner and outer wheels, respectively. Together, these tools offer a robust framework for analyzing and simulating mechanical systems.
 
 ```@docs
 random_search
@@ -55,6 +55,6 @@ exportXML
 ## All Functions
 
 ```@autodocs
-Modules = [micromobilitykinematic]
+Modules = [micromobilitykinematics]
 
 ```
