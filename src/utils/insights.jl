@@ -49,7 +49,7 @@ end
 calculates the objective of the given 
 
 """
-function grid_data_obj(θ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassis; step_size = 1) where {I <: Any}
+function grid_data_obj(θ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension, chassi::Chassis; step_size = 1) 
     θx_max, θz_max = θ_max
     
     
@@ -86,7 +86,7 @@ Calculates the turning angles of the vehicle for each turning angles of the rota
 
 
 """
-function grid_data_δ(θ_max::Tuple{I,I}, steering::Steering; step_size = 1) where {I <: Any}
+function grid_data_δ(θ_max::Tuple{Any,Any}, steering::Steering; step_size = 1) 
     θx_max, θz_max = θ_max
     
     

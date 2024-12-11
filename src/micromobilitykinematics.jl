@@ -1,4 +1,4 @@
-module micromobilitykinematic
+module micromobilitykinematics
     using Documenter    
     using LinearAlgebra
     using StaticArrays
