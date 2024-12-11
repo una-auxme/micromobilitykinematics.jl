@@ -15,6 +15,18 @@ module micromobilitykinematics
     using Ipopt
     using NLopt
 
+
+    export steeringkinematics!, steeringkinematics, steeringkinematicsNEUTRAL!, steeringkinematicsMOVED!
+    export suspensionkinematics!, suspensionkinematicsNEUTRAL!, suspensionkinematicsMOVED!
+    export update!
+    export angle_δi!, angle_δi, angle_δo!, angle_δo
+    export random_search
+
+    export optim_series, optim, grid_optim
+    export checkConstraints, checkConstraints°, steering_objective, objective°
+
+    export plot_optda_series, plot_optda_gird_δ, plot_optda_gird_obj
+
     
     include("core/core.jl")
     include("core/suspensionkinematics.jl")
