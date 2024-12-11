@@ -43,4 +43,5 @@ module micromobilitykinematics
     include("utils/insights.jl")
     include("optimization/optim.jl")
     include("utils/insights.jl")    
+    include("utils/io.jl")
 end
