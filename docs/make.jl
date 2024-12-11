@@ -3,7 +3,7 @@ using Documenter, micromobilitykinematics
 using Documenter
 using Documenter: GitHubActions
 
-makedocs(
+makedocs(sidename="micromobilitykinematics.jl",
     format = Documenter.HTML(
         collapselevel = 1,
         sidebar_sitename = false,
