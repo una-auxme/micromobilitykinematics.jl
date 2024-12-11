@@ -9,7 +9,7 @@ module micromobilitykinematic
     using PlotlyJS
     using LightXML
     include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
-    #using .GeoSpatialRelations
+    using .GeoSpatialRelations
 
     using JuMP
     using Ipopt
