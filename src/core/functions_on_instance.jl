@@ -3,10 +3,10 @@
 
 creates a copy of the steering instance
 
-#Arguments:
+# Arguments:
 -`steering::Steering`: instance of a Steering
 
-#Returns:
+# Returns:
 -`copy::Steering`: copy of the given instance 
 
 """
@@ -64,10 +64,10 @@ end
 calculates the outer steering angle of the wheel
 !only possible after using function kinematics!
 
-#Arguments
+# Arguments
 -`steering::Steering`: Instance of a specific steering
 
-#Returns:
+# Returns:
 - no returns because of in place programming
 
     
@@ -83,10 +83,10 @@ end
 calculates the outer steering angle of the wheel
 !only possible after using function kinematics!
 
-#Arguments
+# Arguments
 -`steering::Steering`: Instance of a specific steering
 
-#Returns 
+# Returns 
 -`δ`: inner steering angle  of the wheel 
     
 """
@@ -110,10 +110,10 @@ end
 calculates the inner steering angle of the wheel
 !only possible after using function kinematics!
 
-#Arguments
+# Arguments
 -`steering::Steering`: Instance of a specific steering
 
-#Returns:
+# Returns:
 - no returns because of in place programming
     
 """
@@ -129,10 +129,10 @@ end
 calculates the inner steering angle of the wheel
 !only possible after using function kinematics!
 
-#Arguments
+# Arguments
 -`steering::Steering`: Instance of a specific steering
 
-#Returns 
+# Returns 
 -`δ`: inner steering angle  of the wheel 
     
 """
@@ -153,14 +153,14 @@ end
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
-#Arguments
+# Arguments
 -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering
 -`suspension::Suspension`: Instance of a specific suspension
 
-#Returns:
+# Returns:
 - no returns because of in place programming
 """
 function update!(args...)
@@ -176,14 +176,14 @@ end
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
-#Arguments
+# Arguments
 -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
 -`steering::Steering`: Instance of a specific steering
 -`suspension::Suspension`: Instance of a specific suspension
 
-#Returns
+# Returns
 -`steering::Steering`: Instance of a specific steering
 
 """
@@ -198,10 +198,10 @@ end
 
 Returns important length values of steering components
 
-#Arguments
+# Arguments
 -`steering::Steering`:  Instance of a specific steering
 
-#Returns
+# Returns
 -`(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)`: important length values of steering components 
 """
 function getValue(steering::Steering)    

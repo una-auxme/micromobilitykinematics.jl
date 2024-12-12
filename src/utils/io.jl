@@ -4,10 +4,10 @@
 
 All important steering/suspension kinematics parameters are transferred to an XML file.
 
-#Arguemnts
+# Arguemnts
 -`inst::Union{Steering, Suspension}`: Instance of a steering/suspension/... where the `kinematic!` function has already been used.
 
-#Keywords
+# Keywords
 -`path=@__DIR__ `: Path to the folder where the xml file will be saved.
 
 
@@ -49,7 +49,7 @@ end
 
 Tuples that exist in the core.jl module are transferred to the XML file.
 
-#Arguments 
+# Arguments 
 -`child::XMLElement`: Child to which the properties should be added in XML. 
 -`field::Symbol`: the current parameter of the instance being discussed 
 -`inst::Union{<:AbstractSteering,<:AbstractSuspension}`: instance that is viewed
@@ -105,7 +105,7 @@ end
 
 Vectors that exist in the core.jl module are transferred to the XML file.
 
-#Arguments 
+# Arguments 
 -`child::XMLElement`: Child to which the properties should be added in XML. 
 -`field::Symbol`: the current parameter of the instance being discussed 
 -`inst::Union{<:AbstractSteering,<:AbstractSuspension}`: instance that is viewed
@@ -158,7 +158,7 @@ end
 
 Single values that exist in the core.jl module are transferred to the XML file.
 
-#Arguments 
+# Arguments 
 -`child::XMLElement`: Child to which the properties should be added in XML. 
 -`field::Symbol`: the current parameter of the instance being discussed 
 -`inst::Union{<:AbstractSteering,<:AbstractSuspension}`: instance that is viewed
@@ -213,7 +213,7 @@ end
 
 The inheritance tree of the instance is followed until each parameter of the instance is included in the XML file, thus ensuring that all relevant information is conveyed within the file.
 
-#Arguments 
+# Arguments 
 -`child::XMLElement`: Child to which the properties should be added in XML. 
 -`inst::Union{<:AbstractSteering,<:AbstractSuspension}`: instance that is viewed
 """
@@ -240,11 +240,11 @@ end
 
     saves the current best objective of the optimaization
 
-#Arguments
+# Arguments
 -`steering::Steering`: Instance of a specific steering
 -`objective`: objective value of the current Iteration
 
-#Returns
+# Returns
 -`nothing`
 """
 function save_current_best_objective°(steering::Steering, objective::T) where {T<:Number}

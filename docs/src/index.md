@@ -1,5 +1,3 @@
-Introduction
-
 | | |
 |---|---|
 | Documentation | [![Build Docs](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://thummeto.github.io/FMI.jl/dev/) |

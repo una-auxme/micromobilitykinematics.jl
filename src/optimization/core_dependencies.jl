@@ -6,11 +6,11 @@ The result of the subtraction should always be negativ.
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 !marked with a  at the beginning !
-#Arguments
+# Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
 - `steering_next::Steering`: The state of the steering kinematics when the rotating part of the steering is rotated about θz+1.
 
-#Returns:
+# Returns:
 - Difference between the current outer turning angle of the wheel and the next step
 """
 function outer_singularity_constraint(steering_now::Steering, steering_next::Steering)
@@ -26,11 +26,11 @@ The result of the subtraction should always be negativ.
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 !marked with a  at the beginning !
-#Arguments
+# Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
 - `steering_next::Steering`: The state of the steering kinematics when the rotating part of the steering is rotated about θz+1.
 
-#Returns:
+# Returns:
 - Difference between the current inner turning angle of the wheel and the next step
 """
 function inner_singularity_constraint(steering_now::Steering, steering_next::Steering)
@@ -46,10 +46,10 @@ calculates the Difference of the front wheels steering angles.
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 !marked with a  at the beginning !
-#Arguments
+# Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
 
-#Returns
+# Returns
 - Difference between the current turning angles of the front wheels
 """
 function angle_dependency(steering_now::Steering)
@@ -65,10 +65,10 @@ of the tie rod. (Left side of the kinematik steering mechanism)
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 !marked with a  at the beginning !
-#Arguments
+# Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
 
-#Returns
+# Returns
 - dependency for the interaction between circle and sphere of the kinematic
 
 """
@@ -92,11 +92,11 @@ of the tie rod. (Right side of the kinematic steering mechanism)
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 !marked with a  at the beginning !
-#Arguments
+# Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
 
 
-#Returns
+# Returns
 - dependency for the interaction between circle and sphere of the kinematic
 
 """
@@ -119,10 +119,10 @@ If the value of d is bigger then the total length of both radii there is no inte
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 
-#Arguments
+# Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
 
-#Returns
+# Returns
 - dependency for the minimal interaction between circle and circle of the kinematic
 """
 
@@ -162,10 +162,10 @@ If the value of d is bigger then the total length of both radii there is no inte
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 
-#Arguments
+# Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
 
-#Returns
+# Returns
 - dependency for the minimal interaction between circle and circle of the kinematic
 """
 
@@ -203,10 +203,10 @@ If the value of the radius of circle2 is bigger then there is no intersect posib
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 
-#Arguments
+# Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
 
-#Returns
+# Returns
 - dependency for the maximal interaction between circle and circle of the kinematic
 """
 function left_circcirc_max_intersection_dependency(steering_now::Steering)
@@ -245,10 +245,10 @@ If the value of the radius of circle2 is bigger then there is no intersect posib
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 
-#Arguments
+# Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
 
-#Returns
+# Returns
 - dependency for the maximal interaction between circle and circle of the kinematic
 """
 function right_circcirc_max_intersection_dependency(steering_now::Steering)
@@ -284,11 +284,11 @@ calculates the diffrence of the max. ideal outer wheel angle and the current max
 
 !Instead of calling the kinematics in all conditions, the approach taken here is to use the properties of instantiation!
 
-#Arguments
+# Arguments
 - `steering::Steering`: the last state of the steering kinematics
 -`measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
 
-#Returns
+# Returns
 - dependency for the minimal track circle
 """
 function track_circle_dependency(steering::Steering, measurements::Measurements)

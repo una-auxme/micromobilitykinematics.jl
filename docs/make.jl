@@ -15,6 +15,11 @@ makedocs(sitename="micromobilitykinematics.jl",
     linkcheck=true,
     pages = [
             "Introduction" => "index.md",
+            "About the Vehicle" => [
+                                    "Steering geometry of the vehicle" => ["Kinematic of the steering geometry" => "kinematic.md",
+                                                                            "Optimisation problem of the steering geometry " => "optimisation_problem.md"],
+
+            ],
             "Examples" => [
                             "Changing steering position" => joinpath("examples", "changing_steering_position.md"),
                             "Optimizing the steering" => joinpath("examples", "optimizing_the_steering.md"),

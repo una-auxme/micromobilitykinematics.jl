@@ -3,7 +3,7 @@
 
 calculates the Rotation matrix RM an rotation point R.
 
-#Arguments
+# Arguments
 - `A`: Point to be rotated
 - `n`: vector around which to rotate
 - `alpha`: the angle to be rotated

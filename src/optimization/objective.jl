@@ -3,7 +3,7 @@
 
     Calculates the distance between the optimum point of intersection of the wheel axis (normally on the rear wheel axis) and the current point of intersection of the axis.
 
-    #Arguments
+    # Arguments
     -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
@@ -11,7 +11,7 @@
     -`steering::Steering`: Instance of a specific steering
     -`suspension::Suspension`: Instance of a specific suspension
 
-    #Returns
+    # Returns
     - Distance between optimal and current intersection point
 """
 function steering_objective(angleConfig::Tuple{T,T},chassis::Chassis, steering::Steering, suspension::Suspension) where {T<:Any}
@@ -70,7 +70,7 @@ The wrapper function of the steering_objective procedure is employed for the pur
 ! function°(): symbolises that this function should only be used within the optimisation !
 
 
-#Arguments
+# Arguments
 -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
     -`θx`: Angle of rotation of the rotation component around the x-axis
     -`θz`: Angle of rotation of the rotation component around the z-axis
@@ -78,7 +78,7 @@ The wrapper function of the steering_objective procedure is employed for the pur
 -`steering::Steering`: Instance of a specific steering
 -`suspension::Suspension`: Instance of a specific suspension
 
-#Returns
+# Returns
 - Distance between optimal and current intersection point
 
 """

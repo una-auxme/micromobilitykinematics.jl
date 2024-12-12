@@ -2,6 +2,8 @@
 ## 1. Initialisation
 The initial stage of the process is to initialise all of the requisite sub-subsystems of the vehicle that directly influence the behaviour of the steering mechanism. 
 
+> **Note:** The classes in this library are grouped according to the components used in a system, such as steering or suspension. The system class then contains important positions of the individual components, which in turn contain their dimensions.
+
 ### Steering
 
 The initial step is to commence the configuration of the steering geometry, which entails defining the dimensions of the constituent components. The dimensions exert a direct impact on the kinematic characteristics of the steering mechanism. To gain a more comprehensive grasp of the steering geometry, it is recommended to consult the accompanying documentation, which provides a comprehensive and detailed account of the subject matter.

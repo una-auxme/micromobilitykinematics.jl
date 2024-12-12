@@ -74,14 +74,14 @@ end
 
 Calculates the turning angles of the vehicle for each turning angles of the rotation component (θx, θz) of the steering system.
 
-#Arguments
+# Arguments
 -`θ_max::Tuple{I,I}`: maximal turning angles of the rotation component
 -`steering::Steering`: Instance of a specific steering mechanism in which the kinematics were previously calculated.
 
-#Keywords
+# Keywords
 -`step_size`: The step size of the grid
 
-#Retruns
+# Retruns
 -`δi, δo`: Tuple of turning angles Matrix 
 
 
@@ -152,13 +152,13 @@ end
 
 Create a plot in which the objective (Ackermann ratio) are mapped to the turning angles of the rotation component (θx, θz) of the steering system.   
 
-#Arguments
+# Arguments
 -`θ_max::Tuple{I,I}`: maximal turning angles of the rotation component
 -`steering::Steering`: Instance of a specific steering mechanism in which the kinematics were previously calculated.
 -`suspension::Suspension`: Instance of a specific suspension in which the kinematics were previously calculated.
 -`chassi::Chassis`: Instance of a Chassis
 
-#Returns
+# Returns
 
 """
 function plot_optda_gird_obj(args...)
@@ -190,11 +190,11 @@ end
     	
 Create a plot in which the turning angles of the vehicle are mapped to the turning angles of the rotation component (θx, θz) of the steering system.
 
-#Arguments
+# Arguments
 -`θ_max::Tuple{I,I}`: maximal turning angles of the rotation component
 -`steering::Steering`: Instance of a specific steering mechanism in which the kinematics were previously calculated.
 
-#Returns
+# Returns
 
 
 """
