@@ -15,11 +15,10 @@ makedocs(sitename="micromobilitykinematics.jl",
     linkcheck=true,
     pages = [
             "Introduction" => "index.md",
-            "Examples" => Any[
+            "Examples" => [
                             "Changing steering position" => joinpath("examples", "changing_steering_position.md"),
                             "Optimizing the steering" => joinpath("examples", "optimizing_the_steering.md"),
                             ],
-
             "Function Library" => "library.md"
     ]
 )
