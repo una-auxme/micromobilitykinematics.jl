@@ -33,4 +33,5 @@ function deployConfig()
     return GitHubActions(github_repository, github_event_name, github_ref)
 end
 
-deploydocs(repo = "github.com/adribrune/micromobilitykinematics.jl.git", devbranch = "main" , deploy_config = deployConfig())
+deploydocs(repo = "https://github.com/una-auxme/micromobilitykinematics.jl", devbranch = "main" , deploy_config = deployConfig())
+
