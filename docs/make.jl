@@ -3,6 +3,7 @@ using Documenter, micromobilitykinematics
 using Documenter
 using Documenter: GitHubActions
 
+
 makedocs(sitename="micromobilitykinematics.jl",
     format = Documenter.HTML(
         collapselevel = 1,
@@ -12,7 +13,7 @@ makedocs(sitename="micromobilitykinematics.jl",
      ),
     checkdocs=:exports,
     linkcheck=true,
-    pages = Any[
+    pages = [
             "Introduction" => "index.md",
             "Examples" => Any[
                             "Changing steering position" => joinpath("examples", "changing_steering_position.md"),
