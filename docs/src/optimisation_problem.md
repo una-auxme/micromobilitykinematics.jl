@@ -226,4 +226,4 @@ The preceding analysis pertains solely to the examination of a steering geometry
 
 All previous scenarios of this condition have been represented exclusively in two-dimensional space. Consequently, any differences in position and their effects on the movement of the angle must be subjected to analysis. In order to achieve this, the principal elements of the scenario depicted in Figure 3.14 are projected onto the y-z plane. As a result of the inclined plane of rotation of the steering lever, there is a height differential between the joints; however, this has no impact on the vectorial determination of the angle $δi$ and $δo$.
 
-![Figure 3.14: Projection of the main points of the scenario onto the y-z plane](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Projection_of_the_main_points_of_the_scenario_onto_the_y-z_plane.png)
+![Figure 3.14: Projection of the main points of the scenario onto the y-z plane](/src/assets/Projection_of_the_main_points_of_the_scenario_onto_the_y-z_plane.png)
