@@ -5,7 +5,7 @@
 | | |
 |---|---|
 |Documentation: |  [![Build Docs](https://github.com/una-auxme/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/una-auxme/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://una-auxme.github.io/micromobilitykinematics.jl/) |
-| Organisiation: | [![](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/149701353.png)](https://github.com/una-auxme) |
+| Organisiation: | [![](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/149701353_V2.png)](https://github.com/una-auxme) |
 
 
 ## What is micromobilitykinematics.jl?
