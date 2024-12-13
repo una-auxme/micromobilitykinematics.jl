@@ -1,14 +1,10 @@
 ![](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/A9vugjjp_s38grl_hy8.jpg)
 
-| | |
-|---|---|
-| Documentation | [![Build Docs](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://thummeto.github.io/FMI.jl/dev/) |
-
 # What is micromobilitykinematics.jl?
 The fundamental operations of the micromobilitykinematics.jl library serve as the foundation for kinematic calculations and updates to a self-developed steering geometry of a micromobility vehicle. 
 
 ### Core Function
-The functions include those for calculating the steering and suspension kinematics in both the neutral and moving state.All important information on the state of the vehicle at a specific steering setting can then be read from the instance. For example, the library offers the possibility to read the steering angles of the inner and outer wheels as well as important joint positions and dimensions of components. In addition, all attributes of the instance can be exported to an XML file. This facilitates, for example, the immediate transfer of the steering geometry to CAD programmes, which can be updated using the calculation.
+The functions include those for calculating the steering and suspension kinematics in both the neutral and moving state. All important information on the state of the vehicle at a specific steering setting can then be read from the instance. For example, the library offers the possibility to read the steering angles of the inner and outer wheels as well as important joint positions and dimensions of components. A portion of the pertinent data is illustrated in the above-labeled image of the steering geometry. In addition, all attributes of the instance can be exported to an XML file. This facilitates, for example, the immediate transfer of the steering geometry to CAD programmes, which can be updated using the calculation.
 
 ### Optimization
 Furthermore, the steering geometry can be modified by altering the parameter values in order to optimise it if necessary. The optimisation is primarily based on the JuMP.jl package and utilises the Ipopt algorithm. The accuracy of the steering, along with other pivotal properties, can be depicted in plots to illustrate the resulting characteristics. 
