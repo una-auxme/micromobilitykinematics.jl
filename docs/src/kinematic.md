@@ -12,38 +12,38 @@ The radius by which the rotational component can rotate around the x-axis lies i
 rest position along the z-axis and is shown in Figure 3.2 as a red continuous vector.
 As there is no further angle of rotation in the rest position and there is a direct dependence of the position of the radii exists, the radius of rotation is represented by a vector (blue continuous vector) parallel to the x-axis. The coordinates of the vectors can be defined as follows:
 
-$$
+```math
 \mathbf{r}_{1x} = \begin{pmatrix} 0 \\ 0 \\ -XSteeringRadius \end{pmatrix} \tag{3.1}
-$$
+```
 
-$$
+```math
 \mathbf{r}_{1z} = \begin{pmatrix} -ZSteeringRadius \\ 0 \\ 0 \end{pmatrix}
-$$
+```
 
 Taking into account the rotation around the vector $r^1_x$, the positioning of both joint centers of rotation $P_L$ and $P_R$ (yellow continuous vector) can be determined. By vector addition of the rotation vectors r1x, r1z and taking into accountthe component width b and the joint dimensions d (green continuous vector ) results in the following relationship:
 
 
-$$ 
+```math 
 
 p_1 = \mathbf{r_x} + \mathbf{r_z} + \begin{pmatrix} 0 \\ \pm(d + (b/2)) \\ 0 \end{pmatrix} 
 
-$$
+```
 
 
 ## Positioning with influence of the steering angle
 
 Using the reference values of the initial position, the same characteristic points of the rotational component can now be calculated as a function of the steering angle. The first step involves performing an elementary rotation around the x-axis of the coordinate system, with a predefined angle θx. To map the coordinates of a point in a rotated coordinate system, the elementary rotation matrix is applied to the vector:
 
-$$ 
+```math
 
 r^{(2)}_x = R_x(\theta_x) \cdot \mathbf{r}_x \tag{3.2}
 
-$$
+```
 
 The coordinates of the mapped vector represent a vector rotated by the angle θx in the original coordinate system.
 All other starting points of the steering system experience an additional rotational movement in which the component can rotate around the vector $r^2_x$. To describe this rotation, a further rotation matrix can be applied to the initial positions. This rotation is not described by an elementary rotation around one of the coordinate axes, but is based on the rotation around a position vector n positioned in space.
 
-$$
+```math
 
 R_n(\theta_x) =
 \begin{bmatrix}
@@ -52,17 +52,17 @@ n_2 \cdot n_1 \cdot (1 - \cos \theta_x) + n_3 \sin \theta_x & (n_2^2) \cdot (1 -
 n_3 \cdot n_1 \cdot (1 - \cos \theta_x) - n_2 \sin \theta_x & n_3 \cdot n_2 \cdot (1 - \cos \theta_x) + n_1 \sin \theta_x & (n_3^2) \cdot (1 - \cos \theta_x) + \cos \theta_x
 \end{bmatrix} \tag{3.3}
 
-$$
+```
 
  For the positioning of both joint pivot center point vectors $p^1$:
 
-$$
+```math
 r^{(2)}_x = R_x(\theta_x) \cdot r^{(1)}_x \tag{3.4}
-$$
+```
 
-$$ 
+```math
 p_2 = R_{r^{(2)}_x} (\theta_x) \cdot p_1
-$$
+```
 
 
 ## Determination of the joint center of rotation of the track lever
@@ -90,11 +90,11 @@ In order to calculate the requisite point, a reference coordinate system D-BKS i
 
 The centre of rotation of the steering lever is situated at a specific distance, designated as $|\mathbf{^Do_M}| = d$, along the z-axis of the D-BKS. It is possible to transform a vector represented in the D-BKS into the Q-BKS by applying the following rotation matrix:
 
-$$
+```math
 \mathbf{Q}_v = \mathbf{Q}_{\mathbf{R}\mathbf{D}} \cdot \mathbf{D}_v \tag{3.5}
-$$
+```
 
-$$
+```math
 =
 \begin{bmatrix}
 e_{D,x} \cdot e_{Q,x} & e_{D,y} \cdot e_{Q,x} & e_{D,z} \cdot e_{Q,x} \\
@@ -107,14 +107,14 @@ x_D \\
 y_D \\
 z_D \\
 \end{bmatrix} \tag{3.6}
-$$
+```
 
 The rotation matrix $\mathbf{^QR_D}$ is constituted by the scalar products of the base vectors of the reference coordinate systems, reflecting their relationship to each other. It is thus necessary to determine the basis vectors of the D-BKS. The connecting vector of the wishbone joint forms the z-axis and can be determined by a simple vector subtraction of the position vectors. The following therefore applies to the unit vector of the z-axis:
 
 
-$$
+```math
 e_{D,z} = \frac{\mathbf{^Qo_{G_1}} - \mathbf{^Qo_{G_2}}}{|\mathbf{^Qo_{G_1}} - \mathbf{^Qo_{G_2}}|} \tag{3.7}
-$$
+```
 
 The graphical correlation is shown in Figure 3.6.
 
@@ -122,22 +122,22 @@ The graphical correlation is shown in Figure 3.6.
 
 The remaining two base vectors of the coordinate system can be determined through the following procedure. For illustrative purposes, please direct your attention to Figure 3.7, which depicts the individual steps in visual form. By employing the previously determined unit vector of the z-axis and the unit vector along the z-axis of the Q-BKS, an imaginary plane can be constructed (depicted in green in Figure 3.7) with the requisite perpendicularity to the axis being sought. To accomplish this, one must simply form the cross product of the two vectors in order to determine a vertical vector at the intersection of the two base vectors. This process is then repeated with the two previously calculated, known base vectors of the coordinate system.
 
-$$
+```math
 e_{Q,y} = e_{Q,x} \times e_{D,z} \tag{3.8}
-$$
+```
 
-$$
+```math
 e_{Q,x} = e_{Q,x} \times e_{Q,y}  \tag{3.9}
-$$
+```
 
 ![Figure 3.7: Method for determining the basis vectors](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Method_for_determining_the_basis_vectors.png)
 
 Zur endgültigen Bestimmung des Drehpunktes wird dessen Positionsvektor $\mathbf{^Do_{M}}$ unter Anwendung von Gleichung 3.5 in das Q-BKS eingespeist. Durch eine zusätzliche Vektoraddition mit dem Positionsvektor des Ursprungs der D-BKS $\mathbf{^QR_{D}}$ ist nun die Lage des Drehpunktes $M_L$ innerhalb der Q-BKS bekannt.
 
-$$
+```math
 \mathbf{^Qo_{M}} = \mathbf{^QR_{D}} \cdot \mathbf{^Do_{M}} + \mathbf{^Qo_{G_1}} \tag{3.10}
 
-$$
+```
 
 ### Calculation of the joint position
 
@@ -149,13 +149,13 @@ A comprehensive examination of the kinematic system reveals the existence of two
 
 In the preceding section, two potential positionings were identified; a criterion must therefore be formulated to select between them. To this end, the x coordinates of vectors $\mathbf{l^1}$​ and $\mathbf{l^2}$​are compared, as illustrated in Figure 3.8. Within the Q reference coordinate system, it is verified whether the x-coordinate of vector $\mathbf{l^2}$​ is genuinely smaller than that of vector $\mathbf{l^1}$​.
 
-$$
+```math
 x_{^Qo_{L_2}} - x_{^Qo_M} < x_{^Qo_{L_1}} -x_{^Qo_M} \tag{3.11}
-$$
+```
 
-$$
+```math
 x_{l_2} < x_{l_1} \tag{3.12}
-$$
+```
 
 ![Figure 3.8: Visualisation of the intersection points between the sphere and the circular path ](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Visualisation_of_the_intersection_points_between_the_sphere_and_the_circular_path.png)
 

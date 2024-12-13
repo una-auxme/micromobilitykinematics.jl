@@ -17,7 +17,6 @@ Collectively, these tools provide a robust framework for analysing and simulatin
 The code presented here is intended for illustrative purposes only. The accompanying documentation provides illustrative examples of potential applications, which offer a more comprehensive understanding of the package's functionality.
 
 ```julia 
-
 # initialisation of the steering
 x_rotational_radius = 56
 z_rotational_radius = 165
