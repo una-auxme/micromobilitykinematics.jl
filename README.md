@@ -1,7 +1,12 @@
 # micromobilitykinematics.jl
 ![](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/A9vugjjp_s38grl_hy8.jpg)
 
- [![Build Docs](https://github.com/una-auxme/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/una-auxme/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://una-auxme.github.io/micromobilitykinematics.jl/) 
+
+| | |
+|---|---|
+|Documentation: |  [![Build Docs](https://github.com/una-auxme/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/una-auxme/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://una-auxme.github.io/micromobilitykinematics.jl/) |
+| Organisiation: | [![](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/149701353.png)](https://github.com/una-auxme) |
+
 
 ## What is micromobilitykinematics.jl?
 The fundamental operations of the micromobilitykinematics.jl library serve as the foundation for kinematic calculations and updates to a self-developed steering geometry of a micromobility vehicle. 
