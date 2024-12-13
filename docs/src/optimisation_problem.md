@@ -27,13 +27,13 @@ The comparison of a real steering system with the Ackermann steering system depi
 
 The following sections present the derivation and calculation of the distance L, with reference to Figure 3.9.
 
-![Figure 3.9: Graphical representation of the derivation using the Ackermann condition](https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphical_representation_of_the_derivation_using_the_Ackermann_condition.png)
+![Figure 3.9: Graphical representation of the derivation using the Ackermann condition](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphical_representation_of_the_derivation_using_the_Ackermann_condition.png)
 
 ### Calculation of the steering angle
 
 The calculation of the intersection points C of the wheel axles is essential for the continuous derivation, as these points depend on the steering angles of the inner δi and outer δo wheels. It is already established that the kinematic chain is influenced by the effect of the L-component, whereby characteristic points of the steering geometry are shifted. The steering lever mounted on the wheel is either pulled or pushed by the tie rod, depending on the steering setting, which in turn leads to a change in the wheel suspension. The kinematic model of the steering system already describes the positions of the components with individual steering adjustment options.
 
-![Figure 3.10: Graphical determination of the steering angle δ](https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphical_determination_of_the_steering_angle_δ.png)
+![Figure 3.10: Graphical determination of the steering angle δ](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphical_determination_of_the_steering_angle_δ.png)
 
 In Figure 3.10, the angles designated as $\delta$ represent the angular displacement of the wheel in relation to the initial position of the steering geometry. Given the direct linkage between the steering lever l and the wheel mount M, the transition from position L1 to L2 can also be interpreted as an angular change between the steering levers $l_1$ and $l_2$. Consequently, the included angle of the steering lever vectors $l_1$ and $l_2$ is to be determined.
 
@@ -199,20 +199,20 @@ $$
 
 In light of the subsequent assignment of value ranges to the individual components, the scenario should be disregarded as part of the optimisation process.
 
-![Figure 3.11: Graphic display if the selected lengths are too small](https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphic_display_if_the_selected_lengths_are_too_small.png)
+![Figure 3.11: Graphic display if the selected lengths are too small](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphic_display_if_the_selected_lengths_are_too_small.png)
 
 
-![Figure 3.12: Graphical representation if the tie rod is too large z](https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphical_representation_if_the_tie_rod_is_too_large_z.png)
+![Figure 3.12: Graphical representation if the tie rod is too large z](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphical_representation_if_the_tie_rod_is_too_large_z.png)
 
 
-![Figure 3.12: Graphic display if the steering lever is too large l](https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphic_display_if_the_steering_lever_is_too_large_l.png)
+![Figure 3.12: Graphic display if the steering lever is too large l](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphic_display_if_the_steering_lever_is_too_large_l.png)
 
 
 ### Avoiding the singularitys
 
 Nevertheless, in the event that a component is significantly longer in comparison to the remaining components, a return effect is observed with regard to the steering lever. To elucidate this phenomenon, a visual illustration is provided in Figure 3.14. Let us assume that the dimensions of the steering lever $(l)$ are significantly longer than the radius of the z-rotation $(r_z)$ of the L-component. A stepwise rotation around the origin of the vector rz with the steering angle θz results in a displacement of the positions along their circular paths, which are represented by the green and orange lines in Figure 3.14. If the direction of rotation of the vector $r_z$ is clockwise, an identical rotation of the vector $l$ would be expected due to the kinematic dependency. However, if the angle of rotation is exceeded, the steering lever $l$ moves in the opposite direction to that of the original rotation. The direction of movement is divided into two phases, with the start, turning and end points shown more intensively in their respective colours and their direction of movement illustrated by arrows. For the steering angles of the wheels, this had the consequence that beyond a certain steering angle, the wheel would steer in the opposite direction, which would have serious consequences for the vehicle dynamics.
 
-![Figure 3.13: Visualisation of the return effect with several steering settings](https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Visualisation_of_the_return_effec_with_several_steering_settings.png)
+![Figure 3.13: Visualisation of the return effect with several steering settings](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Visualisation_of_the_return_effec_with_several_steering_settings.png)
 
 To obviate this potential outcome, it is imperative to ascertain that the extant dimensioning configuration falls within the permissible range for all conceivable setting orientations. In order to define the singularity of the validity range, it is necessary to use a mathematical expression that will allow the establishment of a limit and, consequently, a comparison criterion. In the event that a setting exceeds the aforementioned singularity, it is evident that the dimensioning is not suitable. By comparing the start, turn and end settings of the example, it is possible to derive the following differentiation criterion. During the adjustment process, the steering angle of the wheel increases by δo until the singularity is exceeded. Consequently, the following condition is formulated.
 
@@ -222,8 +222,8 @@ $$
 
 The preceding analysis pertains solely to the examination of a steering geometry aspect, namely the variation of the angle of rotation, which allows the formulation of restrictions. It is also important to assess the opposite side in order to optimise the process. Consequently, the previously defined conditions are checked for their compatibility within the aforementioned scenario. The verification procedure is straightforward visually, as demonstrated by the illustration of the aforementioned scenario for the opposite side of the steering geometry (see Fig. 3.15). As the setting angle increases, the included angle δ of the steering lever l also increases, necessitating the fulfilment of condition 3.28 for the right-hand side of the geometry.
 
-![Figure 3.14: Visualisation of the singulatiry with several steering settings on the opposite side of the geometry](https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Visualisation_of_the_sigularity__with_several_steering_settings_on_the_opposite_side_of_the_geometry.png)
+![Figure 3.14: Visualisation of the singulatiry with several steering settings on the opposite side of the geometry](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Visualisation_of_the_sigularity__with_several_steering_settings_on_the_opposite_side_of_the_geometry.png)
 
 All previous scenarios of this condition have been represented exclusively in two-dimensional space. Consequently, any differences in position and their effects on the movement of the angle must be subjected to analysis. In order to achieve this, the principal elements of the scenario depicted in Figure 3.14 are projected onto the y-z plane. As a result of the inclined plane of rotation of the steering lever, there is a height differential between the joints; however, this has no impact on the vectorial determination of the angle $δi$ and $δo$.
 
-![Figure 3.14: Projection of the main points of the scenario onto the y-z plane](https://github.com/adribrune/micromobilitykinematics.jl/blob/main/docs/src/assets/Projection_of_the_main_points_of_the_scenario_onto_the_y-z_plane.png)
+![Figure 3.14: Projection of the main points of the scenario onto the y-z plane](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Projection_of_the_main_points_of_the_scenario_onto_the_y-z_plane.png)

@@ -1,9 +1,9 @@
 # micromobilitykinematics
-
+![](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/A9vugjjp_s38grl_hy8.jpg)
 
 | | |
 |---|---|
-| Documentation | [![Build Docs](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://una-auxme.github.io/micromobilitykinematics.jl/) |
+| Documentation | [![Build Docs](https://github.com/una-auxme/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/una-auxme/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://una-auxme.github.io/micromobilitykinematics.jl/) |
 
 ## What is micromobilitykinematics.jl?
 The fundamental operations of the micromobilitykinematics.jl library serve as the foundation for kinematic calculations and updates to a self-developed steering geometry of a micromobility vehicle. 
@@ -49,3 +49,14 @@ update!(new_angleConfig, steering, suspension)
 exportXML(steering)
 exportXML(suspension)
 ```
+
+## Related publications?
+
+| | |
+|---|---|
+| autor: |  Peter Krönes , Adrian Brune and Lars Mikelsons |
+| title: |  Design and Optimization of a Steering Geometry for a Micromobility|
+| journal: | Zehnte IFToMM D-A-CH Konferenz 2024 : 05./06. März 2024, Universität Rostock|
+| date of publication: | 04.03.2024|
+| url:| [DOI: 10.17185/duepublico/43383](https://doi.org/10.17185/duepublico/81695) |
+| zite: | [BibTex](https://duepublico2.uni-due.de/receive/duepublico_mods_00081695?XSL.Transformer=bibtex) | | 

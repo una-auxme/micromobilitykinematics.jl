@@ -1,3 +1,5 @@
+![](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/A9vugjjp_s38grl_hy8.jpg)
+
 | | |
 |---|---|
 | Documentation | [![Build Docs](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/adribrune/micromobilitykinematics.jl/actions/workflows/Documentation.ym) [![Dev Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://thummeto.github.io/FMI.jl/dev/) |
@@ -51,4 +53,17 @@ exportXML(suspension)
 
 # How is micromobilitykinematics.jl structured?
 
+
+
+
+# Related publications?
+
+| | |
+|---|---|
+| autor: |  Peter Krönes , Adrian Brune and Lars Mikelsons |
+| title: |  Design and Optimization of a Steering Geometry for a Micromobility|
+| journal: | Zehnte IFToMM D-A-CH Konferenz 2024 : 05./06. März 2024, Universität Rostock|
+| date of publication: | 04.03.2024|
+| url:| [DOI: 10.17185/duepublico/43383](https://doi.org/10.17185/duepublico/81695) |
+| zite: | [BibTex](https://duepublico2.uni-due.de/receive/duepublico_mods_00081695?XSL.Transformer=bibtex) | | 
 
