@@ -4,11 +4,11 @@
 For the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering
--`suspension::Suspension`: Instance of a specific suspension
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
 - no returns because of in place programming
@@ -129,11 +129,11 @@ end
 For the rotation component in its rest position with the angles (θx, θz) = (0,0), the kinematics of the steering is calculated
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering
--`suspension::Suspension`: Instance of a specific suspension
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
 - no returns because of in place programming
@@ -254,11 +254,11 @@ end
 To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering
--`suspension::Suspension`: Instance of a specific suspension
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
 - no returns because of in place programming
@@ -275,14 +275,14 @@ end
 To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering
--`suspension::Suspension`: Instance of a specific suspension
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
-- "steering::Steering": Instance of a specific steering
+- `steering::Steering`: Instance of a specific steering
 """
 function steeringkinematics(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
     cpy_steering = copy(steering)

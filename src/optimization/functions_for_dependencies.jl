@@ -5,11 +5,11 @@ For the moving rotational component with the angles (θx, θz), the kinematics o
 ! function°(): symbolises that this function should only be used within the optimisation !
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering
--`suspension::Suspension`: Instance of a specific suspension
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
 - No return value due to in-place computation.
@@ -115,7 +115,7 @@ For the rotation component with the neutral position, the steering kinematics ar
 ! function°(): symbolises that this function should only be used within the optimisation !
 
 # Arguments
--`steering::Steering`: Instance of a specific steering 
+- `steering::Steering`: Instance of a specific steering 
 
 # Returns:
 - No return value due to in-place computation.
@@ -160,11 +160,11 @@ For the moving rotation component with the angles (θx, θz) and the neutral pos
     ! function°(): symbolises that this function should only be used within the optimisation !
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering 
--`suspension::Suspension`: Instance of a specific suspension
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `steering::Steering`: Instance of a specific steering 
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
 - No return value due to in-place computation.
@@ -182,14 +182,14 @@ For the moving rotation component with the angles (θx, θz) and the neutral pos
 ! function°(): symbolises that this function should only be used within the optimisation !
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering 
--`suspension::Suspension`: Instance of a specific suspension
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `steering::Steering`: Instance of a specific steering 
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
--`steering::Steering`: Instance of a steering with calculated kinematics until `track_lever_mounting_points_ucs`.
+- `steering::Steering`: Instance of a steering with calculated kinematics until `track_lever_mounting_points_ucs`.
 """
 function kinematicsUNTILmount°(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
     cpy_steering = copy(steering)
@@ -206,7 +206,7 @@ For the moving rotational component with angles (θx, θz) and the neutral posit
 ! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
 
 # Arguments
--`steering::Steering`: Instance of a specific steering where the function was previously called
+- `steering::Steering`: Instance of a specific steering where the function was previously called
 
 # Returns:
 - No return value due to in-place computation.
@@ -295,7 +295,7 @@ For the moving rotational component with angles (θx, θz) and the neutral posit
 ! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
 
 # Arguments
--`steering::Steering`: Instance of a specific steering where the function `kinematicsUNTILmount°!` was previously called
+- `steering::Steering`: Instance of a specific steering where the function `kinematicsUNTILmount°!` was previously called
 
 # Returns:
 - No return value due to in-place computation.
@@ -316,7 +316,7 @@ end
 ! function kinematicsUNTILmountMOVED°! should already be used on the steering instance !
 
 # Arguments
--`steering::Steering`: Instance of a specific steering where the function `kinematicsUNTILmount°!` was previously called
+- `steering::Steering`: Instance of a specific steering where the function `kinematicsUNTILmount°!` was previously called
 
 # Returns:
 - No return value due to in-place computation.

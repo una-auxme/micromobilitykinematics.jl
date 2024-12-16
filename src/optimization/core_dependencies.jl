@@ -286,7 +286,7 @@ calculates the diffrence of the max. ideal outer wheel angle and the current max
 
 # Arguments
 - `steering::Steering`: the last state of the steering kinematics
--`measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
+- `measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
 
 # Returns
 - dependency for the minimal track circle

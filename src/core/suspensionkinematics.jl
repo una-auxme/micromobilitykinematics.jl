@@ -5,7 +5,7 @@
 calculates all the movement-dependent positions of the joints in MOVED-Position
 
 # Arguments:
--`suspension::Suspension`: Suspension of the micromobility vehicle
+- `suspension::Suspension`: Suspension of the micromobility vehicle
 
 
 """
@@ -64,7 +64,7 @@ end
 calculates all the movement-dependent positions of the joints in NEUTRAL-Position
 
 # Arguemnts:
--`suspension::Suspension`: Suspension of the micromobility vehicle
+- `suspension::Suspension`: Suspension of the micromobility vehicle
 
 
 """
@@ -124,7 +124,7 @@ end
     calculates all the movement-dependent positions of the joints in NEUTRAL- and MOVED-Postion
     
 # Arguments:
--`suspension::Suspension`: Suspension of the micromobility vehicle
+- `suspension::Suspension`: Suspension of the micromobility vehicle
 """
 function suspensionkinematics!(suspension::Suspension)
     suspensionkinematicsNEUTRAL!(suspension)

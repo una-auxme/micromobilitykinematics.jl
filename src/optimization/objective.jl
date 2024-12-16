@@ -3,16 +3,16 @@
 
     Calculates the distance between the optimum point of intersection of the wheel axis (normally on the rear wheel axis) and the current point of intersection of the axis.
 
-    # Arguments
-    -`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
-    -`measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
-    -`steering::Steering`: Instance of a specific steering
-    -`suspension::Suspension`: Instance of a specific suspension
+# Arguments
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+    - `θx`: Angle of rotation of the rotation component around the x-axis
+    - `θz`: Angle of rotation of the rotation component around the z-axis
+- `measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
-    # Returns
-    - Distance between optimal and current intersection point
+# Returns
+- Distance between optimal and current intersection point
 """
 function steering_objective(angleConfig::Tuple{T,T},chassis::Chassis, steering::Steering, suspension::Suspension) where {T<:Any}
     println("Thread $(Threads.threadid()):> objective")
@@ -71,12 +71,12 @@ The wrapper function of the steering_objective procedure is employed for the pur
 
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-    -`θx`: Angle of rotation of the rotation component around the x-axis
-    -`θz`: Angle of rotation of the rotation component around the z-axis
--`measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
--`steering::Steering`: Instance of a specific steering
--`suspension::Suspension`: Instance of a specific suspension
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+    - `θx`: Angle of rotation of the rotation component around the x-axis
+    - `θz`: Angle of rotation of the rotation component around the z-axis
+- `measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns
 - Distance between optimal and current intersection point

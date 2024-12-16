@@ -7,7 +7,7 @@ checks angle dependency
 - `steering::Steering`: Instance of a specific steering
 
 # Returns:
--`::Bool`
+- `::Bool`
 """
 function AngleDependency(arge...)
     try
@@ -27,10 +27,10 @@ end
 checks kinematic dependency
 
 # Arguments
--`steering::Steering`: Instance of a specific steering
+- `steering::Steering`: Instance of a specific steering
 
 # Returns:
--`::Bool`
+- `::Bool`
 """
 function KinematicDependency(arge...)
     try
@@ -65,7 +65,7 @@ checks singularity constraints
 - `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
--`::Bool`
+- `::Bool`
 """
 function SingularityConstraint(arge...)
     try 
@@ -87,11 +87,11 @@ end
     checks tracking circle constraint
 
 # Arguments
--`steering::Steering`: Instance of a specific steering
--`measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
+- `steering::Steering`: Instance of a specific steering
+- `measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
     
 # Returns:
--`::Bool`
+- `::Bool`
 """
 function TrackingCircleConstraint(arge...)
     try 
@@ -111,17 +111,17 @@ checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspensi
     checks  all constraints and dependencies
 
 # Arguments 
--`step_size`: step_size in which the angular area should be checked
--`maxangleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+- `step_size`: step_size in which the angular area should be checked
+- `maxangleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: maximal Angle of rotation of the rotation component around the x-axis
         -`θz`: maximal Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering
--`suspension::Suspension`: Instance of a specific suspension
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
--`::Bool`:
-        -`false`: It is not possible to match the constraints in a satisfactory manner
-        -`true`: It is possible to match the constraints in a satisfactory manner
+- `::Bool`:
+        - `false`: It is not possible to match the constraints in a satisfactory manner
+        - `true`: It is possible to match the constraints in a satisfactory manner
 """
 function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension) 
     θx_max, θz_max = max_angleConfig
@@ -197,15 +197,15 @@ The wrapper function of the checkConstraints procedure is employed for the purpo
 ! function°(): symbolises that this function should only be used within the optimisation !
 
 # Arguments
--`x_rotational_radius`: Length of the rotational component around the x-axis. (detailed info in doc)
--`z_rotational_radius`: Length of the rotational component around the z-axis. (detailed info in doc)
--`track_lever_length`: Length of the track lever. (detailed info in doc)
--`tie_rod_length`: Length of tie rod. (detailed info in doc)
+- `x_rotational_radius`: Length of the rotational component around the x-axis. (detailed info in doc)
+- `z_rotational_radius`: Length of the rotational component around the z-axis. (detailed info in doc)
+- `track_lever_length`: Length of the track lever. (detailed info in doc)
+- `tie_rod_length`: Length of tie rod. (detailed info in doc)
 
 # Returns
--`binary`:
-        -`0`: It is not possible to match the constraints in a satisfactory manner.
-        -`1`: It is possible to match the constraints in a satisfactory manner.
+- `binary`:
+        - `0`: It is not possible to match the constraints in a satisfactory manner.
+        - `1`: It is possible to match the constraints in a satisfactory manner.
 
 """
 function checkConstraints°(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
@@ -235,18 +235,17 @@ end
 random search with given border for the parameters and given angular area for rotary component 
 
 # Arguments:
--`upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
--`lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
--`max_angleConfig`: maximal angular area for rotary component (defult: (0,35))
+- `upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
+- `lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
+- `max_angleConfig`: maximal angular area for rotary component (defult: (0,35))
 
 # Keywords:
-
--`info::Bool`: true if info should be printed
--`radius`: desired track circle radius (defult: 3500)
--`step_size`: step_size in which the angular area should be checked
+- `info::Bool`: true if info should be printed
+- `radius`: desired track circle radius (defult: 3500)
+- `step_size`: step_size in which the angular area should be checked
 
 # Returns:
--`compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
+- `compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
 """
 function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I} ; info = false, step_size = 1 ) where {T<:Real, I<:Integer}
     param = nothing

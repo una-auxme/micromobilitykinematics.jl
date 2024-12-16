@@ -3,15 +3,13 @@
 
     creates model for optimization with sphere dependencies
 
-    #Arguments
-    -`θ::Tuple{T,T}`: tuple of Angles (θx, θz)
-    -`start_set`: Parameter start values ["x_rotational_radius";"z_rotational_radius";"track_lever_length";"tie_rod_length"]
-
-    #Returns:
-    -`model`: returns a jump model
-
-    See Also
-    """
+# Arguments
+- `θ::Tuple{T,T}`: tuple of Angles (θx, θz)
+- `start_set`: Parameter start values ["x_rotational_radius";"z_rotational_radius";"track_lever_length";"tie_rod_length"]
+# Returns:
+- `model`: returns a jump model
+See Also
+"""
 function create_model(θ::Tuple{T,T}, steering::Steering) where {T<:Number}
     θx_, θz_ = θ
     start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = getValue(steering)
@@ -64,10 +62,10 @@ end
 
     gets the importend informations of the model solution
 
-#Arguments:
+# Arguments:
 -`model`: jump model
 
-#Returns:
+# Returns:
 -`objectiv`: value of the final objective
 """
 function get_model_solution(model)
@@ -84,17 +82,17 @@ end
     optim(θ::Tuple{T,T},upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},max_angleConfig)
 
 
-#Arguments:
--`θ::Tuple{T,T}`: angle pair to be considered
--`upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
--`lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
--`max_angleConfig`: maximal angular area for rotary component (default: (0,35))
+# Arguments:
+- `θ::Tuple{T,T}`: angle pair to be considered
+- `upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
+- `lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
+- `max_angleConfig`: maximal angular area for rotary component (default: (0,35))
 
-#Keywords
--`param::Tuple{I,I,I,I}`: If necessary, the components can be initialised individually, otherwise the values are randomised by the function that was checked for kinematic conditions.
+# Keywords
+- `param::Tuple{I,I,I,I}`: If necessary, the components can be initialised individually, otherwise the values are randomised by the function that was checked for kinematic conditions.
 
-#Returns:
--`opda`: instance of OptDa (optimization Data)
+# Returns:
+- `opda`: instance of OptDa (optimization Data)
 """
 function optim(θ::Tuple{T,T}, args...) where {T<:Integer}
 
@@ -132,14 +130,14 @@ end
 
     !(saves Dict in folder)
 
-#Arguments:
--`θ::Tuple{T,T}`: angle pair to be considered
--`upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
--`lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
--`max_angleConfig`: maximal angular area for rotary component (default: (0,35))
+# Arguments:
+- `θ::Tuple{T,T}`: angle pair to be considered
+- `upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
+- `lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
+- `max_angleConfig`: maximal angular area for rotary component (default: (0,35))
 
-#Returns:
--`sol_dict`: Dict which contains the optimal solutions.
+# Returns:
+- `sol_dict`: Dict which contains the optimal solutions.
 
 
 """

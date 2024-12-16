@@ -4,10 +4,10 @@
 creates a copy of the steering instance
 
 # Arguments:
--`steering::Steering`: instance of a Steering
+- `steering::Steering`: instance of a Steering
 
 # Returns:
--`copy::Steering`: copy of the given instance 
+- `copy::Steering`: copy of the given instance 
 
 """
 function copy(steering::Steering)
@@ -65,7 +65,7 @@ calculates the outer steering angle of the wheel
 !only possible after using function kinematics!
 
 # Arguments
--`steering::Steering`: Instance of a specific steering
+- `steering::Steering`: Instance of a specific steering
 
 # Returns:
 - no returns because of in place programming
@@ -84,10 +84,10 @@ calculates the outer steering angle of the wheel
 !only possible after using function kinematics!
 
 # Arguments
--`steering::Steering`: Instance of a specific steering
+- `steering::Steering`: Instance of a specific steering
 
 # Returns 
--`δ`: inner steering angle  of the wheel 
+- `δ`: inner steering angle  of the wheel 
     
 """
 function angle_δo(steering::Steering)
@@ -111,7 +111,7 @@ calculates the inner steering angle of the wheel
 !only possible after using function kinematics!
 
 # Arguments
--`steering::Steering`: Instance of a specific steering
+- `steering::Steering`: Instance of a specific steering
 
 # Returns:
 - no returns because of in place programming
@@ -130,10 +130,10 @@ calculates the inner steering angle of the wheel
 !only possible after using function kinematics!
 
 # Arguments
--`steering::Steering`: Instance of a specific steering
+- `steering::Steering`: Instance of a specific steering
 
 # Returns 
--`δ`: inner steering angle  of the wheel 
+- `δ`: inner steering angle  of the wheel 
     
 """
 function angle_δi(steering::Steering)
@@ -154,11 +154,11 @@ end
 updates the kinematics of the given steering instance on the new angles and suspension
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: Angle of rotation of the rotation component around the x-axis
         -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering
--`suspension::Suspension`: Instance of a specific suspension
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
 - no returns because of in place programming
@@ -177,11 +177,11 @@ end
 updates the kinematics of the given steering instance on the new angles and suspension
 
 # Arguments
--`angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
--`steering::Steering`: Instance of a specific steering
--`suspension::Suspension`: Instance of a specific suspension
+- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `steering::Steering`: Instance of a specific steering
+- `suspension::Suspension`: Instance of a specific suspension
 
 # Returns
 -`steering::Steering`: Instance of a specific steering
@@ -199,10 +199,10 @@ end
 Returns important length values of steering components
 
 # Arguments
--`steering::Steering`:  Instance of a specific steering
+- `steering::Steering`:  Instance of a specific steering
 
 # Returns
--`(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)`: important length values of steering components 
+- `(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)`: important length values of steering components 
 """
 function getValue(steering::Steering)    
 return steering.rotational_component.x_rotational_radius, steering.rotational_component.z_rotational_radius, steering.track_lever.length, steering.tie_rod.length
