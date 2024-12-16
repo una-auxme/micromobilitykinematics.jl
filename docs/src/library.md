@@ -52,9 +52,4 @@ The export function exportXML enables users to efficiently save and share their 
 exportXML
 ```
 
-## All Functions
 
-```@autodocs
-Modules = [micromobilitykinematics]
-
-```

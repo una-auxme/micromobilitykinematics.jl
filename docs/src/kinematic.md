@@ -5,7 +5,7 @@ Within the kinematic model, the joint positions are primarily calculated, taking
 The selection of a suitable reference coordinate system is crucial for defining the initial position of key points. Such a coordinate system should easily integrate predefined lengths, widths, and distances and facilitate the calculation of positioning during rotational movements. A suitable point for this purpose is the intersection point of the rotational axes of the steering geometry. Figure illustrates this coordinate system, with the corresponding axes shown in black. Overall, the figure provides a functional representation of the adjustment capability of the steering geometry, with significant information highlighted through color visualization. For determining the initial position of the key reference points, only those vectors represented by a continuous line should be considered.
 
 
-![Figure 3.2: The functional representation of the setting option rotational component](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/rotational%20component.png)
+![Figure 3.2: The functional representation of the setting option rotational component](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/rotational%20component.png?raw=true?raw=true)
 
 
 The radius by which the rotational component can rotate around the x-axis lies in the rest position along the z-axis.
@@ -69,14 +69,14 @@ p_2 = R_{r^{(2)}_x} (\theta_x) \cdot p_1
 
 To enable comprehensive modeling of the steering, the positions of the outer joint rotation centers are essential. They link the tie rod and the steering components, facilitating the complete integration of the steering kinematic chain. The initial position discussed previously is now expanded by the kinematic chain, as shown in the figure below. The yellow vector represents the tie rod, which pivots around a center on the blue axis of rotation of the wheel carrier. Due to the symmetric properties of the steering geometry at rest, a one-sided representation was chosen for clarity, as an identical procedure applies to the opposite side. In this illustration, the joints are represented by circles, with the red color indicating the sought component.
 
-![Figure 3.3: The functional representation of the adjustment options for the steering geometry](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/rotation%20of%20track%20lever.png)
+![Figure 3.3: The functional representation of the adjustment options for the steering geometry](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/rotation%20of%20track%20lever.png?raw=true)
 
 
 
 ### Definition of an independent coordinate system
 The joint positions depend on the dynamic movement of the wheel, which is connected through the track lever. The joints move in a circular path around the wheel's axis of rotation. When a steamer is compressed, the wheel suspension's position changes, resulting in an overall displacement of the lever and the required joint center of rotation.
 
-![Figure 3.4: Consideration of a damped wheel suspension](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Consideration_of_a_damped_wheel_suspension.png)
+![Figure 3.4: Consideration of a damped wheel suspension](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Consideration_of_a_damped_wheel_suspension.png?raw=true)
 
 Figure 3.4 illustrates these relationships, with the initial position in blue and displaced elements in green. The green cylinders represent the wishbone joints, allowing rotation around the dashed axes. Vectors \mathbf{ and $\mathbf{q^2}$​ simplify the wishbone positions, ending in joints that form the wheel's axis of rotation (dashed line in Fig. above). Vectors $\mathbf{l^1}$​ and $\mathbf{l^2}$​ indicate the steering arms, with center of rotation marked as $\mathbf{M}$​. The tie rod, shown as a pink dashed line, visualizes the displacement.
 
@@ -118,7 +118,7 @@ e_{D,z} = \frac{\mathbf{^Qo_{G_1}} - \mathbf{^Qo_{G_2}}}{|\mathbf{^Qo_{G_1}} - \
 
 The graphical correlation is shown in Figure 3.6.
 
-![Figure 3.6: Graphical derivation of a base vector of the coordinate system D-BKS](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphical_derivation_of_a_base_vector_of_the_coordinate_system_D-BKS.png)
+![Figure 3.6: Graphical derivation of a base vector of the coordinate system D-BKS](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Graphical_derivation_of_a_base_vector_of_the_coordinate_system_D-BKS.png?raw=true)
 
 The remaining two base vectors of the coordinate system can be determined through the following procedure. For illustrative purposes, please direct your attention to Figure 3.7, which depicts the individual steps in visual form. By employing the previously determined unit vector of the z-axis and the unit vector along the z-axis of the Q-BKS, an imaginary plane can be constructed (depicted in green in Figure 3.7) with the requisite perpendicularity to the axis being sought. To accomplish this, one must simply form the cross product of the two vectors in order to determine a vertical vector at the intersection of the two base vectors. This process is then repeated with the two previously calculated, known base vectors of the coordinate system.
 
@@ -130,7 +130,7 @@ e_{Q,y} = e_{Q,x} \times e_{D,z} \tag{3.8}
 e_{Q,x} = e_{Q,x} \times e_{Q,y}  \tag{3.9}
 ```
 
-![Figure 3.7: Method for determining the basis vectors](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Method_for_determining_the_basis_vectors.png)
+![Figure 3.7: Method for determining the basis vectors](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Method_for_determining_the_basis_vectors.png?raw=true)
 
 Zur endgültigen Bestimmung des Drehpunktes wird dessen Positionsvektor $\mathbf{^Do_{M}}$ unter Anwendung von Gleichung 3.5 in das Q-BKS eingespeist. Durch eine zusätzliche Vektoraddition mit dem Positionsvektor des Ursprungs der D-BKS $\mathbf{^QR_{D}}$ ist nun die Lage des Drehpunktes $M_L$ innerhalb der Q-BKS bekannt.
 
@@ -157,7 +157,7 @@ x_{^Qo_{L_2}} - x_{^Qo_M} < x_{^Qo_{L_1}} -x_{^Qo_M} \tag{3.11}
 x_{l_2} < x_{l_1} \tag{3.12}
 ```
 
-![Figure 3.8: Visualisation of the intersection points between the sphere and the circular path ](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Visualisation_of_the_intersection_points_between_the_sphere_and_the_circular_path.png)
+![Figure 3.8: Visualisation of the intersection points between the sphere and the circular path ](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/Visualisation_of_the_intersection_points_between_the_sphere_and_the_circular_path.png?raw=true)
 
 
 

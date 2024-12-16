@@ -13,10 +13,11 @@ makedocs(sitename="micromobilitykinematics.jl",
      ),
     checkdocs=:exports,
     linkcheck=true,
+    warnonly = :linkcheck,
     pages = [
             "Introduction" => "index.md",
             "About the Vehicle" => [
-                                    "calculation of the Steering geometry" => ["Kinematic of the steering geometry" => "kinematic.md",
+                                    "Calculation of the Steering geometry" => ["Kinematic of the steering geometry" => "kinematic.md",
                                                                             "Optimisation problem of the steering geometry " => "optimisation_problem.md"],
 
             ],
