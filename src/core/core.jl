@@ -318,14 +318,14 @@ mutable struct Suspension <: AbstractSuspension
     
     kinematics!::Function
 
-    function Suspension(compression)
+    function Suspension(compressions::Tuple)
         inst = new()
 
         inst.lowerwishbone = (LowerWishbone(),LowerWishbone())      # (left, right)
 
         inst.upperwishbone = (UpperWishbone(), UpperWishbone())     # (left, right)
 
-        inst.damper = (Damper(compression), Damper(compression))                          # (left, right)
+        inst.damper = (Damper(compressions[1]), Damper(compressions[2]))                          # (left, right)
 
         inst.wheelmount = WheelMount()
 

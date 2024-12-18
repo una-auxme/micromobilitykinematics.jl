@@ -260,7 +260,7 @@ function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}
             println("Thread $(Threads.threadid()):> Parameters: $param \n")
         end
 
-        suspension = Suspension(30)
+        suspension = Suspension((30,30))
         suspensionkinematics!(suspension)
         steering = Steering(param...)
 

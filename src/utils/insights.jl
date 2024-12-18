@@ -86,7 +86,7 @@ Calculates the turning angles of the vehicle for each turning angles of the rota
 
 
 """
-function grid_data_δ(θ_max::Tuple{Any,Any}, steering::Steering; step_size = 1) 
+function grid_data_δ(θ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension; step_size = 1) 
     θx_max, θz_max = θ_max
     
     
@@ -105,6 +105,10 @@ function grid_data_δ(θ_max::Tuple{Any,Any}, steering::Steering; step_size = 1)
     end
     return δi, δo
 end
+
+
+
+
 
 """
     plot_optda_series(optda_dict::Dict{Int64,Any})
@@ -185,6 +189,120 @@ function plot_optda_gird_obj(args...)
     PlotlyJS.plot(sur_obj, layout)
 end
 
+
+
+"""
+
+
+"""
+function plotSuspImpact(θ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension, chassis::Chassis; step_size = 1, suspensionNEUTRAL = Suspension((30,30)))
+    θx_max, θz_max = θ_max
+    θx = 0:1:θx_max
+    θz = 0:1:θz_max
+
+    objectiveNEUTRAL = grid_data_obj(θ_max, steering, suspensionNEUTRAL, chassis)
+    objective = grid_data_obj(θ_max, steering, suspension, chassis)
+
+    δi_NEUTRAL, δo_NEUTRAL  = grid_data_δ(θ_max, steering, suspensionNEUTRAL)
+    δi, δo  = grid_data_δ(θ_max, steering, suspension)
+
+    #############################################################################
+    sur_objNEUTRAL = PlotlyJS.surface(;
+                                    x=θx, 
+                                    y=θz, 
+                                    z=objectiveNEUTRAL, 
+                                    name="Neutral",
+                                    colorscale="Greys", 
+                                    opacity=0.8,
+                                    colorbar=attr(
+                                                title="Neutral",   # Titel der Farbskala
+                                                x=1.05,            # Position der Farbskala (rechts neben dem Plot)
+                                                y=0.5,             # Vertikale Position
+                                                thickness=20,      # Dicke der Farbskala
+                                                len=0.7            # Länge der Farbskala
+                                                    ))
+    sur_obj = PlotlyJS.surface(;
+                            x=θx, 
+                            y=θz, 
+                            z=objective, 
+                            name="Current",
+                            colorscale="YlOrRd", 
+                            opacity=0.5,
+                            colorbar=attr(
+                                        title="Current",  # Titel der Farbskala
+                                        x=1.2,           # Position der Farbskala (weiter rechts)
+                                        y=0.5,            # Vertikale Position
+                                        thickness=20,     # Dicke der Farbskala
+                                        len=0.7           # Länge der Farbskala
+                                            ))
+
+#############################################################################
+    sur_δi_NEUTRAL = PlotlyJS.surface(;
+                                    x=θx, 
+                                    y=θz, 
+                                    z=δi_NEUTRAL, 
+                                    name="Neutral",
+                                    colorscale="Greys", 
+                                    opacity=0.8,
+                                    colorbar=attr(
+                                                title="Neutral",   # Titel der Farbskala
+                                                x=1.05,            # Position der Farbskala (rechts neben dem Plot)
+                                                y=0.5,             # Vertikale Position
+                                                thickness=20,      # Dicke der Farbskala
+                                                len=0.7            # Länge der Farbskala
+                                                    ))
+
+    sur_δi = PlotlyJS.surface(;
+                            x=θx, 
+                            y=θz, 
+                            z=δi, 
+                            name="Current",
+                            colorscale="YlOrRd", 
+                            opacity=0.5,
+                            colorbar=attr(
+                                        title="Current",  # Titel der Farbskala
+                                        x=1.2,           # Position der Farbskala (weiter rechts)
+                                        y=0.5,            # Vertikale Position
+                                        thickness=20,     # Dicke der Farbskala
+                                        len=0.7           # Länge der Farbskala
+                                            ))
+
+
+#############################################################################
+    #title="Lenkabweichung in Abhängigkeit der Stellwinkel (θx, θz) der Rotationskomponente der Lenkgeometrie"
+    layout1 = Layout(autosize=true, 
+                    margin=attr(l=10, r=10, b=10, t=10),
+                    scene=attr(
+                        xaxis=attr(title="θx in [°]"),
+                        yaxis=attr(title="θz in [°]"),
+                        zaxis=attr(title="objective in [mm]"),
+                        scene = attr(aspectmode="cube")),
+                    width=600,
+                    height=600,
+                    scene_camera_eye=attr(x=2.0, y=1.4, z=1.4),
+                    )
+
+    layout2 = Layout(autosize=true, 
+                    margin=attr(l=10, r=10, b=10, t=10),
+                    scene=attr(
+                        xaxis=attr(title="θx in [°]"),
+                        yaxis=attr(title="θz in [°]"),
+                        zaxis=attr(title="δ in [°]"),
+                        scene = attr(aspectmode="cube")),
+                    width=600,
+                    height=600,
+                    scene_camera_eye=attr(x=2.0, y=1.4, z=1.4),
+                    )
+
+    plot_objective = PlotlyJS.plot([sur_objNEUTRAL, sur_obj], layout1)
+    plot_δi = PlotlyJS.plot([sur_δi_NEUTRAL, sur_δi], layout2)
+
+    display(plot_objective)
+    display(plot_δi)
+end
+
+
+
 """
     plot_optda_gird_δi(θ_max::Tuple{I,I}, steering::Steering) where {T <: Any}
     	
@@ -224,5 +342,8 @@ function plot_optda_gird_δ(args...)
 
     PlotlyJS.plot([sur_δi, sur_δo], layout)
 end
+
+
+
 
 

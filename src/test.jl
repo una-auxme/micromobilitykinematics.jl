@@ -271,22 +271,29 @@ save_file(doc,"ParamList.xml")
 
 
 
-# initialisation of the steering
-x_rotational_radius = 56
-z_rotational_radius = 165
-track_lever_length = 185
-tie_rod_length = 210
-steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+
+steering = Steering(62.0, 176.0, 189.0, 223.0)
 
 # initialisation of the suspension
-compression = 30 # neutral damper positioning
-suspension = Suspension(compression)
+compression = 70 # neutral damper positioning
+suspension = Suspension((70,30))
 
 
 # steering setting
 angleConfig = (0,10)
 
 suspensionkinematics!(suspension)
+
+
+chassis = Chassis()
+
+
+plotSuspImpact((10,35), steering, suspension, chassis)
+
+
+
+
+
 steeringkinematics!(angleConfig, steering, suspension)
 
 # new steering setting 
@@ -294,8 +301,6 @@ new_angleConfig = (0,25)
 
 # update steering kinematics 
 update!(new_angleConfig, steering, suspension)
-
-
 
 
 
