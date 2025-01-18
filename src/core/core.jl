@@ -92,6 +92,13 @@ mutable struct Steering <: AbstractSteering
     δi::Any                 # inner steering angle of the wheel
     δo::Any                   # outer steering angle of the wheel
 
+
+    vec_x_rotational::Union{Vector{Any},Nothing} 
+    vec_z_rotational::Union{Vector{Any},Nothing} 
+
+    vec_x_rotational_neutral::Union{Vector{Any},Nothing} 
+    vec_z_rotational_neutral::Union{Vector{Any},Nothing} 
+
     sphere_joints::Union{Tuple{Vector{Any},Vector{Any}},Nothing}          # (SJ_l, SJ_r) = (left, right)
     circle_joints::Union{Tuple{Vector{Any},Vector{Any}},Nothing}          # (SC_l, SC_r) = (left, right)
 
@@ -129,7 +136,13 @@ mutable struct Steering <: AbstractSteering
         inst.θz = nothing
 
         inst.δi = nothing 
-        inst.δo = nothing           
+        inst.δo = nothing      
+        
+        inst.vec_x_rotational = nothing
+        inst.vec_z_rotational = nothing
+
+        inst.vec_x_rotational_neutral = nothing
+        inst.vec_x_rotational_neutral = nothing
 
         inst.sphere_joints = nothing
         inst.circle_joints = nothing

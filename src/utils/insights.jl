@@ -344,6 +344,96 @@ function plot_optda_gird_δ(args...)
 end
 
 
+function plot_steering(steering::Steering)
+
+        println([0, steering.vec_x_rotational[1]])
+    # Erstelle einen Plot mit dem Vektor
+    trace = PlotlyJS.scatter3d(
+        x=[0, steering.vec_x_rotational[1]],  # x-Koordinaten
+        y=[0, steering.vec_x_rotational[2]],  # y-Koordinaten
+        z=[0, steering.vec_x_rotational[3]],  # z-Koordinaten
+        mode="lines+markers+text",  # Linie, Punkte und Text
+        text="rotational component",         # Beschriftung für beide Punkte
+        line=attr(width=4, color="gray"),  # Linienstil
+        marker=attr(size=6, color="red"),   # Marker-Stil
+        name= "x_rotation"
+    )
+    
+    trace2 = PlotlyJS.scatter3d(
+        x=[steering.vec_x_rotational[1], steering.vec_z_rotational[1]],  # x-Koordinaten
+        y=[steering.vec_x_rotational[2], steering.vec_z_rotational[2]],  # y-Koordinaten
+        z=[steering.vec_x_rotational[3], steering.vec_z_rotational[3]],  # z-Koordinaten
+        mode="lines+markers+text",  # Linie, Punkte und Text
+        text="rotational component",         # Beschriftung für beide Punkte
+        line=attr(width=4, color="gray"),  # Linienstil
+        marker=attr(size=6, color="red"),   # Marker-Stil
+        name= "z_rotation"
+    )
+
+    
+
+    trace3 = PlotlyJS.scatter3d(
+        x=[steering.vec_z_rotational[1], steering.sphere_joints[1][1]],  # x-Koordinaten
+        y=[steering.vec_z_rotational[2], steering.sphere_joints[1][2]],  # y-Koordinaten
+        z=[steering.vec_z_rotational[3], steering.sphere_joints[1][3]],  # z-Koordinaten
+        mode="lines+markers+text",  # Linie, Punkte und Text
+        text="sphere joints",         # Beschriftung für beide Punkte
+        line=attr(width=4, color="gray"),  # Linienstil
+        marker=attr(size=6, color="red"),   # Marker-Stil
+        name= "z_rotation"
+    )
+
+    
+    trace4 = PlotlyJS.scatter3d(
+        x=[steering.vec_z_rotational[1], steering.sphere_joints[2][1]],  # x-Koordinaten
+        y=[steering.vec_z_rotational[2], steering.sphere_joints[2][2]],  # y-Koordinaten
+        z=[steering.vec_z_rotational[3], steering.sphere_joints[2][3]],  # z-Koordinaten
+        mode="lines+markers+text",  # Linie, Punkte und Text
+        text="sphere joints",         # Beschriftung für beide Punkte
+        line=attr(width=4, color="gray"),  # Linienstil
+        marker=attr(size=6, color="red"),   # Marker-Stil
+        name= "z_rotation"
+    )
+
+    trace5 = PlotlyJS.scatter3d(
+        x=[steering.sphere_joints[1][1], steering.circle_joints[1][1]],  # x-Koordinaten
+        y=[steering.sphere_joints[1][2], steering.circle_joints[1][2]],  # y-Koordinaten
+        z=[steering.sphere_joints[1][3], steering.circle_joints[1][3]],  # z-Koordinaten
+        mode="lines+markers+text",  # Linie, Punkte und Text
+        text="circle joints",         # Beschriftung für beide Punkte
+        line=attr(width=4, color="gray"),  # Linienstil
+        marker=attr(size=6, color="red"),   # Marker-Stil
+        name= "z_rotation"
+    )
+
+    vec = steering.wishbone_ucs_position[1] + steering.wheel_ucs_position[1]
+
+    trace5 = PlotlyJS.scatter3d(
+        x=[0, vec[1]],  # x-Koordinaten
+        y=[0, vec[2]],  # y-Koordinaten
+        z=[0, vec[3]],  # z-Koordinaten
+        mode="markers+text",  # Linie, Punkte und Text
+        text="circle joints",         # Beschriftung für beide Punkte
+        line=attr(width=4, color="gray"),  # Linienstil
+        marker=attr(size=6, color="red"),   # Marker-Stil
+        name= "z_rotation"
+    )
+
+    
+    # Erstelle das Layout für den 3D-Plot
+    layout = Layout(
+        title="3D-Vektor Plot",
+        scene=attr(
+            xaxis_title="X-Achse",
+            yaxis_title="Y-Achse",
+            zaxis_title="Z-Achse"
+        )
+    )
+    
+    # Kombiniere den Trace und das Layout und zeige den Plot an
+    PlotlyJS.plot([trace,trace2,trace3,trace4,trace5], layout)
+end
+
 
 
 

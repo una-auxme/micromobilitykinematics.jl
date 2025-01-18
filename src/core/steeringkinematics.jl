@@ -30,6 +30,10 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
 
     left_sphere_joints_neutral = [0.0; steering.rotational_component.to_joint_pivot_point; 0] + vec_z_rotational_neutral
     right_sphere_joints_neutral = [0.0; -steering.rotational_component.to_joint_pivot_point; 0] + vec_z_rotational_neutral
+    
+    #safe pivot
+    steering.vec_x_rotational_neutral = vec_x_rotational_neutral
+    steering.vec_z_rotational_neutral = vec_x_rotational_neutral
 
     steering.sphere_joints_neutral = (left_sphere_joints_neutral, right_sphere_joints_neutral)
 
@@ -45,6 +49,9 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
     ~, right_sphere_joints = rotate3(steering.sphere_joints_neutral[2], rotational_component_ucs[1,:], θx)
     ~, right_sphere_joints = rotate3(right_sphere_joints, vec_x_rotational, θz)
 
+    # safe pivot
+    steering.vec_z_rotational = vec_z_rotational
+    steering.vec_x_rotational = vec_x_rotational
 
     steering.sphere_joints = (left_sphere_joints, right_sphere_joints) 
 
