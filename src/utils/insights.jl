@@ -346,79 +346,284 @@ end
 
 function plot_steering(steering::Steering)
 
-        println([0, steering.vec_x_rotational[1]])
-    # Erstelle einen Plot mit dem Vektor
-    trace = PlotlyJS.scatter3d(
-        x=[0, steering.vec_x_rotational[1]],  # x-Koordinaten
-        y=[0, steering.vec_x_rotational[2]],  # y-Koordinaten
-        z=[0, steering.vec_x_rotational[3]],  # z-Koordinaten
-        mode="lines+markers+text",  # Linie, Punkte und Text
-        text="rotational component",         # Beschriftung für beide Punkte
-        line=attr(width=4, color="gray"),  # Linienstil
-        marker=attr(size=6, color="red"),   # Marker-Stil
-        name= "x_rotation"
+
+    ######## RotationalComponent
+
+    # Steering UCS position
+    rotcomp1 = PlotlyJS.scatter3d(
+        x=[0],  # x-Koordinaten
+        y=[0],  # y-Koordinaten
+        z=[0],  # z-Koordinaten
+        mode="markers+text",  # Linie, Punkte und Text
+        text="Steering UCS",         # Beschriftung für beide Punkte
+        marker=attr(size=6, color="black"),
+        showlegend=false
+    )
+
+
+    ### x rotation 
+    # point
+    rotcomp2 = PlotlyJS.scatter3d(
+        x=[steering.vec_x_rotational[1]],  
+        y=[steering.vec_x_rotational[2]],  
+        z=[steering.vec_x_rotational[3]],  
+        mode="markers+text",  
+        text="rotational component",         
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+    # vector
+    rotcomp3 = PlotlyJS.scatter3d(
+        x=[0, steering.vec_x_rotational[1]],  
+        y=[0, steering.vec_x_rotational[2]],  
+        z=[0, steering.vec_x_rotational[3]],  
+        mode="lines",    
+        line=attr(width=4, color="red"),  
+        name= "x rotation"
     )
     
-    trace2 = PlotlyJS.scatter3d(
+    ### z rotaion
+    # point
+     rotcomp4 = PlotlyJS.scatter3d(
+        x=[steering.vec_z_rotational[1]],  # x-Koordinaten
+        y=[steering.vec_z_rotational[2]],  # y-Koordinaten
+        z=[steering.vec_z_rotational[3]],  # z-Koordinaten
+        mode="markers+text",  
+        text="rotational component",        
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+    # vector
+    rotcomp5 = PlotlyJS.scatter3d(
         x=[steering.vec_x_rotational[1], steering.vec_z_rotational[1]],  # x-Koordinaten
         y=[steering.vec_x_rotational[2], steering.vec_z_rotational[2]],  # y-Koordinaten
         z=[steering.vec_x_rotational[3], steering.vec_z_rotational[3]],  # z-Koordinaten
-        mode="lines+markers+text",  # Linie, Punkte und Text
-        text="rotational component",         # Beschriftung für beide Punkte
-        line=attr(width=4, color="gray"),  # Linienstil
-        marker=attr(size=6, color="red"),   # Marker-Stil
-        name= "z_rotation"
+        mode="lines",  # Linie, Punkte und Text
+        line=attr(width=4, color="blue"),  
+        name= "z rotaion"
     )
 
-    
-
-    trace3 = PlotlyJS.scatter3d(
+    ### spher joints left
+    # point
+     rotcomp6 = PlotlyJS.scatter3d(
+        x=[steering.sphere_joints[1][1]],  # x-Koordinaten
+        y=[steering.sphere_joints[1][2]],  # y-Koordinaten
+        z=[steering.sphere_joints[1][3]],  # z-Koordinaten
+        mode="markers+text",  
+        text="sphere joint",        
+        marker=attr(size=6, color="red"),  
+        showlegend=false
+    )
+    # vector
+    rotcomp7 = PlotlyJS.scatter3d(
         x=[steering.vec_z_rotational[1], steering.sphere_joints[1][1]],  # x-Koordinaten
         y=[steering.vec_z_rotational[2], steering.sphere_joints[1][2]],  # y-Koordinaten
         z=[steering.vec_z_rotational[3], steering.sphere_joints[1][3]],  # z-Koordinaten
-        mode="lines+markers+text",  # Linie, Punkte und Text
-        text="sphere joints",         # Beschriftung für beide Punkte
-        line=attr(width=4, color="gray"),  # Linienstil
-        marker=attr(size=6, color="red"),   # Marker-Stil
-        name= "z_rotation"
+        mode="lines",  
+        line=attr(width=4, color="green"), 
+        name= "spher joints"
     )
 
-    
-    trace4 = PlotlyJS.scatter3d(
+
+    ### spher joints right
+    # point
+     rotcomp8 = PlotlyJS.scatter3d(
+        x=[steering.sphere_joints[2][1]],  # x-Koordinaten
+        y=[steering.sphere_joints[2][2]],  # y-Koordinaten
+        z=[steering.sphere_joints[2][3]],  # z-Koordinaten
+        mode="markers+text",  
+        text="sphere joint",
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+    # vector
+    rotcomp9 = PlotlyJS.scatter3d(
         x=[steering.vec_z_rotational[1], steering.sphere_joints[2][1]],  # x-Koordinaten
         y=[steering.vec_z_rotational[2], steering.sphere_joints[2][2]],  # y-Koordinaten
         z=[steering.vec_z_rotational[3], steering.sphere_joints[2][3]],  # z-Koordinaten
-        mode="lines+markers+text",  # Linie, Punkte und Text
-        text="sphere joints",         # Beschriftung für beide Punkte
-        line=attr(width=4, color="gray"),  # Linienstil
-        marker=attr(size=6, color="red"),   # Marker-Stil
-        name= "z_rotation"
+        mode="lines",       
+        line=attr(width=4, color="green"), 
+        name= "spher joints ",
+        showlegend=false
     )
 
-    trace5 = PlotlyJS.scatter3d(
+    rotcomp = [rotcomp1, rotcomp2, rotcomp3, rotcomp4, rotcomp5, rotcomp6, rotcomp7, rotcomp8, rotcomp9]
+
+    ######## Tie Rod
+
+    ### left
+    tierod1 = PlotlyJS.scatter3d(
         x=[steering.sphere_joints[1][1], steering.circle_joints[1][1]],  # x-Koordinaten
         y=[steering.sphere_joints[1][2], steering.circle_joints[1][2]],  # y-Koordinaten
         z=[steering.sphere_joints[1][3], steering.circle_joints[1][3]],  # z-Koordinaten
-        mode="lines+markers+text",  # Linie, Punkte und Text
-        text="circle joints",         # Beschriftung für beide Punkte
-        line=attr(width=4, color="gray"),  # Linienstil
-        marker=attr(size=6, color="red"),   # Marker-Stil
-        name= "z_rotation"
+        mode="lines",  
+        line=attr(width=4, color="purple"),  
+        name= "tie rod"
     )
 
-    vec = steering.wishbone_ucs_position[1] + steering.wheel_ucs_position[1]
+    ### right 
+    tierod2 = PlotlyJS.scatter3d(
+        x=[steering.sphere_joints[2][1], steering.circle_joints[2][1]],  # x-Koordinaten
+        y=[steering.sphere_joints[2][2], steering.circle_joints[2][2]],  # y-Koordinaten
+        z=[steering.sphere_joints[2][3], steering.circle_joints[2][3]],  # z-Koordinaten
+        mode="lines",  
+        line=attr(width=4, color="purple"),  
+        name= "tie rod",
+        showlegend=false
+    )
 
-    trace5 = PlotlyJS.scatter3d(
-        x=[0, vec[1]],  # x-Koordinaten
-        y=[0, vec[2]],  # y-Koordinaten
-        z=[0, vec[3]],  # z-Koordinaten
+
+    tierod = [tierod1, tierod2]
+    ######## Suspension
+
+    ### wishbone left
+    # point
+    wishbone1 = PlotlyJS.scatter3d(
+        x=[steering.wishbone_ucs_position[1][1]],  # x-Koordinaten
+        y=[steering.wishbone_ucs_position[1][2]],  # y-Koordinaten
+        z=[steering.wishbone_ucs_position[1][3]],  # z-Koordinaten
         mode="markers+text",  # Linie, Punkte und Text
-        text="circle joints",         # Beschriftung für beide Punkte
-        line=attr(width=4, color="gray"),  # Linienstil
-        marker=attr(size=6, color="red"),   # Marker-Stil
-        name= "z_rotation"
+        text="wishbone UCS",
+        marker=attr(size=6, color="red"),
+        showlegend=false
     )
 
+    ### wishbone right
+    # point
+    wishbone2 = PlotlyJS.scatter3d(
+        x=[steering.wishbone_ucs_position[2][1]],  # x-Koordinaten
+        y=[steering.wishbone_ucs_position[2][2]],  # y-Koordinaten
+        z=[steering.wishbone_ucs_position[2][3]],  # z-Koordinaten
+        mode="markers+text",  # Linie, Punkte und Text
+        text="wishbone UCS",
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+
+    wishbone = [wishbone1, wishbone2]
+
+
+    ######## Wheel Mount
+
+    ### wheel UCS left
+    # point
+    vec_left = steering.wishbone_ucs_position[1] + steering.wheel_ucs_position[1]
+    wheel1 = PlotlyJS.scatter3d(
+        x=[vec_left[1]],  # x-Koordinaten
+        y=[vec_left[2]],  # y-Koordinaten
+        z=[vec_left[3]],  # z-Koordinaten
+        mode="markers+text",  
+        text="wheel UCS",
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+
+    ### wheel UCS right
+    # point
+    println(steering.wheel_ucs_position[2])
+    vec_right = steering.wishbone_ucs_position[2] + steering.wheel_ucs_position[2] .* [1,-1,1]
+    wheel2 = PlotlyJS.scatter3d(
+        x=[vec_right[1]],  # x-Koordinaten
+        y=[vec_right[2]],  # y-Koordinaten
+        z=[vec_right[3]],  # z-Koordinaten
+        mode="markers+text",  
+        text="wheel UCS",
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+
+    wheel = [wheel1, wheel2]
+
+    ######## Track lever mounting
+
+    ###### LEFT
+    ### track_lever_mounting_points_ucs
+    # point
+    tracklever1 = PlotlyJS.scatter3d(
+        x=[steering.track_lever_mounting_points_ucs[1][1]],  # x-Koordinaten
+        y=[steering.track_lever_mounting_points_ucs[1][2]],  # y-Koordinaten
+        z=[steering.track_lever_mounting_points_ucs[1][3]],  # z-Koordinaten
+        mode="markers+text",  
+        text="track lever mounting UCS",
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+    # vector
+    tracklever2 = PlotlyJS.scatter3d(
+        x=[vec_left[1], steering.track_lever_mounting_points_ucs[1][1]],  # x-Koordinaten
+        y=[vec_left[2], steering.track_lever_mounting_points_ucs[1][2]],  # y-Koordinaten
+        z=[vec_left[3], steering.track_lever_mounting_points_ucs[1][3]],  # z-Koordinaten
+        mode="lines",       
+        line=attr(width=4, color="gray"), 
+        name= "offset"
+    )
+
+    ### circle_joints
+    # point 
+     tracklever3 = PlotlyJS.scatter3d(
+        x=[steering.circle_joints[1][1]],  # x-Koordinaten
+        y=[steering.circle_joints[1][2]],  # y-Koordinaten
+        z=[steering.circle_joints[1][3]],  # z-Koordinaten
+        mode="markers+text",  
+        text="circle joint",
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+    # vector
+    tracklever4 = PlotlyJS.scatter3d(
+        x=[steering.track_lever_mounting_points_ucs[1][1], steering.circle_joints[1][1]],  # x-Koordinaten
+        y=[steering.track_lever_mounting_points_ucs[1][2], steering.circle_joints[1][2]],  # y-Koordinaten
+        z=[steering.track_lever_mounting_points_ucs[1][3], steering.circle_joints[1][3]],  # z-Koordinaten
+        mode="lines",       
+        line=attr(width=4, color="orange"), 
+        name= "track lever"
+    )
+
+    ###### RIGHT
+    ### track_lever_mounting_points_ucs
+    # point
+    tracklever5 = PlotlyJS.scatter3d(
+        x=[steering.track_lever_mounting_points_ucs[2][1]],  # x-Koordinaten
+        y=[steering.track_lever_mounting_points_ucs[2][2]],  # y-Koordinaten
+        z=[steering.track_lever_mounting_points_ucs[2][3]],  # z-Koordinaten
+        mode="markers+text",  
+        text="track lever mounting UCS",
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+    # vector
+    tracklever6 = PlotlyJS.scatter3d(
+        x=[vec_right[1], steering.track_lever_mounting_points_ucs[2][1]],  # x-Koordinaten
+        y=[vec_right[2], steering.track_lever_mounting_points_ucs[2][2]],  # y-Koordinaten
+        z=[vec_right[3], steering.track_lever_mounting_points_ucs[2][3]],  # z-Koordinaten
+        mode="lines",       
+        line=attr(width=4, color="gray"), 
+        name= "offset",
+        showlegend=false
+    )
+
+    ### circle_joints
+    # point 
+     tracklever7 = PlotlyJS.scatter3d(
+        x=[steering.circle_joints[2][1]],  # x-Koordinaten
+        y=[steering.circle_joints[2][2]],  # y-Koordinaten
+        z=[steering.circle_joints[2][3]],  # z-Koordinaten
+        mode="markers+text",  
+        text="circle joint",
+        marker=attr(size=6, color="red"),
+        showlegend=false
+    )
+    # vector
+    tracklever8 = PlotlyJS.scatter3d(
+        x=[steering.track_lever_mounting_points_ucs[2][1], steering.circle_joints[2][1]],  # x-Koordinaten
+        y=[steering.track_lever_mounting_points_ucs[2][2], steering.circle_joints[2][2]],  # y-Koordinaten
+        z=[steering.track_lever_mounting_points_ucs[2][3], steering.circle_joints[2][3]],  # z-Koordinaten
+        mode="lines",       
+        line=attr(width=4, color="orange"), 
+        name= "track lever",
+        showlegend=false
+    )
+    tracklever = [tracklever1, tracklever2, tracklever3, tracklever4, tracklever5, tracklever6, tracklever7, tracklever8]
     
     # Erstelle das Layout für den 3D-Plot
     layout = Layout(
@@ -431,7 +636,7 @@ function plot_steering(steering::Steering)
     )
     
     # Kombiniere den Trace und das Layout und zeige den Plot an
-    PlotlyJS.plot([trace,trace2,trace3,trace4,trace5], layout)
+    PlotlyJS.plot([rotcomp...,tierod...,wishbone...,wheel...,tracklever...], layout)
 end
 
 

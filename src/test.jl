@@ -271,8 +271,8 @@ save_file(doc,"ParamList.xml")
 
 
 
-
 steering = Steering(62.0, 176.0, 189.0, 223.0)
+
 
 # initialisation of the susfpension
 compression = 70 # neutral damper positioning
@@ -288,8 +288,8 @@ suspensionkinematics!(suspension)
 chassis = Chassis()
 
 
-
-
+suspension.lowerwishbone[1].sphere_joint
+suspension.lowerwishbone[2].sphere_joint
 
 
 plotSuspImpact((10,35), steering, suspension, chassis)
@@ -297,7 +297,7 @@ plotSuspImpact((10,35), steering, suspension, chassis)
 
 steering.circle_joints[1]
 steering.wheel_ucs_position[1]
-steering.wishbone_ucs_position[1]
+steering.wishbone_ucs_position[2]
 
 steering.wishbone_ucs_position[1] + steering.wheel_ucs_position[1]
 
