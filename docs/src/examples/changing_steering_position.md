@@ -59,6 +59,18 @@ steeringkinematics!(angleConfig, steering, suspension)
 
 ```
 
+Should it be required, the kinematic chain of the steering geometry can be displayed here in a three-dimensional vector plot, thus facilitating the acquisition of a preliminary visual impression.
+
+```julia
+
+plot_steering(steering)
+
+```
+
+![3D-Vector Plot of the kinematic chain of the steering geometry](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/plot_steeringkinematiks.png?raw=true?)
+
+
+
 
 ## 3. Updating the steering geometry positioning
 Updating of steering geometry positioning by change in steering angle

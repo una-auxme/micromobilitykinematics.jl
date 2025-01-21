@@ -343,7 +343,16 @@ function plot_optda_gird_δ(args...)
     PlotlyJS.plot([sur_δi, sur_δo], layout)
 end
 
+"""
+    plot_steering(steering::Steering)
 
+creates a 3D vector plot showing the kinematic chain of the steering system
+
+# Arguments
+- `steering::Steering`: instance of a steering system for which the kinematics have already been calculated
+
+
+"""
 function plot_steering(steering::Steering)
 
 
@@ -629,9 +638,18 @@ function plot_steering(steering::Steering)
     layout = Layout(
         title="3D-Vektor Plot",
         scene=attr(
-            xaxis_title="X-Achse",
-            yaxis_title="Y-Achse",
-            zaxis_title="Z-Achse"
+            xaxis=attr(
+                title="X-Achse",
+                range=[-200, 50]  # Bereich der X-Achse
+            ),
+            yaxis=attr(
+                title="Y-Achse",
+                range=[-400, 400]   # Bereich der Y-Achse
+            ),
+            zaxis=attr(
+                title="Z-Achse",
+                range=[-300, 50]    # Bereich der Z-Achse
+            )
         )
     )
     
