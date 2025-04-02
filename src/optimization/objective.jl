@@ -4,9 +4,10 @@
     Calculates the distance between the optimum point of intersection of the wheel axis (normally on the rear wheel axis) and the current point of intersection of the axis.
 
 # Arguments
-- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-    - `θx`: Angle of rotation of the rotation component around the x-axis
-    - `θz`: Angle of rotation of the rotation component around the z-axis
+- `angleConfig::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θy`: Angle of rotation of the rotation component around the y-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
 - `measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
@@ -14,7 +15,7 @@
 # Returns
 - Distance between optimal and current intersection point
 """
-function steering_objective(angleConfig::Tuple{T,T},chassis::Chassis, steering::Steering, suspension::Suspension) where {T<:Any}
+function steering_objective(angleConfig::Tuple{T,T,T},chassis::Chassis, steering::Steering, suspension::Suspension) where {T<:Any}
     println("Thread $(Threads.threadid()):> objective")
     # calculate the kinematics in respect of the given angles
     #println("$(steering.rotational_component.x_rotational_radius), $(steering.rotational_component.z_rotational_radius), $(steering.track_lever.length), $(steering.tie_rod.length)\n  ")
@@ -82,14 +83,14 @@ The wrapper function of the steering_objective procedure is employed for the pur
 - Distance between optimal and current intersection point
 
 """
-function objective°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+function objective°(θx, θy, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     ################## 
     # Supsystems
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
-    suspension = Suspension(30.0)
+    suspension = Suspension((30,30))
     chassis = Chassis()
     # Calculation of objective function 
-    return steering_objective((θx,θz),chassis,steering,suspension)
+    return steering_objective((θx, θy, θz),chassis,steering,suspension)
 
 end
 

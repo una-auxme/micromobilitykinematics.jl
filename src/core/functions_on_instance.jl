@@ -1,40 +1,40 @@
-"""
-    copy(steering::Steering)
-
-creates a copy of the steering instance
-
-# Arguments:
-- `steering::Steering`: instance of a Steering
-
-# Returns:
-- `copy::Steering`: copy of the given instance 
-
-"""
-function copy(steering::Steering)
-    comp = (steering.rotational_component.x_rotational_radius,steering.rotational_component.z_rotational_radius, steering.track_lever.length, steering.tie_rod.length)
-    
-    copy = Steering(comp...)
-
-    copy.θx = steering.θx
-    copy.θz = steering.θz
-
-    copy.δi = steering.δi
-    copy.δo = steering.δo
-
-    copy.sphere_joints = steering.sphere_joints
-    copy.sphere_joints_neutral = steering.sphere_joints_neutral
-
-    copy.circle_joints = steering.circle_joints
-    copy.circle_joints_neutral = steering.circle_joints_neutral
-
-    copy.wheel_ucs_position = steering.wheel_ucs_position
-    copy.base_vec_wheel_ucs = steering.base_vec_wheel_ucs
-
-    copy.wishbone_ucs_position = steering.wishbone_ucs_position
-    copy.track_lever_mounting_points_ucs = steering.track_lever_mounting_points_ucs
-
-    return copy 
-end
+#"""
+#    copy(steering::Steering)
+#
+#creates a copy of the steering instance
+#
+## Arguments:
+#- `steering::Steering`: instance of a Steering
+#
+## Returns:
+#- `copy::Steering`: copy of the given instance 
+#
+#"""
+#function copy(steering::Steering)
+#    comp = (steering.rotational_component.x_rotational_radius,steering.rotational_component.z_rotational_radius, steering.track_lever.length, steering.tie_rod.length)
+#    
+#    copy = Steering(comp...)
+#
+#    copy.θx = steering.θx
+#    copy.θz = steering.θz
+#
+#    copy.δi = steering.δi
+#    copy.δo = steering.δo
+#
+#    copy.sphere_joints = steering.sphere_joints
+#    copy.sphere_joints_neutral = steering.sphere_joints_neutral
+#
+#    copy.circle_joints = steering.circle_joints
+#    copy.circle_joints_neutral = steering.circle_joints_neutral
+#
+#    copy.wheel_ucs_position = steering.wheel_ucs_position
+#    copy.base_vec_wheel_ucs = steering.base_vec_wheel_ucs
+#
+#    copy.wishbone_ucs_position = steering.wishbone_ucs_position
+#    copy.track_lever_mounting_points_ucs = steering.track_lever_mounting_points_ucs
+#
+#    return copy 
+#end
 
 
 #for (func,index) in zip([:angle_δo, :angle_δi], [1,2])
@@ -149,14 +149,15 @@ end
 
 
 """
-    update!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    update!(angleConfig::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
 # Arguments
-- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: Angle of rotation of the rotation component around the x-axis
-        -`θz`: Angle of rotation of the rotation component around the z-axis
+- `angleConfig::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θy`: Angle of rotation of the rotation component around the y-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
 
@@ -172,13 +173,14 @@ function update!(args...)
 end 
 
 """
-    update!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    update!(angleConfig::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
 # Arguments
-- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+- `angleConfig::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
         - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θy`: Angle of rotation of the rotation component around the y-axis
         - `θz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension

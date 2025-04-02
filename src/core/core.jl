@@ -87,6 +87,7 @@ mutable struct Steering <: AbstractSteering
 
     ######## depends on the kinematics
     θx::Any                  # Angle of rotation of the rotation component around the x-axis
+    θy::Any                  # Angle of rotation of the rotation component around the x-axis
     θz::Any                  # Angle of rotation of the rotation component around the z-axis
 
     δi::Any                 # inner steering angle of the wheel
@@ -133,6 +134,7 @@ mutable struct Steering <: AbstractSteering
 
 
         inst.θx = nothing
+        inst.θy = nothing
         inst.θz = nothing
 
         inst.δi = nothing 

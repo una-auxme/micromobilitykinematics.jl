@@ -10,12 +10,13 @@
 - `model`: returns a jump model
 See Also
 """
-function create_model(θ::Tuple{T,T}, steering::Steering) where {T<:Number}
-    θx_, θz_ = θ
+function create_model(θ::Tuple{T,T,T}, steering::Steering) where {T<:Number}
+    θx_, θy_, θz_ = θ
     start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = getValue(steering)
 
     #selection of the used solver
-    model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e-3, #1e-2,
+    model = Model(optimizer_with_attributes(Ipopt.Optimizer,
+                                                             "tol" => 1e-3, #1e-2,           
                                                              "acceptable_tol" => 1e-1, 
                                                              "dual_inf_tol" =>1e-1, 
                                                              "compl_inf_tol"=>  1e-6,
@@ -32,15 +33,16 @@ function create_model(θ::Tuple{T,T}, steering::Steering) where {T<:Number}
 
     # fixed variables used in optimisation
     @variable(model, θx)
+    @variable(model, θy)
     @variable(model, θz)
 
 
     # used and unknown functions must be registered for optimisation
-    register(model, :objective°, 6, objective°, autodiff=true)
+    register(model, :objective°, 7, objective°, autodiff=true)
     register(model, :checkConstraints°, 4, checkConstraints°, autodiff=true)
 
     # define the objectie of the given NL-Problem
-    @NLobjective(model, Min, objective°(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length))
+    @NLobjective(model, Min, objective°(θx, θy, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length))
     
     # define the constraint of the given NL-Problem
     @NLconstraint(model, C, checkConstraints°(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) >= 1 )
@@ -52,7 +54,8 @@ function create_model(θ::Tuple{T,T}, steering::Steering) where {T<:Number}
     set_start_value(tie_rod_length, start_tie_rod_length)
 
     fix(θx, θx_)
-    fix(θz,θz_)
+    fix(θy, θy_)
+    fix(θz, θz_)
 
     return model
 end
@@ -69,8 +72,8 @@ end
 -`objectiv`: value of the final objective
 """
 function get_model_solution(model)
-    x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length, ~ = all_variables(model)
-    solution = (value(x_rotational_radius),value(z_rotational_radius),value(track_lever_length),value(tie_rod_length))
+    x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length, ~ = JuMP.all_variables(model)
+    solution = (JuMP.value(x_rotational_radius),JuMP.value(z_rotational_radius),JuMP.value(track_lever_length),JuMP.value(tie_rod_length))
     objective = objective_value(model)
     status = termination_status(model)
     return solution,objective,status
@@ -94,12 +97,12 @@ end
 # Returns:
 - `opda`: instance of OptDa (optimization Data)
 """
-function optim(θ::Tuple{T,T}, args...) where {T<:Integer}
+function optim(θ::Tuple{T,T,T}, args...) where {T<:Integer}
 
     param = random_search(args...)
     steering = Steering(param...) # param = x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length
     
-    suspension = Suspension(30)
+    suspension = Suspension((30,30))
     suspensionkinematics!(suspension)
 
 
@@ -183,7 +186,7 @@ end
 
 
 """
-function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T, T}, max_angleConfig) where {T<:Number}
+function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T, T}, max_angleConfig; θy = 5) where {T<:Number}
     θx_max , θz_max = max_angleConfig
     step_size = 1
     #initialisieren aller Winkelmöglichkeiten
@@ -198,8 +201,9 @@ function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T,
         for θ in θ_tuple[i,:] 
             if θ != (0,0)
                 θx,θz = θ
-                opt_series = optim_series(5,θ,upper_border,lower_border,max_angleConfig)
-                pathTOdata = joinpath(path_data,"opt_series($(θx),$(θz)).jld2")
+                θ_ = (θx,θy,θz)
+                opt_series = optim_series(5,θ_,upper_border,lower_border,max_angleConfig)
+                pathTOdata = joinpath(path_data,"opt_series($(θx),$(θy),$(θz)).jld2")
                 @save pathTOdata opt_series
 
             end   

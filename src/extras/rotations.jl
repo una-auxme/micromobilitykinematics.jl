@@ -1,7 +1,7 @@
 """
     rotate3(A,n,alpha,shift=[0;0;0])
 
-calculates the Rotation matrix RM an rotation point R.
+calculates the Rotation matrix RM an rotation point A.
 
 # Arguments
 - `A`: Point to be rotated
@@ -9,7 +9,7 @@ calculates the Rotation matrix RM an rotation point R.
 - `alpha`: the angle to be rotated
 - `shift=[0;0;0]`: used to rotate around axes that are not going through the origin
 
-#Returns
+# Returns
 -`RM`: Rotation matrix
 -`R`: rotated point 
 """

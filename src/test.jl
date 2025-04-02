@@ -1,3 +1,106 @@
+
+
+
+
+
+
+
+
+lower_bourder = (50.0,
+50.0, 
+70.0, 
+195.0)
+upper_bourder = (100.0,
+200.0,
+200.0,
+260.0
+)
+max_angleConfig = (10,10,35)
+
+@thread
+
+random_search(upper_bourder, lower_bourder, max_angleConfig)
+optim((1,10,20), upper_bourder, lower_bourder, max_angleConfig)
+
+grid_optim(upper_bourder, lower_bourder, max_angleConfig)
+
+sol_dict = optim_series(2, (1,1), upper_bourder, lower_bourder, max_angleConfig)
+
+optda = sol_dict[2]
+
+optda.objective
+
+
+(57.44215025102158, 141.46879245569016, 169.82983068573606, 228.15747858550213)
+
+
+
+
+
+
+
+
+steering = Steering(57.44215025102158, 141.46879245569016, 169.82983068573606, 228.15747858550213)
+
+# initialisation of the susfpension
+suspension = Suspension((30,30))
+
+
+# steering setting
+angleConfig = (0,10,30)
+
+suspensionkinematics!(suspension)
+
+
+chassis = Chassis()
+
+steeringkinematics!(angleConfig, steering, suspension)
+
+
+plt = plot_steering(steering)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###################### Versuche 1
 
 θx_max, θz_max  = (10,35)
@@ -257,7 +360,20 @@ save_file(doc,"ParamList.xml")
 
 
 
+lower_bourder = (50.0,
+50.0, 
+70.0, 
+195.0)
+upper_bourder = (100.0,
+200.0,
+200.0,
+260.0
+)
+max_angleConfig = (20,10,35)
 
+@thread
+
+random_search(upper_bourder, lower_bourder, max_angleConfig)
 
 
 
@@ -272,21 +388,28 @@ save_file(doc,"ParamList.xml")
 
 
 steering = Steering(62.0, 176.0, 189.0, 223.0)
-
+steering = Steering(90.0, 149.0, 192.0, 242.0)
 
 # initialisation of the susfpension
-compression = 70 # neutral damper positioning
 suspension = Suspension((30,30))
 
 
 # steering setting
-angleConfig = (0,0)
+angleConfig = (0,10,40)
 
 suspensionkinematics!(suspension)
 
 
 chassis = Chassis()
 
+steeringkinematics!(angleConfig, steering, suspension)
+
+
+plt = plot_steering(steering)
+
+PlotlyJS.savefig(plt,"tmplinteractiveSVGfall<==")
+
+PlotlyJS.savefig(plt, "plot_steeringkinematics.png")
 
 suspension.lowerwishbone[1].sphere_joint
 suspension.lowerwishbone[2].sphere_joint
@@ -301,10 +424,7 @@ steering.wishbone_ucs_position[2]
 
 steering.wishbone_ucs_position[1] + steering.wheel_ucs_position[1]
 
-steeringkinematics!(angleConfig, steering, suspension)
 
-
-plot_steering(steering)
 
 
 # new steering setting 

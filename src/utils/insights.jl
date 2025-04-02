@@ -640,7 +640,7 @@ function plot_steering(steering::Steering)
         scene=attr(
             xaxis=attr(
                 title="X-Achse",
-                range=[-200, 50]  # Bereich der X-Achse
+                range=[100, -200]  # Bereich der X-Achse
             ),
             yaxis=attr(
                 title="Y-Achse",
@@ -654,7 +654,7 @@ function plot_steering(steering::Steering)
     )
     
     # Kombiniere den Trace und das Layout und zeige den Plot an
-    PlotlyJS.plot([rotcomp...,tierod...,wishbone...,wheel...,tracklever...], layout)
+    return PlotlyJS.plot([rotcomp...,tierod...,wishbone...,wheel...,tracklever...], layout)
 end
 
 

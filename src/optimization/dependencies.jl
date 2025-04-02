@@ -112,8 +112,9 @@ checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspensi
 
 # Arguments 
 - `step_size`: step_size in which the angular area should be checked
-- `maxangleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+- `maxangleConfig::Tuple{T,T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: maximal Angle of rotation of the rotation component around the x-axis
+        -`θy`: Angle of rotation of the rotation component around the y-axis
         -`θz`: maximal Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
@@ -124,7 +125,7 @@ checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspensi
         - `true`: It is possible to match the constraints in a satisfactory manner
 """
 function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension) 
-    θx_max, θz_max = max_angleConfig
+    θx_max, θy , θz_max = max_angleConfig
     try
         kin_Bool = []
         angle_Bool = []
@@ -132,8 +133,8 @@ function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering,
         track_Bool = []
 
         # One-time calculation of the kinematics and storage in instances until the intersection needs to be checked.  
-        θ_tuples = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
-        steerings = [kinematicsUNTILmount°(θ_tuple, steering, suspension) for θ_tuple in θ_tuples]
+        θ_tuples = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max] # searching space of (θx, θz)
+        steerings = [kinematicsUNTILmount°((θ_tuple[1], θy, θ_tuple[2]) , steering, suspension) for θ_tuple in θ_tuples]
         # checks if steering.sphere_joints is calculable (intersection is posible)
         for steering in steerings
             push!(kin_Bool, KinematicDependency(steering))
@@ -210,6 +211,7 @@ The wrapper function of the checkConstraints procedure is employed for the purpo
 """
 function checkConstraints°(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     θx_max, θz_max  = (10,35)
+    θy = 0
 
     println("Thread $(Threads.threadid()):> checkConstraints°")
 
@@ -217,7 +219,7 @@ function checkConstraints°(x_rotational_radius, z_rotational_radius, track_leve
         println("Thread $(Threads.threadid()):> ($(x_rotational_radius), $(z_rotational_radius), $(track_lever_length), $(tie_rod_length))")
     end
 
-    angleConfig = (θx_max, θz_max)
+    angleConfig = (θx_max,θy,θz_max)
 
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     
@@ -237,7 +239,10 @@ random search with given border for the parameters and given angular area for ro
 # Arguments:
 - `upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
 - `lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
-- `max_angleConfig`: maximal angular area for rotary component (defult: (0,35))
+- `max_angleConfig`: maximal angular area for rotary component (defult: (0,0,35))
+        - `θx`: Angle of rotation of the rotation component around the x-axis
+        - `θy`: Angle of rotation of the rotation component around the y-axis
+        - `θz`: Angle of rotation of the rotation component around the z-axis
 
 # Keywords:
 - `info::Bool`: true if info should be printed
@@ -247,7 +252,7 @@ random search with given border for the parameters and given angular area for ro
 # Returns:
 - `compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
 """
-function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I} ; info = false, step_size = 1 ) where {T<:Real, I<:Integer}
+function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I,I},  ; info = false, step_size = 1 ) where {T<:Real, I<:Integer}
     param = nothing
     valid_param = false
 
