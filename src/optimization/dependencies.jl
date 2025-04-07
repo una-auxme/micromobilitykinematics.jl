@@ -223,7 +223,7 @@ function checkConstraints°(x_rotational_radius, z_rotational_radius, track_leve
 
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     
-    suspension = Suspension(30)
+    suspension = Suspension((30,30))
     suspensionkinematics!(suspension)
     #println(":> $(checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0)")
     return checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0

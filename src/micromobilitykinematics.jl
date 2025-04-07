@@ -10,7 +10,9 @@ module micromobilitykinematics
     using LightXML
     include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
     using .GeoSpatialRelations
+    using GLMakie
 
+    
     using JuMP
     using Ipopt
     using NLopt

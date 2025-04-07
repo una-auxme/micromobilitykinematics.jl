@@ -23,9 +23,9 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
     steering.θz = θz
 
 
-    θx =    deg2rad(θx)
-    θy =    deg2rad(θy)
-    θz =    deg2rad(θz)
+    θx =   θx * (π / 180) #deg2rad(θx)
+    θy =   θy * (π / 180) #deg2rad(θy)
+    θz =   θz * (π / 180) #deg2rad(θz)
 
     #############
     rotational_component_ucs = [[1;0;0] [0;1;0] [0;0;1]]
@@ -100,12 +100,12 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
     lower_end_of_rotational_component = (steering.wishbone_ucs_position[1].*[-1,-1,-1] - [0.0,0.0,steering.rotational_component.x_rotational_radius])
     
     #line
-    line = Line(suspension.lowerwishbone[1].sphere_joint_neutral, left_base_vec[:,3])
+    line = GeoSpatialRelations.Line(suspension.lowerwishbone[1].sphere_joint_neutral, left_base_vec[:,3])
  
     #plane
-    plane = Plane(lower_end_of_rotational_component, [0.0,0.0,1.0])
+    plane = GeoSpatialRelations.Plane(lower_end_of_rotational_component, [0.0,0.0,1.0])
 
-    inter = intersection(line, plane)
+    inter = GeoSpatialRelations.intersection(line, plane)
     
     vec_offset = inter - suspension.lowerwishbone[1].sphere_joint_neutral
     offset_length = norm(vec_offset)
@@ -126,12 +126,12 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
         #@eval $mount = $track_lever_mount_IN_steering_ucs                          # Not compatible with threading
         mount_dict[mount] = track_lever_mount_IN_steering_ucs
         #Circle 
-        circ = Circle(track_lever_mount_IN_steering_ucs,steering.track_lever.length,steering.base_vec_wheel_ucs[index][:,3])
+        circ = GeoSpatialRelations.Circle(track_lever_mount_IN_steering_ucs,steering.track_lever.length,steering.base_vec_wheel_ucs[index][:,3])
 
         #Sphere
-        sphere = Sphere(steering.sphere_joints[index],steering.tie_rod.length)
+        sphere = GeoSpatialRelations.Sphere(steering.sphere_joints[index],steering.tie_rod.length)
 
-        circle_joints_1, circle_joints_2 = intersection(circ, sphere)
+        circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
 
         if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          
             #@eval $circle_joint = $circle_joints_2                                  # Not compatible with threading
@@ -168,9 +168,9 @@ For the rotation component in its rest position with the angles (θx, θz) = (0,
 function steeringkinematicsNEUTRAL!(angleConfig::Tuple, steering::Steering, suspension::Suspension)
     θx, θy, θz = angleConfig
 
-    θx =    deg2rad(0.0)
-    θy =    deg2rad(θy)
-    θz =    deg2rad(0.0)
+    θx =  0.0 * (π / 180)  #deg2rad(0.0)
+    θy =  θy * (π / 180)  #deg2rad(θy)
+    θz =  0.0 * (π / 180)  #deg2rad(0.0)
 
     #############
     rotational_component_ucs = [[1;0;0] [0;1;0] [0;0;1]]
@@ -238,12 +238,12 @@ function steeringkinematicsNEUTRAL!(angleConfig::Tuple, steering::Steering, susp
     lower_end_of_rotational_component = (steering.wishbone_ucs_position[1].*[-1,-1,-1] - [0.0,0.0,steering.rotational_component.x_rotational_radius])
     
     #line
-    line = Line(suspension.lowerwishbone[1].sphere_joint_neutral, left_base_vec[:,3])
+    line = GeoSpatialRelations.Line(suspension.lowerwishbone[1].sphere_joint_neutral, left_base_vec[:,3])
  
     #plane
-    plane = Plane(lower_end_of_rotational_component, [0.0,0.0,1.0])
+    plane = GeoSpatialRelations.Plane(lower_end_of_rotational_component, [0.0,0.0,1.0])
 
-    inter = intersection(line, plane)
+    inter = GeoSpatialRelations.intersection(line, plane)
     
     vec_offset = inter - suspension.lowerwishbone[1].sphere_joint_neutral
     offset_length = norm(vec_offset)
@@ -266,13 +266,13 @@ function steeringkinematicsNEUTRAL!(angleConfig::Tuple, steering::Steering, susp
         #@eval $mount = $track_lever_mount_IN_steering_ucs                                  # Not compatible with threading
         mount_dict[mount] = track_lever_mount_IN_steering_ucs
         #Circle 
-        circ = Circle(track_lever_mount_IN_steering_ucs,steering.track_lever.length,base_vec_wheel_ucs[index][:,3])
+        circ = GeoSpatialRelations.Circle(track_lever_mount_IN_steering_ucs,steering.track_lever.length,base_vec_wheel_ucs[index][:,3])
 
         #Sphere
-        sphere = Sphere(steering.sphere_joints_neutral[index],steering.tie_rod.length)
+        sphere = GeoSpatialRelations.Sphere(steering.sphere_joints_neutral[index],steering.tie_rod.length)
 
 
-        circle_joints_1, circle_joints_2 = intersection(circ, sphere)
+        circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
         
 
         if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          

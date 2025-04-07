@@ -15,23 +15,118 @@ upper_bourder = (100.0,
 200.0,
 260.0
 )
-max_angleConfig = (10,10,35)
+max_angleConfig = (10,0,35)
 
 @thread
 
 random_search(upper_bourder, lower_bourder, max_angleConfig)
-optim((1,10,20), upper_bourder, lower_bourder, max_angleConfig)
+opt = optim((1,10,20), upper_bourder, lower_bourder, max_angleConfig)
 
 grid_optim(upper_bourder, lower_bourder, max_angleConfig)
 
-sol_dict = optim_series(2, (1,1), upper_bourder, lower_bourder, max_angleConfig)
+sol_dict = optim_series(2, (1,1), upper_bourder, upper_bourder, max_angleConfig)
 
 optda = sol_dict[2]
 
-optda.objective
+opt.objective
+opt.steering
+
+
+
+grid_optim(upper_bourder,lower_bourder, max_angleConfig)
+
+
 
 
 (57.44215025102158, 141.46879245569016, 169.82983068573606, 228.15747858550213)
+
+#EXIT: Solved To Acceptable Level.
+(62.2368497962264, 114.29468297994238, 132.90122400685277, 232.44025074027434)
+
+
+
+
+
+using Makie 
+
+
+steering = Steering(57.44215025102158, 141.46879245569016, 169.82983068573606, 228.15747858550213)
+
+# initialisation of the susfpension
+suspension = Suspension((30,30))
+
+
+# steering setting
+angleConfig = (0,10,0)
+
+suspensionkinematics!(suspension)
+
+
+chassis = Chassis()
+
+steeringkinematics!(angleConfig, steering, suspension)
+
+
+steering_objective(angleConfig,chassis, steering, suspension)
+
+plt = plot_steering2(steering)
+
+
+
+
+
+
+
+
+
+
+
+
+fig = GLMakie.Figure()
+
+ax = GLMakie.Axis3(fig[1, 1])
+
+GLMakie.xlims!(ax, 0, 20)
+GLMakie.ylims!(ax, 0, 20)
+GLMakie.zlims!(ax, 0, 20)
+
+
+
+
+fig[2, 1] = buttongrid = GridLayout(tellwidth = false)
+
+counts = Observable([1, 4, 3, 7, 2])
+
+buttonlabels = [lift(x -> "Count: $(x[i])", counts) for i in 1:5]
+
+buttons = buttongrid[1, 1:5] = [Slider(fig, label = l) for l in buttonlabels]
+
+counts[][1] += 1
+
+for i in 1:5
+    on(buttons[i].clicks) do n
+        counts[][i] += 1
+        notify(counts)
+    end
+end
+
+xs = ys =  zeros(5)
+
+#barplot!(counts, color = cgrad(:Spectral)[LinRange(0, 1, 5)])
+meshscatter!(xs, ys, counts, markersize = 0.1)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -42,12 +137,31 @@ optda.objective
 
 steering = Steering(57.44215025102158, 141.46879245569016, 169.82983068573606, 228.15747858550213)
 
+lower_bourder = (50.0,
+50.0, 
+70.0, 
+100.0)
+
+upper_bourder = (100.0,
+100.0,
+100.0,
+250.0
+)
+max_angleConfig = (10,0,35)
+
+
+param = random_search(upper_bourder, lower_bourder, max_angleConfig)
+(61.0, 74.0, 95.0, 228.0)
+
+steering = Steering(param...)
+
+
 # initialisation of the susfpension
 suspension = Suspension((30,30))
 
 
 # steering setting
-angleConfig = (0,10,30)
+angleConfig = (0,0,0)
 
 suspensionkinematics!(suspension)
 
@@ -56,11 +170,282 @@ chassis = Chassis()
 
 steeringkinematics!(angleConfig, steering, suspension)
 
-
-plt = plot_steering(steering)
-
+#steering_objective((10,0,35), chassis,steering,suspension)
 
 
+# Figure
+fig = GLMakie.Figure(resolution = (1200, 1200))
+
+ax = GLMakie.Axis3(fig[1:2, 1:3])
+ax.aspect = :data
+
+# Limits
+GLMakie.xlims!(ax, -200, 50)
+GLMakie.ylims!(ax, -300, 300)
+GLMakie.zlims!(ax, -200, 50)
+
+############# Angle Layout
+angle_layout = GridLayout(tellheight = false)
+fig[3,1] = angle_layout
+
+titel = Label(angle_layout[1,1], "Rotation angle configuration", fontsize = 15)
+
+
+#sl_θz = Slider(angle_layout[2, 1], range = -30:1:30, startvalue = 0)
+sl_θ = SliderGrid(
+                angle_layout[2, 1],
+                (label = "θx", range = -30:1:30, format = "{:.1f}°", startvalue = 0),
+                (label = "θz", range = 0:1:15, format = "{:.1f}°", startvalue = 0),
+                (label = "θz", range = -30:1:30, format = "{:.1f}°", startvalue = 0),
+                width = 350,
+                tellheight = false)
+
+rowgap!(angle_layout, 1, -200)
+
+
+
+############# Parameter Layout 
+
+#param_layout = GridLayout(tellheight = false)
+#fig[3,2] = param_layout
+
+#titel = Label(param_layout[1,1], "Components configuration", fontsize = 15)
+
+#sg2 = SliderGrid(
+#                param_layout[2, 1],
+#                (label = "θx radius", range = 50:1:100, format = "{:.1f}mm", startvalue = 0),
+#                (label = "θz radius", range = 50:1:200, format = "{:.1f}mm", startvalue = 0),
+#                (label = "track lever", range = 70:1:200, format = "{:.1f}mm", startvalue = 0),
+#                (label = "tie rod", range = 195:1:260, format = "{:.1f}mm", startvalue = 0),
+#                width = 350,
+#                tellheight = false)
+
+
+#rowgap!(param_layout, 1, -165)
+                
+
+############## Action Layout              
+action_layout = GridLayout(tellheight = false)
+fig[3, 2] = action_layout  # Sub-Layout einfügen
+
+titel = Label(action_layout[1,1], "Actions", fontsize = 15)
+
+# Füge mehrere Buttons in das verschachtelte Layout ein:
+
+button_layout = GridLayout(tellheight = false)
+action_layout[2,1] = button_layout
+
+button1 = Button(button_layout[1, 1], label = "")
+button2 = Button(button_layout[2, 1], label = "")
+button3 = Button(button_layout[3, 1], label = "")
+
+rowgap!(action_layout, 1, -165)
+
+
+
+
+   #############| Layout Infos  
+   info_layout = GridLayout(tellheight = false)
+   fig[3, 3] = info_layout  # Sub-Layout einfügen
+
+   titel2 = Label(info_layout[1,1], "Information", fontsize = 15)
+
+   # Füge mehrere Buttons in das verschachtelte Layout ein:
+
+   text_layout = GridLayout(tellheight = false)
+   info_layout[2,1] = text_layout
+
+   tb_obj = Textbox(text_layout[1, 1], placeholder = "objective: ",width = 200)
+   tb_δi = Textbox(text_layout[2, 1], placeholder = "δi: ",width = 200)
+   tb_δo = Textbox(text_layout[3, 1], placeholder = "δo: ",width = 200)
+
+   rowgap!(info_layout, 1, -165)
+
+
+
+
+   colsize!(fig.layout, 1, Relative(0.3))  # Spalte 1 = 30%
+   colsize!(fig.layout, 2, Relative(0.3))  # Spalte 2 = 30%
+   colsize!(fig.layout, 3, Relative(0.3))  # Spalte 3 = 30%
+
+
+
+   tb_obj.placeholder.val  = "changed"
+
+
+tb_obj.placeholder.val 
+#autolimits!(ax)
+
+
+###############
+
+
+#sliderobservables = [s.value for s in sg1.sliders]
+
+###############
+
+# 
+rotational_coponent = [Point3f([0,0,0]),
+                        Point3f(steering.vec_x_rotational...),
+                        Point3f(steering.vec_z_rotational...)]
+left_steering_connections = [Point3f(steering.vec_z_rotational...),
+                                Point3f(steering.sphere_joints[1]...),
+                                Point3f(steering.circle_joints[1]...),
+                                Point3f(steering.track_lever_mounting_points_ucs[1]...)]
+
+right_steering_connections = [Point3f(steering.vec_z_rotational...),
+                                Point3f(steering.sphere_joints[2]...),
+                                Point3f(steering.circle_joints[2]...),
+                                Point3f(steering.track_lever_mounting_points_ucs[2]...)]
+
+# stationary
+stationary = [Point3f(steering.wishbone_ucs_position[1]...),
+                Point3f(steering.wishbone_ucs_position[2]...)]        
+
+
+observe_rot = Observable(rotational_coponent)
+observe_left = Observable(left_steering_connections)
+observe_right = Observable(right_steering_connections)
+observe_stationary = Observable(stationary)
+#points = Observable(Point3f(steering.circle_joints[1]...))
+
+
+GLMakie.scatter!(ax, observe_rot, markersize=10)
+GLMakie.scatter!(ax, observe_left, markersize=10)
+GLMakie.scatter!(ax, observe_right, markersize=10)
+GLMakie.scatter!(ax, observe_stationary, markersize=10)
+
+GLMakie.lines!(ax, observe_rot)
+GLMakie.lines!(ax, observe_left)
+GLMakie.lines!(ax, observe_right)
+
+
+
+
+
+function update_geometry!((θx,θy,θz))
+    println((θx, θy, θz))
+    steeringkinematicsMOVED!((θx, θy, θz), steering, suspension)
+
+    rotational_coponent = [Point3f([0,0,0]),
+                            Point3f(steering.vec_x_rotational...),
+                            Point3f(steering.vec_z_rotational...)]
+    left_steering_connections = [Point3f(steering.vec_z_rotational...),
+                                    Point3f(steering.sphere_joints[1]...),
+                                    Point3f(steering.circle_joints[1]...),
+                                    Point3f(steering.track_lever_mounting_points_ucs[1]...)]
+
+    right_steering_connections = [Point3f(steering.vec_z_rotational...),
+                                    Point3f(steering.sphere_joints[2]...),
+                                    Point3f(steering.circle_joints[2]...),
+                                    Point3f(steering.track_lever_mounting_points_ucs[2]...)]
+
+    # stationary
+    stationary = [Point3f(steering.wishbone_ucs_position[1]...),
+                    Point3f(steering.wishbone_ucs_position[2]...)]        
+
+
+    observe_rot[] = rotational_coponent
+    observe_left[] = left_steering_connections
+    observe_right[] = right_steering_connections
+    observe_stationary[] = stationary
+end 
+
+sl_θ.sliders[1].value.val
+
+
+
+
+on(sl_θ.sliders[1].value) do val
+    θx = val
+    θy = sl_θ.sliders[2].value.val
+    θz = sl_θ.sliders[3].value.val
+
+    update_geometry!((θx,θy,θz))
+    #autolimits!(ax)
+end
+
+on(sl_θ.sliders[2].value) do val
+    θx = sl_θ.sliders[1].value.val
+    θy = val
+    θz = sl_θ.sliders[3].value.val
+
+    update_geometry!((θx,θy,θz))
+    #autolimits!(ax)
+end
+
+on(sl_θ.sliders[3].value) do val
+    θx = sl_θ.sliders[1].value.val
+    θy = sl_θ.sliders[2].value.val
+    θz = val
+
+    update_geometry!((θx,θy,θz))
+    #autolimits!(ax)
+end
+
+
+
+
+
+fig = GUI_layout()
+
+s = fig.layout[3,1].contents
+
+s.sliders
+
+
+on(button1.clicks) do n
+    
+    angleConfig = (10,10,30)
+    println(angleConfig)
+    steeringkinematics!(angleConfig, steering, suspension)
+
+end
+
+
+# GridLayout
+rowsize!(fig.layout, 1, Relative(3/4))
+colsize!(fig.layout, 1, Relative(2/3))
+
+rowsize!(fig.layout, 3, Relative(1/3))
+colsize!(fig.layout, 3, Relative(1/3))
+
+
+on(bt.clicks) do n
+    tb.displayed_string = "track_lever_length"
+
+
+end
+ 
+
+
+
+sliderobservables = [s.value for s in sg.sliders]
+
+
+GLMakie.meshscatter!(sliderobservables[1].val,  
+sliderobservables[2].val,  
+sliderobservables[3].val,
+             markersize = 0.01)
+
+text!(ax, string("Label"), position = Point3f(1, 5, 8), align = (:center, :bottom), fontsize = 10)
+
+bars = lift(sliderobservables...) do slvalues...
+    [slvalues...]
+end
+
+
+
+# 
+
+
+
+steering 
+
+
+
+
+steering.θx
 
 
 
@@ -75,18 +460,81 @@ plt = plot_steering(steering)
 
 
 
+function distanz_3d(p1, p2)
+    return sqrt((p2[1] - p1[1])^2 + (p2[2] - p1[2])^2 + (p2[3] - p1[3])^2)
+end
 
 
+function sind_rechtwinklig(a, b; tol=1e-10)
+    skalarprodukt = dot(a, b)
+    return abs(skalarprodukt)
+end
 
 
+function winkel_zwischen(a, b; in_grad=true)
+    if length(a) != length(b)
+        error("Vektoren müssen die gleiche Dimension haben.")
+    end
+    
+    skalarprodukt = dot(a, b)
+    betrag_a = norm(a)
+    betrag_b = norm(b)
 
+    if betrag_a == 0 || betrag_b == 0
+        error("Einer der Vektoren hat die Länge 0 – Winkel ist undefiniert.")
+    end
 
+    cos_theta = skalarprodukt / (betrag_a * betrag_b)
+    # Sicherstellen, dass cos_theta im Bereich [-1, 1] bleibt (Numerik!)
+    cos_theta = clamp(cos_theta, -1.0, 1.0)
 
+    theta = acos(cos_theta)  # in Radiant
 
+    return in_grad ? rad2deg(theta) : theta
+end
 
+# === Makie Setup ===
+fig = Figure(resolution=(800, 600))
+ax = Axis3(fig[1, 1])
 
+# Observable Slider-Werte
+θx = Node(0.0)
+θy = Node(0.0)
+θz = Node(0.0)
 
+# Die Observable für die Punktwolke
+points = Node(Point3f0[])
 
+# Plot der Punkte (initial leer)
+sc = scatter!(ax, points, markersize=10)
+
+# Update-Funktion
+function update_geometry!()
+    steeringkinematicsMOVED!((θx[], θy[], θz[]), steering, suspension)
+    left, right = steering.circle_joints
+    points[] = Point3f0[left... , right...]
+end
+
+# Slider erstellen
+sl_θx = Slider(fig[2, 1], range = -30:1:30, startvalue = 0) 
+sl_θy = Slider(fig[3, 1], range = -30:1:30, startvalue = 0)
+sl_θz = Slider(fig[4, 1], range = -30:1:30, startvalue = 0)
+
+# Slider-Callbacks setzen
+on(sl_θx.value) do val
+    θx[] = val
+    update_geometry!()
+end
+on(sl_θy.value) do val
+    θy[] = val
+    update_geometry!()
+end
+on(sl_θz.value) do val
+    θz[] = val
+    update_geometry!()
+end
+
+fig
 
 
 

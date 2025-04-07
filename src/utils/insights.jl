@@ -302,6 +302,47 @@ function plotSuspImpact(θ_max::Tuple{Any,Any}, steering::Steering, suspension::
 end
 
 
+function plotSuspImpact2(θ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension, chassis::Chassis; step_size = 1, suspensionNEUTRAL = Suspension((30,30)))
+    θx_max, θz_max = θ_max
+    θx = 0:step_size:θx_max
+    θz = 0:step_size:θz_max
+
+    # Meshgrid erzeugen für x und y
+    θx_grid = repeat(θx', length(θz), 1)
+    θz_grid = repeat(θz, 1, length(θx))
+
+    # Daten berechnen
+    objectiveNEUTRAL = grid_data_obj(θ_max, steering, suspensionNEUTRAL, chassis)
+    objective = grid_data_obj(θ_max, steering, suspension, chassis)
+
+    δi_NEUTRAL, δo_NEUTRAL  = grid_data_δ(θ_max, steering, suspensionNEUTRAL)
+    δi, δo  = grid_data_δ(θ_max, steering, suspension)
+
+    # Plot 1: Objective Comparison
+    fig1 = Figure(resolution = (800, 600))
+    ax1 = Axis3(fig1[1, 1], title = "Objective", xlabel = "θx [°]", ylabel = "θz [°]", zlabel = "Objective [mm]")
+
+    surface!(ax1, θx, θz, objectiveNEUTRAL; colormap = :greys, transparency = true, alpha = 0.8)
+    surface!(ax1, θx, θz, objective; colormap = :ylorrd, transparency = true, alpha = 0.5)
+
+    fig1[1, 1] = ax1
+
+    # Plot 2: δi Comparison
+    fig2 = Figure(resolution = (800, 600))
+    ax2 = Axis3(fig2[1, 1], title = "Lenkabweichung δi", xlabel = "θx [°]", ylabel = "θz [°]", zlabel = "δ [°]")
+
+    surface!(ax2, θx, θz, δi_NEUTRAL; colormap = :greys, transparency = true, alpha = 0.8)
+    surface!(ax2, θx, θz, δi; colormap = :ylorrd, transparency = true, alpha = 0.5)
+
+    fig2[1, 1] = ax2
+
+    display(fig1)
+    display(fig2)
+end
+
+
+
+
 
 """
     plot_optda_gird_δi(θ_max::Tuple{I,I}, steering::Steering) where {T <: Any}
@@ -656,7 +697,3 @@ function plot_steering(steering::Steering)
     # Kombiniere den Trace und das Layout und zeige den Plot an
     return PlotlyJS.plot([rotcomp...,tierod...,wishbone...,wheel...,tracklever...], layout)
 end
-
-
-
-

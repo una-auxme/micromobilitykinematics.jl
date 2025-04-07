@@ -74,8 +74,8 @@ of the tie rod. (Left side of the kinematik steering mechanism)
 """
 function left_circsphere_plane_dependency(steering_now::Steering)
 
-    circ = Circle(steering_now.track_lever_mounting_points_ucs[1],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[1][:,3])
-    sphere = Sphere(steering_now.sphere_joints[1],steering_now.tie_rod.length)
+    circ = GeoSpatialRelations.Circle(steering_now.track_lever_mounting_points_ucs[1],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[1][:,3])
+    sphere = GeoSpatialRelations.Sphere(steering_now.sphere_joints[1],steering_now.tie_rod.length)
 
     normal = circ.normal/norm(circ.normal)        #circ.normal must be a unit vector
     d = (normal[1]*sphere.center[1] + normal[2]*sphere.center[2] + normal[3]*sphere.center[3] - sum(normal.*circ.center))
@@ -102,8 +102,8 @@ of the tie rod. (Right side of the kinematic steering mechanism)
 """
 function right_circsphere_plane_dependency(steering_now::Steering) 
 
-    circ = Circle(steering_now.track_lever_mounting_points_ucs[2],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[2][:,3])
-    sphere = Sphere(steering_now.sphere_joints[2],steering_now.tie_rod.length)
+    circ = GeoSpatialRelations.Circle(steering_now.track_lever_mounting_points_ucs[2],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[2][:,3])
+    sphere = GeoSpatialRelations.Sphere(steering_now.sphere_joints[2],steering_now.tie_rod.length)
 
     normal = circ.normal/norm(circ.normal)        #circ.normal must be a unit vector
     d = (normal[1]*sphere.center[1] + normal[2]*sphere.center[2] + normal[3]*sphere.center[3] - sum(normal.*circ.center))
@@ -129,8 +129,8 @@ If the value of d is bigger then the total length of both radii there is no inte
 function left_circcirc_min_intersection_dependency(steering_now::Steering)
     #  from the GeoSpatialRelations package of the intersection() function
 
-    circ1 = Circle(steering_now.track_lever_mounting_points_ucs[1],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[1][:,3])
-    sphere = Sphere(steering_now.sphere_joints[1],steering_now.tie_rod.length)
+    circ1 = GeoSpatialRelations.Circle(steering_now.track_lever_mounting_points_ucs[1],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[1][:,3])
+    sphere = GeoSpatialRelations.Sphere(steering_now.sphere_joints[1],steering_now.tie_rod.length)
 
     normal = circ1.normal/norm(circ1.normal)
     d = (normal[1]*sphere.center[1] + normal[2]*sphere.center[2] + normal[3]*sphere.center[3] - sum(normal.*circ1.center))
@@ -138,7 +138,7 @@ function left_circcirc_min_intersection_dependency(steering_now::Steering)
     r_circ_2 = sqrt(sphere.radius^2-d^2)
     center_circ_2 = sphere.center -d*normal
 
-    circ2 = Circle(center_circ_2, r_circ_2, normal)
+    circ2 = GeoSpatialRelations.Circle(center_circ_2, r_circ_2, normal)
 
     if circ1.normal != circ2.normal
         throw(ArgumentError("The two circles do not lie in the same plane of three-dimensional space!"))
@@ -171,8 +171,8 @@ If the value of d is bigger then the total length of both radii there is no inte
 
 function right_circcirc_min_intersection_dependency(steering_now::Steering)
 
-    circ1 = Circle(steering_now.track_lever_mounting_points_ucs[2],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[2][:,3])
-    sphere = Sphere(steering_now.sphere_joints[2],steering_now.tie_rod.length)
+    circ1 = GeoSpatialRelations.Circle(steering_now.track_lever_mounting_points_ucs[2],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[2][:,3])
+    sphere = GeoSpatialRelations.Sphere(steering_now.sphere_joints[2],steering_now.tie_rod.length)
 
     normal = circ1.normal/norm(circ1.normal)
     d = (normal[1]*sphere.center[1] + normal[2]*sphere.center[2] + normal[3]*sphere.center[3] - sum(normal.*circ1.center))
@@ -180,7 +180,7 @@ function right_circcirc_min_intersection_dependency(steering_now::Steering)
     r_circ_2 = sqrt(sphere.radius^2-d^2)
     center_circ_2 = sphere.center -d*normal
 
-    circ2 = Circle(center_circ_2, r_circ_2, normal)
+    circ2 = GeoSpatialRelations.Circle(center_circ_2, r_circ_2, normal)
 
     if circ1.normal != circ2.normal
         throw(ArgumentError("The two circles do not lie in the same plane of three-dimensional space!"))
@@ -212,8 +212,8 @@ If the value of the radius of circle2 is bigger then there is no intersect posib
 function left_circcirc_max_intersection_dependency(steering_now::Steering)
 #  from the GeoSpatialRelations package of the intersection() function
 
-    circ1 = Circle(steering_now.track_lever_mounting_points_ucs[1],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[1][:,3])
-    sphere = Sphere(steering_now.sphere_joints[1],steering_now.tie_rod.length)
+    circ1 = GeoSpatialRelations.Circle(steering_now.track_lever_mounting_points_ucs[1],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[1][:,3])
+    sphere = GeoSpatialRelations.Sphere(steering_now.sphere_joints[1],steering_now.tie_rod.length)
 
     normal = circ1.normal/norm(circ1.normal)
     d = (normal[1]*sphere.center[1] + normal[2]*sphere.center[2] + normal[3]*sphere.center[3] - sum(normal.*circ1.center))
@@ -221,7 +221,7 @@ function left_circcirc_max_intersection_dependency(steering_now::Steering)
     r_circ_2 = sqrt(sphere.radius^2-d^2)
     center_circ_2 = sphere.center -d*normal
 
-    circ2 = Circle(center_circ_2, r_circ_2, normal)
+    circ2 = GeoSpatialRelations.Circle(center_circ_2, r_circ_2, normal)
 
     if circ1.normal != circ2.normal
         throw(ArgumentError("The two circles do not lie in the same plane of three-dimensional space!"))
@@ -254,8 +254,8 @@ If the value of the radius of circle2 is bigger then there is no intersect posib
 function right_circcirc_max_intersection_dependency(steering_now::Steering)
 #  from the GeoSpatialRelations package of the intersection() function
 
-    circ1 = Circle(steering_now.track_lever_mounting_points_ucs[2],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[2][:,3])
-    sphere = Sphere(steering_now.sphere_joints[2],steering_now.tie_rod.length)
+    circ1 = GeoSpatialRelations.Circle(steering_now.track_lever_mounting_points_ucs[2],steering_now.track_lever.length,steering_now.base_vec_wheel_ucs[2][:,3])
+    sphere = GeoSpatialRelations.Sphere(steering_now.sphere_joints[2],steering_now.tie_rod.length)
 
     normal = circ1.normal/norm(circ1.normal)
     d = (normal[1]*sphere.center[1] + normal[2]*sphere.center[2] + normal[3]*sphere.center[3] - sum(normal.*circ1.center))
@@ -263,7 +263,7 @@ function right_circcirc_max_intersection_dependency(steering_now::Steering)
     r_circ_2 = sqrt(sphere.radius^2-d^2)
     center_circ_2 = sphere.center -d*normal
 
-    circ2 = Circle(center_circ_2, r_circ_2, normal)
+    circ2 = GeoSpatialRelations.Circle(center_circ_2, r_circ_2, normal)
 
     if circ1.normal != circ2.normal
         throw(ArgumentError("The two circles do not lie in the same plane of three-dimensional space!"))

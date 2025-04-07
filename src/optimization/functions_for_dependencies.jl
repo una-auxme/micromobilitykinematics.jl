@@ -258,13 +258,13 @@ function kinematicsASOFmountMOVED°!(steering::Steering)
 
         #Circle 
         #@show steering.base_vec_wheel_ucs
-        circ = Circle(mount,steering.track_lever.length,steering.base_vec_wheel_ucs[index][:,3])
+        circ = GeoSpatialRelations.Circle(mount,steering.track_lever.length,steering.base_vec_wheel_ucs[index][:,3])
 
         #Sphere
-        sphere = Sphere(steering.sphere_joints[index],steering.tie_rod.length)
+        sphere = GeoSpatialRelations.Sphere(steering.sphere_joints[index],steering.tie_rod.length)
 
 
-        circle_joints_1, circle_joints_2 = intersection(circ, sphere)
+        circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
         
 
         if circle_joints_2[1] - mount[1] < circle_joints_1[1] - mount[1]                          
@@ -303,12 +303,12 @@ function kinematicsASOFmountNEUTRAL°!(steering::Steering)
         mount = steering.track_lever_mounting_points_ucs[index]
 
         #Circle 
-        circ = Circle(mount,steering.track_lever.length,steering.base_vec_wheel_ucs[index][:,3])
+        circ = GeoSpatialRelations.Circle(mount,steering.track_lever.length,steering.base_vec_wheel_ucs[index][:,3])
 
         #Sphere
-        sphere = Sphere(steering.sphere_joints_neutral[index],steering.tie_rod.length)
+        sphere = GeoSpatialRelations.Sphere(steering.sphere_joints_neutral[index],steering.tie_rod.length)
 
-        circle_joints_1, circle_joints_2 = intersection(circ, sphere)
+        circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
         
         if circle_joints_2[1] - mount[1] < circle_joints_1[1] - mount[1]
             #@eval $circle_joint = circle_joints_2                                      # Not compatible with threading

@@ -16,7 +16,7 @@
 - Distance between optimal and current intersection point
 """
 function steering_objective(angleConfig::Tuple{T,T,T},chassis::Chassis, steering::Steering, suspension::Suspension) where {T<:Any}
-    println("Thread $(Threads.threadid()):> objective")
+    #println("Thread $(Threads.threadid()):> objective")
     # calculate the kinematics in respect of the given angles
     #println("$(steering.rotational_component.x_rotational_radius), $(steering.rotational_component.z_rotational_radius), $(steering.track_lever.length), $(steering.tie_rod.length)\n  ")
     update!(angleConfig, steering, suspension)

@@ -186,8 +186,8 @@ end
 
 
 """
-function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T, T}, max_angleConfig; θy = 5) where {T<:Number}
-    θx_max , θz_max = max_angleConfig
+function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T, T}, max_angleConfig) where {T<:Number}
+    θx_max , θy, θz_max = max_angleConfig
     step_size = 1
     #initialisieren aller Winkelmöglichkeiten
     θ_tuple = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
