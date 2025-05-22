@@ -18,6 +18,7 @@ function suspensionkinematicsMOVED!(suspension::Suspension)
         suspension.lowerwishbone[index].id = side
 
         center = suspension.damper[index].upper_fixture
+        suspension.damper[index].length  = suspension.damper[index].nominal_length - (suspension.damper[index].compression / 100) * suspension.damper[index].travel
         radius = suspension.damper[index].length
         normal =  suspension.lowerwishbone[index].rotation_axis
         circ_damper = GeoSpatialRelations.Circle(center, radius, normal)
@@ -53,7 +54,7 @@ function suspensionkinematicsMOVED!(suspension::Suspension)
 
         sphere_lower_sphere_joint = GeoSpatialRelations.Sphere(center, radius)
     
-        suspension.upperwishbone[index].sphere_joint = collect(intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1])
+        suspension.upperwishbone[index].sphere_joint = collect(GeoSpatialRelations.intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1])
     end
 end
 

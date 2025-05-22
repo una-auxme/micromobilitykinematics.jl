@@ -1,5 +1,5 @@
 """
-    ackermannratio(angleConfig::Tuple{T,T,T}, 
+    ackermannratio(θ::Tuple{T,T,T}, 
                         chassis::Chassis, 
                         steering::Steering, 
                         suspension::Suspension) where {T >: Any}
@@ -9,7 +9,7 @@ Calculates the Ackermann steering ratio [%] based on the current steering config
 A result of 100% indicates a perfect match with ideal Ackermann behavior, while lower values indicate deviation due to geometry, articulation, or linkage constraints.
 
 # Arguments
-- `angleConfig::Tuple{T,T,T}`: A tuple `(θx, θy, θz)` representing the current steering angles.
+- `θ::Tuple{T,T,T}`: A tuple `(θx, θy, θz)` representing the current steering angles.
 - `chassis::Chassis`: The chassis object containing structural vehicle information such as wheelbase.
 - `steering::Steering`: The steering system configuration, used to evaluate current joint and linkage positions.
 - `suspension::Suspension`: The suspension model affecting the geometry during steering.
@@ -25,12 +25,13 @@ This function evaluates how closely the current steering geometry approximates i
 # Returns 
 - Float64: The computed Ackermann ratio in percent [%].
 """
-function ackermannratio(angleConfig::Tuple{T,T,T},chassis::Chassis, steering::Steering, suspension::Suspension) where {T >: Any}
+function ackermannratio(θ::Tuple{T,T,T}, 
+                        chassis::Chassis, steering::Steering, suspension::Suspension) where {T >: Any}
     #wheel_offset                    # Distance Rotationspoint and Wheelcenter
     #offset = wheel_offset * sind(δo)
 
     measurment = Measurements(chassis, steering)
-    objective = steering_objective(angleConfig, chassis, steering, suspension)
+    objective = steering_objective(θ, chassis, steering, suspension)
 
     L = objective + measurment.wheel_base #+ offset
 

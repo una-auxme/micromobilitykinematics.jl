@@ -78,6 +78,25 @@ for (type, supertype) in zip([:TieRod, :TrackLever],[:AbstractTieRod, :AbstractT
 end
 
 
+mutable struct InitSteeringParam
+    θx_radius::Any
+    θz_radius::Any
+    track_lever_length::Any
+    tie_rod_length::Any
+    function InitSteeringParam(θx_radius, θz_radius, track_lever_length, tie_rod_length)
+        inst = new()
+
+        inst.θx_radius = θx_radius
+        inst.θz_radius = θz_radius
+        inst.track_lever_length = track_lever_length
+        inst.tie_rod_length = tie_rod_length
+        
+        return inst
+    end
+
+end
+
+
 
 mutable struct Steering <: AbstractSteering
     ##### Components
@@ -119,8 +138,13 @@ mutable struct Steering <: AbstractSteering
 
     ######## objective 
 
-    objective::Union{Any, Nothing}                              
+    objective::Union{Any, Nothing}         
+    
+    
 
+    ######## inital Param
+    
+    init_steering::InitSteeringParam
 
     ######## function 
 
@@ -159,6 +183,8 @@ mutable struct Steering <: AbstractSteering
         inst.track_lever_mounting_points_ucs = nothing
 
         inst.objective = nothing
+
+        inst.init_steering = InitSteeringParam(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 
         inst.kinematics! = steeringkinematics!
 

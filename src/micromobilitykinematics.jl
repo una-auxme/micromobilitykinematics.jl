@@ -1,4 +1,4 @@
-module micromobilitykinematics
+#module micromobilitykinematics
     using Documenter    
     using LinearAlgebra
     using StaticArrays
@@ -46,4 +46,4 @@ module micromobilitykinematics
     include("optimization/optim.jl")
     include("utils/insights.jl")    
     include("utils/io.jl")
-end
+#end

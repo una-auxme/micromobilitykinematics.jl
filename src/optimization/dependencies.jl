@@ -106,13 +106,13 @@ function TrackingCircleConstraint(arge...)
 end
 
 """
-checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension)
+checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspension::Suspension)
 
     checks  all constraints and dependencies
 
 # Arguments 
 - `step_size`: step_size in which the angular area should be checked
-- `maxangleConfig::Tuple{T,T,T}`: angles (θx,θz) in which the rotational component is rotated
+- `maxθ::Tuple{T,T,T}`: angles (θx,θz) in which the rotational component is rotated
         -`θx`: maximal Angle of rotation of the rotation component around the x-axis
         -`θy`: Angle of rotation of the rotation component around the y-axis
         -`θz`: maximal Angle of rotation of the rotation component around the z-axis
@@ -124,8 +124,8 @@ checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspensi
         - `false`: It is not possible to match the constraints in a satisfactory manner
         - `true`: It is possible to match the constraints in a satisfactory manner
 """
-function checkConstraints(step_size, max_angleConfig::Tuple, steering::Steering, suspension::Suspension) 
-    θx_max, θy , θz_max = max_angleConfig
+function checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspension::Suspension) 
+    θx_max, θy , θz_max = θ_max
     try
         kin_Bool = []
         angle_Bool = []
@@ -219,27 +219,27 @@ function checkConstraints°(x_rotational_radius, z_rotational_radius, track_leve
         println("Thread $(Threads.threadid()):> ($(x_rotational_radius), $(z_rotational_radius), $(track_lever_length), $(tie_rod_length))")
     end
 
-    angleConfig = (θx_max,θy,θz_max)
+    θ = (θx_max,θy,θz_max)
 
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     
     suspension = Suspension((30,30))
     suspensionkinematics!(suspension)
-    #println(":> $(checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0)")
-    return checkConstraints(1,angleConfig,steering,suspension) ? 1.0 : 0.0
+    #println(":> $(checkConstraints(1,θ,steering,suspension) ? 1.0 : 0.0)")
+    return checkConstraints(1,θ,steering,suspension) ? 1.0 : 0.0
 end
 
 
 
 """
-    random_search(upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},max_angleConfig; info = false, radius = 3500, step_size = 1 )
+    random_search(upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},θ_max; info = false, radius = 3500, step_size = 1 )
 
 random search with given border for the parameters and given angular area for rotary component 
 
 # Arguments:
 - `upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
 - `lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
-- `max_angleConfig`: maximal angular area for rotary component (defult: (0,0,35))
+- `θ_max`: maximal angular area for rotary component (defult: (0,0,35))
         - `θx`: Angle of rotation of the rotation component around the x-axis
         - `θy`: Angle of rotation of the rotation component around the y-axis
         - `θz`: Angle of rotation of the rotation component around the z-axis
@@ -252,7 +252,7 @@ random search with given border for the parameters and given angular area for ro
 # Returns:
 - `compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
 """
-function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, max_angleConfig::Tuple{I,I,I},  ; info = false, step_size = 1 ) where {T<:Real, I<:Integer}
+function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, θ_max::Tuple{I,I,I},  ; info = false, step_size = 1 ) where {T<:Real, I<:Integer}
     param = nothing
     valid_param = false
 
@@ -269,7 +269,7 @@ function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}
         suspensionkinematics!(suspension)
         steering = Steering(param...)
 
-        valid_param = checkConstraints(step_size, max_angleConfig,steering,suspension)
+        valid_param = checkConstraints(step_size, θ_max,steering,suspension)
         i +=1
     end
     return Tuple(param)

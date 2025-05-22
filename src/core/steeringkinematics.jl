@@ -1,10 +1,10 @@
 """
-    steeringkinematicsMOVED!(angleConfig::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    steeringkinematicsMOVED!(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 For the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated
 
 # Arguments
-- `angleConfig::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
+- `θ::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
         - `θx`: Angle of rotation of the rotation component around the x-axis
         - `θy`: Angle of rotation of the rotation component around the y-axis
         - `θz`: Angle of rotation of the rotation component around the z-axis
@@ -14,8 +14,8 @@ For the moving rotational component with the angles (θx, θz), the kinematics o
 # Returns:
 - no returns because of in place programming
 """
-function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspension::Suspension)
-    θx, θy, θz = angleConfig
+function steeringkinematicsMOVED!(θ::Tuple, steering::Steering, suspension::Suspension)
+    θx, θy, θz = θ
 
 
     steering.θx = θx
@@ -23,9 +23,9 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
     steering.θz = θz
 
 
-    θx =   θx * (π / 180) #deg2rad(θx)
-    θy =   θy * (π / 180) #deg2rad(θy)
-    θz =   θz * (π / 180) #deg2rad(θz)
+    θx = deg2rad(θx)
+    θy = deg2rad(θy)
+    θz = deg2rad(θz)
 
     #############
     rotational_component_ucs = [[1;0;0] [0;1;0] [0;0;1]]
@@ -77,12 +77,11 @@ function steeringkinematicsMOVED!(angleConfig::Tuple, steering::Steering, suspen
     wheel_ucs = [[1.0;0.0;0.0] [0.0;1.0;0.0] [0.0;0.0;1.0]]
 
 
-    suspension.kinematics!(suspension)
+    suspensionkinematics!(suspension)
 
 
     wheel_ucs_position = (suspension.lowerwishbone[1].sphere_joint, suspension.lowerwishbone[2].sphere_joint)
     steering.wheel_ucs_position = wheel_ucs_position
-    println(wheel_ucs_position)
     
     left_axis_z = (suspension.upperwishbone[1].sphere_joint - suspension.lowerwishbone[1].sphere_joint) / norm(suspension.upperwishbone[1].sphere_joint - suspension.lowerwishbone[1].sphere_joint)
     right_axis_z = (suspension.upperwishbone[2].sphere_joint - suspension.lowerwishbone[2].sphere_joint) / norm(suspension.upperwishbone[2].sphere_joint - suspension.lowerwishbone[2].sphere_joint)
@@ -150,12 +149,12 @@ end
 
 
 """
-    steeringkinematicsNEUTRAL!(angleConfig::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    steeringkinematicsNEUTRAL!(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 For the rotation component in its rest position with the angles (θx, θz) = (0,0), the kinematics of the steering is calculated
 
 # Arguments
-- `angleConfig::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
+- `θ::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
         - `θx`: Angle of rotation of the rotation component around the x-axis
         - `θy`: Angle of rotation of the rotation component around the y-axis
         - `θz`: Angle of rotation of the rotation component around the z-axis
@@ -165,8 +164,8 @@ For the rotation component in its rest position with the angles (θx, θz) = (0,
 # Returns:
 - no returns because of in place programming
 """
-function steeringkinematicsNEUTRAL!(angleConfig::Tuple, steering::Steering, suspension::Suspension)
-    θx, θy, θz = angleConfig
+function steeringkinematicsNEUTRAL!(θ::Tuple, steering::Steering, suspension::Suspension)
+    θx, θy, θz = θ
 
     θx =  0.0 * (π / 180)  #deg2rad(0.0)
     θy =  θy * (π / 180)  #deg2rad(θy)
@@ -216,7 +215,7 @@ function steeringkinematicsNEUTRAL!(angleConfig::Tuple, steering::Steering, susp
     wheel_ucs = [[1.0;0.0;0.0] [0.0;1.0;0.0] [0.0;0.0;1.0]]
 
 
-    suspension.kinematics!(suspension)
+    suspensionkinematics!(suspension)
 
 
     wheel_ucs_position = (suspension.lowerwishbone[1].sphere_joint, suspension.lowerwishbone[2].sphere_joint)
@@ -291,12 +290,12 @@ end
 
 
 """
-    steeringkinematics!(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    steeringkinematics!(θ::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
 
 # Arguments
-- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+- `θ::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         - `θx`: Angle of rotation of the rotation component around the x-axis
         - `θz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
@@ -312,12 +311,12 @@ function steeringkinematics!(args...)
 end
 
 """
-    steeringkinematics(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    steeringkinematics(θ::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
 
 # Arguments
-- `angleConfig::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
+- `θ::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
         - `θx`: Angle of rotation of the rotation component around the x-axis
         - `θz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
@@ -326,8 +325,8 @@ To fully describe the kinematics of the steering system, both MOVED and NEUTRAL 
 # Returns:
 - `steering::Steering`: Instance of a specific steering
 """
-function steeringkinematics(angleConfig::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
+function steeringkinematics(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
     cpy_steering = deepcopy(steering)
-    steeringkinematics!(angleConfig,steering,suspension)
+    steeringkinematics!(θ,steering,suspension)
     return cpy_steering
 end

@@ -149,12 +149,12 @@ end
 
 
 """
-    update!(angleConfig::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    update!(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
 # Arguments
-- `angleConfig::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
+- `θ::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
         - `θx`: Angle of rotation of the rotation component around the x-axis
         - `θy`: Angle of rotation of the rotation component around the y-axis
         - `θz`: Angle of rotation of the rotation component around the z-axis
@@ -173,12 +173,12 @@ function update!(args...)
 end 
 
 """
-    update!(angleConfig::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    update!(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
 # Arguments
-- `angleConfig::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
+- `θ::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
         - `θx`: Angle of rotation of the rotation component around the x-axis
         - `θy`: Angle of rotation of the rotation component around the y-axis
         - `θz`: Angle of rotation of the rotation component around the z-axis
@@ -189,9 +189,9 @@ updates the kinematics of the given steering instance on the new angles and susp
 -`steering::Steering`: Instance of a specific steering
 
 """
-function update(angleConfig::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+function update(θ::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
     cpy_steering = deepcopy(steering)
-    update!(angleConfig, cpy_steering, suspension)
+    update!(θ, cpy_steering, suspension)
     return cpy_steering
 end 
 

@@ -82,14 +82,14 @@ end
 
 
 """
-    optim(θ::Tuple{T,T},upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},max_angleConfig)
+    optim(θ::Tuple{T,T},upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},θ_max)
 
 
 # Arguments:
 - `θ::Tuple{T,T}`: angle pair to be considered
 - `upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
 - `lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
-- `max_angleConfig`: maximal angular area for rotary component (default: (0,35))
+- `θ_max`: maximal angular area for rotary component (default: (0,35))
 
 # Keywords
 - `param::Tuple{I,I,I,I}`: If necessary, the components can be initialised individually, otherwise the values are randomised by the function that was checked for kinematic conditions.
@@ -127,7 +127,7 @@ end
 
 
 """
-    n_times_parallel_optim(num::Int64, θ::Tuple{T,T},upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},max_angleConfig)
+    n_times_parallel_optim(num::Int64, θ::Tuple{T,T},upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},θ_max)
 
     Executes an optimisation 'n' times in parallel using threads.
 
@@ -137,7 +137,7 @@ end
 - `θ::Tuple{T,T}`: angle pair to be considered
 - `upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
 - `lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
-- `max_angleConfig`: maximal angular area for rotary component (default: (0,35))
+- `θ_max`: maximal angular area for rotary component (default: (0,35))
 
 # Returns:
 - `sol_dict`: Dict which contains the optimal solutions.
@@ -181,13 +181,13 @@ end
 
 
 """
-    grid_optim(upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64}, max_angleConfig::Tuple{I,I}) where {I::Int64}
+    grid_optim(upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64}, θ_max::Tuple{I,I}) where {I::Int64}
 
 
 
 """
-function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T, T}, max_angleConfig) where {T<:Number}
-    θx_max , θy, θz_max = max_angleConfig
+function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T, T}, θ_max) where {T<:Number}
+    θx_max , θy, θz_max = θ_max
     step_size = 1
     #initialisieren aller Winkelmöglichkeiten
     θ_tuple = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
@@ -202,7 +202,7 @@ function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T,
             if θ != (0,0)
                 θx,θz = θ
                 θ_ = (θx,θy,θz)
-                opt_series = optim_series(5,θ_,upper_border,lower_border,max_angleConfig)
+                opt_series = optim_series(5,θ_,upper_border,lower_border,θ_max)
                 pathTOdata = joinpath(path_data,"opt_series($(θx),$(θy),$(θz)).jld2")
                 @save pathTOdata opt_series
 
@@ -210,9 +210,4 @@ function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T,
         end
     end 
 end
-
-
-
-
-
 
