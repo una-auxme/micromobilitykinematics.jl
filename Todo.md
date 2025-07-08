@@ -11,7 +11,7 @@
 ## 🔁 Alle To-Dos auf einen Blick
 - [x] rotation der Rotationscomponente um die y-Achse anpassen
 - [x] Opt: optimierung zum laufen bringen
-- [ ] GUI: plots skalen anpassen
+- [x] GUI: plots skalen anpassen
 - [ ] GUI: neuer plot compression zum Einschlagwinkel 
 - [ ] GUI: tracking der Kameraeinstellung der Plots
 - [ ] Docs: Documentation anpassen
