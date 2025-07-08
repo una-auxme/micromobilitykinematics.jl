@@ -1,4 +1,4 @@
-#module micromobilitykinematics
+module micromobilitykinematics
     using Documenter    
     using LinearAlgebra
     using StaticArrays
@@ -6,7 +6,7 @@
     using JLD2
     using Base.Threads
     using Plots;gr()
-    using PlotlyJS
+    #using PlotlyJS
     using LightXML
     include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
     using .GeoSpatialRelations
@@ -46,4 +46,9 @@
     include("optimization/optim.jl")
     include("utils/insights.jl")    
     include("utils/io.jl")
-#end
+    include("gui/GUIcore.jl")
+    include("gui/layout.jl")
+    include("gui/calculation.jl")
+    include("gui/events.jl")
+    include("gui/save.jl")
+end

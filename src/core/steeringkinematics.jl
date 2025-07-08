@@ -27,6 +27,7 @@ function steeringkinematicsMOVED!(θ::Tuple, steering::Steering, suspension::Sus
     θy = deg2rad(θy)
     θz = deg2rad(θz)
 
+
     #############
     rotational_component_ucs = [[1;0;0] [0;1;0] [0;0;1]]
 
@@ -38,13 +39,13 @@ function steeringkinematicsMOVED!(θ::Tuple, steering::Steering, suspension::Sus
     
     # tilting the handlebar around y-axes
 
-    ~, vec_x_rotational_neutral = rotate3(vec_x_rotational_neutral, rotational_component_ucs[2,:], θy)
+    ~, vec_x_rotational_neutral = rotate3(vec_x_rotational_neutral, rotational_component_ucs[2,:], -θy)
 
-    ~, vec_z_rotational_neutral = rotate3(vec_z_rotational_neutral, rotational_component_ucs[2,:], θy)
+    ~, vec_z_rotational_neutral = rotate3(vec_z_rotational_neutral, rotational_component_ucs[2,:], -θy)
     
-    ~, left_sphere_joints_neutral = rotate3(left_sphere_joints_neutral, rotational_component_ucs[2,:], θy)
+    ~, left_sphere_joints_neutral = rotate3(left_sphere_joints_neutral, rotational_component_ucs[2,:], -θy)
 
-    ~, right_sphere_joints_neutral = rotate3(right_sphere_joints_neutral, rotational_component_ucs[2,:], θy)
+    ~, right_sphere_joints_neutral = rotate3(right_sphere_joints_neutral, rotational_component_ucs[2,:], -θy)
 
 
 
@@ -185,13 +186,13 @@ function steeringkinematicsNEUTRAL!(θ::Tuple, steering::Steering, suspension::S
 
     # tilting the handlebar around y-axes
 
-    ~, vec_x_rotational_neutral = rotate3(vec_x_rotational_neutral, rotational_component_ucs[2,:], θy)
+    ~, vec_x_rotational_neutral = rotate3(vec_x_rotational_neutral, rotational_component_ucs[2,:], -θy)
 
-    ~, vec_z_rotational_neutral = rotate3(vec_z_rotational_neutral, rotational_component_ucs[2,:], θy)
+    ~, vec_z_rotational_neutral = rotate3(vec_z_rotational_neutral, rotational_component_ucs[2,:], -θy)
     
-    ~, left_sphere_joints_neutral = rotate3(left_sphere_joints_neutral, rotational_component_ucs[2,:], θy)
+    ~, left_sphere_joints_neutral = rotate3(left_sphere_joints_neutral, rotational_component_ucs[2,:], -θy)
 
-    ~, right_sphere_joints_neutral = rotate3(right_sphere_joints_neutral, rotational_component_ucs[2,:], θy)
+    ~, right_sphere_joints_neutral = rotate3(right_sphere_joints_neutral, rotational_component_ucs[2,:], -θy)
 
 
 

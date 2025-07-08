@@ -86,7 +86,7 @@ end
 
 
 # Arguments:
-- `θ::Tuple{T,T}`: angle pair to be considered
+- `θ::Tuple{T,T,T}`: angle pair to be considered
 - `upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
 - `lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
 - `θ_max`: maximal angular area for rotary component (default: (0,35))
@@ -97,7 +97,7 @@ end
 # Returns:
 - `opda`: instance of OptDa (optimization Data)
 """
-function optim(θ::Tuple{T,T,T}, args...) where {T<:Integer}
+function optim(θ::Tuple{T,T,T}, args...) where {T<:Number}
 
     param = random_search(args...)
     steering = Steering(param...) # param = x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length
@@ -127,7 +127,7 @@ end
 
 
 """
-    n_times_parallel_optim(num::Int64, θ::Tuple{T,T},upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},θ_max)
+    n_times_parallel_optim(num::Int64, θ::Tuple{T,T,T},upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},θ_max)
 
     Executes an optimisation 'n' times in parallel using threads.
 
@@ -146,7 +146,7 @@ end
 """
 function optim_series(num::Int64,args...)
     sol_dict = Dict{Int,Any}()
-
+    println(args...)
     lk = ReentrantLock()
     @threads for id in 1:num
         success = false
@@ -188,9 +188,12 @@ end
 """
 function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T, T}, θ_max) where {T<:Number}
     θx_max , θy, θz_max = θ_max
-    step_size = 1
+
+    θx_max = Int(round(θx_max))
+    θy_max = Int(round(θz_max))
+    step_size = 1.0
     #initialisieren aller Winkelmöglichkeiten
-    θ_tuple = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
+    θ_tuple = [(i, j) for i in 0.0:step_size:θx_max, j in 0.0:step_size:θz_max]
 
     ######## starting Optimization #########
     for i in 1:Int((θx_max/step_size)+1)
@@ -202,7 +205,7 @@ function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T,
             if θ != (0,0)
                 θx,θz = θ
                 θ_ = (θx,θy,θz)
-                opt_series = optim_series(5,θ_,upper_border,lower_border,θ_max)
+                opt_series = optim_series(2,θ_,upper_border,lower_border,θ_max)
                 pathTOdata = joinpath(path_data,"opt_series($(θx),$(θy),$(θz)).jld2")
                 @save pathTOdata opt_series
 

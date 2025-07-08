@@ -52,8 +52,6 @@ function interactionlyt(θ_max, chassis, steering, suspension)
 end
 
 
-
-
 """
     layout_section_angles(fig, slot, θ_max)
 
@@ -97,9 +95,9 @@ function layout_section_angles(fig, slot, θ_max)
 
 
     angle_section.sg_θ = SliderGrid( angle_section.lyt[2, 1],
-                                    (label = "θx", range = 0:1:θx_max, format = "{:.1f}°", startvalue = 0),
-                                    (label = "θy", range = 0:1:θy_max, format = "{:.1f}°", startvalue = 0),
-                                    (label = "θz", range = 0:1:θz_max, format = "{:.1f}°", startvalue = 0),
+                                    (label = "θx", range = 0.0:1.0:θx_max, format = "{:.1f}°", startvalue = 0),
+                                    (label = "θy", range = 0.0:0.1:θy_max, format = "{:.1f}°", startvalue = 0),
+                                    (label = "θz", range = 0.0:1.0:θz_max, format = "{:.1f}°", startvalue = 0),
                                     width = 350,
                                     tellheight = false)
 
@@ -509,7 +507,7 @@ function radii_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
                             xlabel = "θz in [°]", 
                             ylabel = "radius in [mm]", 
                             title = "Radii for (θx, θy, θz) = (0,0,0)",
-                            yticks = 0:1000:40000) 
+                            yticks = 0:5000:40000) 
     section_plot.ax_radii.blockscene.visible[] = false
     # Limits
     GLMakie.xlims!(section_plot.ax_radii, 0, 35)
@@ -518,14 +516,14 @@ function radii_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     #GLMakie.autolimits!(ax_radii)
 
     ############| Radii θz Data
-    radii_θz = steering_radii_θz(1,0,θz_max,chassis, steering, suspension)
+    radii_θz = steering_radii_θz(1.0,0.0,θz_max,chassis, steering, suspension)
 
     ############| Radii θz Observervar 
     section_plot.obs_radii_θz = Observable(radii_θz)
 
 
     ############| Radii θz Ploting  
-    xs = [θz for θz in 0:1:θz_max] 
+    xs = [θz for θz in 0.0:1.0:θz_max] 
 
     GLMakie.lines!(section_plot.ax_radii, xs, section_plot.obs_radii_θz)
 
@@ -587,7 +585,7 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 
     ############| Ackermannratio Data
 
-    ratio = ackermannratio_θz(0,0,θz_max,chassis, steering, suspension)
+    ratio = ackermannratio_θz(0.0,0.0,θz_max,chassis, steering, suspension)
 
     ############| Ackermannratio Observervar 
 
@@ -598,7 +596,7 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 
 
     ############| Ackermannratio Ploting  
-    xs = [θz for θz in 0:1:θz_max] 
+    xs = [θz for θz in 0.0:1.0:θz_max] 
 
     GLMakie.lines!(section_plot.ax_ratio, xs, section_plot.obs_ratio_θz)
 
@@ -669,9 +667,10 @@ function ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspen
                                                     xlabel = "θx in [°]", 
                                                     ylabel = "θz in [°]",
                                                     zlabel = "ratio in [%]",
-                                                    zticks = 50:5:100, 
+                                                    zticks = 50:10:100, 
                                                     title = "Ackermannratio surface",) #
-    section_plot.ax_ratio_surface.aspect = :data
+    #section_plot.ax_ratio_surface.aspect = :data
+    section_plot.ax_ratio_surface.aspect = (1, 1, 1)
     section_plot.ax_ratio_surface.blockscene.visible[] = false
     
 
@@ -690,9 +689,11 @@ function ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspen
 
     ############| Ackermannratio Ploting  
 
-    GLMakie.surface!(section_plot.ax_ratio_surface , 0:1:θx_max, 0:1:θz_max, section_plot.obs_ratio_surface; colormap = :darkterrain)
+    GLMakie.surface!(section_plot.ax_ratio_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, section_plot.obs_ratio_surface; colormap = :darkterrain)
     
 end
+
+
 
 """
     update_geometry!(θ, section_plot, steering, suspension)

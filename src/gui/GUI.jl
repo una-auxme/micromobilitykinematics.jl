@@ -39,12 +39,7 @@ function GUI_steering(args...)
   event_slider_param_θz_radius(interaction_lyt, args...)
   event_slider_param_tierod(interaction_lyt, args...)
   event_slider_param_tracklever(interaction_lyt, args...)
-
 end
-
-
-# TODO 
-
 
 
 
@@ -56,7 +51,7 @@ suspension = Suspension((30,30))
 
 
 # steering setting
-angleConfig = (0,0,0)
+angleConfig = (0.0,0.0,0.0)
 
 suspensionkinematics!(suspension)
 
@@ -65,7 +60,7 @@ chassis = Chassis()
 
 steeringkinematics!(angleConfig, steering, suspension)
 
-θ_max = (15,5,35)
+θ_max = (15.0,5.0,35.0)
 GUI_steering(θ_max, chassis , steering, suspension)
 
 

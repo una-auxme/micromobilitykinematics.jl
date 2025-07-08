@@ -26,7 +26,9 @@ This function evaluates how closely the current steering geometry approximates i
 - Float64: The computed Ackermann ratio in percent [%].
 """
 function ackermannratio(θ::Tuple{T,T,T}, 
-                        chassis::Chassis, steering::Steering, suspension::Suspension) where {T >: Any}
+                            chassis::Chassis, 
+                            steering::Steering, 
+                            suspension::Suspension) where {T >: Any}
     #wheel_offset                    # Distance Rotationspoint and Wheelcenter
     #offset = wheel_offset * sind(δo)
 
@@ -121,14 +123,17 @@ function steering_radii(chassis::Chassis,
         θx, θy, θz = θ
         update!(θ, steering, suspension)
 
+        θx_i = Int(round(θx))
+        θz_i = Int(round(θz))
+
         if steering.δo == 0.0
-            radii[θx+1,θz+1] = NaN
+            radii[θx_i+1,θz_i+1] = NaN
         else
     
         measurment = Measurements(chassis, steering)
         δo = deg2rad(steering.δo)
     
-        radii[θx + 1,θz + 1] = measurment.wheel_base / sin(δo)
+        radii[θx_i + 1,θz_i + 1] = measurment.wheel_base / sin(δo)
         end
     end 
 
@@ -243,8 +248,10 @@ function ackermannratio_θz(θx::T,
         θz = θ
         update!((θx, θy, θz), steering, suspension)
 
+
+
         if steering.δo == 0.0
-            push!(ratio,ackermannratio((θx, θy, θz+1),chassis, steering, suspension))
+            push!(ratio,ackermannratio((θx, θy, θz+1.0),chassis, steering, suspension))
         else
             push!(ratio,ackermannratio((θx, θy, θz),chassis, steering, suspension))
         end
@@ -294,11 +301,14 @@ function ackermannratio_surface(chassis::Chassis,
         θx, θy, θz = θ
         update!(θ, steering, suspension)
 
+        θx_i = Int(round(θx))
+        θz_i = Int(round(θz))
+
         if steering.δo == 0.0
-            ratio[θx+1,θz+1] = NaN
+            ratio[θx_i+1,θz_i+1] = NaN
         else
     
-        ratio[θx+1,θz+1] = ackermannratio(θ,chassis, steering, suspension)
+        ratio[θx_i+1,θz_i+1] = ackermannratio(θ,chassis, steering, suspension)
         end
     end 
     return ratio
