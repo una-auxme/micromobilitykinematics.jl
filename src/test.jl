@@ -1,26 +1,30 @@
 
 
 
-
-
-
-
-
 lower_bourder = (50.0,
 50.0, 
 70.0, 
 195.0)
 upper_bourder = (100.0,
-200.0,
+100.0,
 200.0,
 260.0
 )
-max_angleConfig = (10,0,35)
+max_angleConfig = (15.0,1.0,35.0)
 
-@thread
+set = random_search(upper_bourder, lower_bourder, max_angleConfig)
+opt = optim_over_range(set...,max_angleConfig)
 
-random_search(upper_bourder, lower_bourder, max_angleConfig)
-opt = optim((1,10,20), upper_bourder, lower_bourder, max_angleConfig)
+checkConstraints°(73.68312302748815, 99.99954088264283, 111.06518883155972, 224.05255235101745)
+
+opt = optim02(upper_bourder, lower_bourder, max_angleConfig)
+
+max_angleConfig = (15.0,1.0,35.0)
+opt2 = optim_at_pose((1.0,1.0,20.0),upper_bourder, lower_bourder, max_angleConfig)
+
+
+
+
 
 grid_optim(upper_bourder, lower_bourder, max_angleConfig)
 
@@ -28,8 +32,50 @@ sol_dict = optim_series(2, (1,1), upper_bourder, upper_bourder, max_angleConfig)
 
 optda = sol_dict[2]
 
-opt.objective
-opt.steering
+opt2.objective
+
+save2 = opt2.steering
+
+save = opt.steering
+
+p = getValue(save2)
+# optimal solution (58.93776580661926, 100.00000099999852, 113.81284143399382, 228.618912533653)
+# optimal solution (63.771311101944455, 100.00000099999696, 110.76251978448404, 227.2229191420079)
+
+checkConstraints°(p...)
+
+st = opt.steering
+
+
+#(56.0, 86.0, 111.0, 215.0)
+
+
+suspension = Suspension((30,30))
+
+
+# steering setting
+angleConfig = (0.0,0.0,0.0)
+
+suspensionkinematics!(suspension)
+
+
+chassis = Chassis()
+
+steeringkinematics!(angleConfig, st, suspension)
+
+θ_max = (15.0,1.0,35.0)
+GUI_steering(θ_max, chassis , st, suspension)
+
+
+
+param = getValue(st)
+
+checkConstraints°((71.72351165297609, 99.99961733848545, 116.65242673951506, 225.9899084736011))
+
+
+
+θ_max = (15.0,0.0,35.0)
+GUI_steering(θ_max, chassis , st, suspension)
 
 
 
@@ -47,17 +93,34 @@ grid_optim(upper_bourder,lower_bourder, max_angleConfig)
 
 
 
+
+
+
+ θ_tuples = [(i, j) for i in 0.0:1.0:15, j in 0.0:1.0:35] # searching space of (θx, θz)
+θy = 0.0
+[(θ_tuple[1], θy, θ_tuple[2]) for θ_tuple in θ_tuples]
+
+
+
+
+
+
+ θ_tuples = [(i,l, j) for i in 0.0:1.0:10.0, l in 0.0:0.1:5.0, j in 0.0:1.0:30.0] # searching space of (θx, θz)
+
+
+
+
 using Makie 
 
 
-steering = Steering(57.44215025102158, 141.46879245569016, 169.82983068573606, 228.15747858550213)
+steering = Steering(74.49225659129358, 99.99825703300766, 122.32554031130196, 223.75433904895826)
 
 # initialisation of the susfpension
 suspension = Suspension((30,30))
 
 
 # steering setting
-angleConfig = (0,10,0)
+angleConfig = (15.0,0.0,35.0)
 
 suspensionkinematics!(suspension)
 

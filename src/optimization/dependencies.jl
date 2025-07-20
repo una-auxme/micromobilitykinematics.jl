@@ -124,7 +124,7 @@ checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspension::Suspe
         - `false`: It is not possible to match the constraints in a satisfactory manner
         - `true`: It is possible to match the constraints in a satisfactory manner
 """
-function checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspension::Suspension) 
+function checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspension::Suspension)
     θx_max, θy , θz_max = θ_max
     try
         kin_Bool = []
@@ -157,6 +157,7 @@ function checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspensi
         # calculation of complete kinematics necessary (steering.sphere_joints)
         for steering in steerings
             #for (θx,θz) = (0,0) AngleDependency and SingularityConstraintis not expressive
+            #println("------------------------------------------> $((steering.θx, steering.θy, steering.θz)) ")
             if steering.θx == 0.0 && steering.θz == 0.0 
                 continue
             end
@@ -185,7 +186,7 @@ function checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspensi
         end
     catch err
         #println("\n\n\n $(err.stack) \n\n\n")
-        println("$err")
+        @warn "Error in checkConstraints: $err"
         return false
     end
     return true
@@ -210,7 +211,7 @@ The wrapper function of the checkConstraints procedure is employed for the purpo
 
 """
 function checkConstraints°(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
-    θx_max, θz_max  = (10.0,35.0)
+    θx_max, θz_max  = (15.0,35.0)
     θy = 0.0
 
     println("Thread $(Threads.threadid()):> checkConstraints°")
@@ -226,7 +227,7 @@ function checkConstraints°(x_rotational_radius, z_rotational_radius, track_leve
     suspension = Suspension((30,30))
     suspensionkinematics!(suspension)
     #println(":> $(checkConstraints(1,θ,steering,suspension) ? 1.0 : 0.0)")
-    return checkConstraints(1,θ,steering,suspension) ? 1.0 : 0.0
+    return checkConstraints(1.0,θ,steering,suspension) ? 1.0 : 0.0
 end
 
 
@@ -252,7 +253,7 @@ random search with given border for the parameters and given angular area for ro
 # Returns:
 - `compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
 """
-function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, θ_max::Tuple{I,I,I},  ; info = false, step_size = 1.0 ) where {T<:Number, I<:Number}
+function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, θ_max::Tuple{I,I,I}; info = false, step_size = 1.0 ) where {T<:Number, I<:Number}
     param = nothing
     valid_param = false
 

@@ -3,10 +3,7 @@
 # 📝 To-Do Liste
 
 ## 📌 Heute
-- [x] rotation der Rotationscomponente um die y-Achse anpassen
-- [x] Opt: optimierung zum laufen bringen
-- [x] GUI: plots skalen anpassen
-- [x] Opt: Rotation um die y-Achse als double
+
 
 ## 🔁 Alle To-Dos auf einen Blick
 - [x] rotation der Rotationscomponente um die y-Achse anpassen
@@ -17,6 +14,7 @@
 - [ ] Docs: Documentation anpassen
 - [ ] Docs: Beispiel für die anwendung der optimierung 
 - [x] Opt: Rotation um die y-Achse als double
+- [ ] Opt: Opimization over all angles
 
 ## 🛠️ Laufende Todos
 - [ ] GUI

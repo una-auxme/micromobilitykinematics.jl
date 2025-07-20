@@ -294,7 +294,7 @@ function ackermannratio_surface(chassis::Chassis,
                                     step_size = 1 ) where {T <: Any}
 
     θx_max , θy, θz_max = θ_max
-    θ_matrix = [(θx, θy, θz) for θx in 0:step_size:θx_max, θz in 0:step_size:θz_max]
+    θ_matrix = [(θx, θy, θz) for θx in 0.0:step_size:θx_max, θz in 0.0:step_size:θz_max]
     ratio = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
 
     for θ in θ_matrix

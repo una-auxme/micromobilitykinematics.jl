@@ -14,17 +14,11 @@ The steering class itself includes all the important joint positions and compone
 
 ```julia 
 # random search, with the following argument
-lower_bourder = (50.0, 50.0, 70.0, 195.0)
-upper_bourder = (100.0, 200.0, 200.0, 260.0)
-max_angleConfig = (10,35)
+lower_bourder = (50.0, 50.0, 70.0, 195.0)  
+upper_bourder = (100.0, 100.0, 200.0, 260.0)
+max_angleConfig = (15.0, 0.0, 35.0)
 
-param = random_search(upper_bourder, lower_bourder, max_angleConfig)
-
-# Initialisation of the steering, with the following argument
-x_rotational_radius = param[1]
-z_rotational_radius = param[2]
-track_lever_length = param[3]
-tie_rod_length = param[4]
+x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length = random_search(upper_bourder, lower_bourder, max_angleConfig)
 
 steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 ``` 
@@ -52,7 +46,7 @@ Once the individual components have been initialised, the steering geometry can 
 
 ```julia
 # steering setting
-angleConfig = (0,10)
+angleConfig = (0.0 , 0.0, 10)
 
 suspensionkinematics!(suspension)
 steeringkinematics!(angleConfig, steering, suspension)
@@ -77,7 +71,7 @@ Updating of steering geometry positioning by change in steering angle
 
 ```julia 
 # new steering setting 
-new_angleConfig = (0,25)
+new_angleConfig = (0.0, 0.0, 25.0)
 
 update!(new_angleConfig, steering, suspension)
 ```

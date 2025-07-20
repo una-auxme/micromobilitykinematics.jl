@@ -26,8 +26,8 @@ module micromobilitykinematics
 
     export exportXML
 
-    export optim_series, optim, grid_optim
-    export checkConstraints, checkConstraints°, steering_objective, objective°
+    export create_model_for_pose, get_model_solution, optim_at_pose, optim_series_at_pose, grid_optim, create_model_for_range, optim_over_range
+    export checkConstraints, checkConstraints°, ackermann_deviation, ackermann_deviation_for_pose, ackermann_deviation_over_range
 
     export plot_optda_series, plot_optda_gird_δ, plot_optda_gird_obj
 

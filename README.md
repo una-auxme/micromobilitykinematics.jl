@@ -23,11 +23,14 @@ Collectively, these tools provide a robust framework for analysing and simulatin
 The code presented here is intended for illustrative purposes only. The accompanying documentation provides illustrative examples of potential applications, which offer a more comprehensive understanding of the package's functionality.
 
 ```julia 
-# initialisation of the steering
-x_rotational_radius = 56    # Steeringarm_rotX
-z_rotational_radius = 165   # Steeringarm_rotZ 
-track_lever_length = 185    # Steeringlever 
-tie_rod_length = 210        # Steeringrod
+
+lower_bourder = (50.0, 50.0, 70.0, 195.0)  
+upper_bourder = (100.0, 100.0, 200.0, 260.0)
+max_angleConfig = (15.0, 0.0, 35.0)
+
+x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length = random_search(upper_bourder, lower_bourder, max_angleConfig)
+
+
 steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 
 # initialisation of the suspension
@@ -36,13 +39,13 @@ suspension = Suspension(compression)
 
 
 # steering setting
-angleConfig = (0,10)
+angleConfig = (0.0, 0.0, 10.0)
 
 suspensionkinematics!(suspension)
 steeringkinematics!(angleConfig, steering, suspension)
 
 # new steering setting 
-new_angleConfig = (0,25)
+new_angleConfig = (0.0, 0.0, 25.0)
 
 # update steering kinematics 
 update!(new_angleConfig, steering, suspension)

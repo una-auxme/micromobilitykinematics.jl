@@ -26,13 +26,18 @@ angle_δo
 ### Optimization
 The Optimization functions in the micromobilitykinematics.jl library are designed to help users optimize various parameters related to micromobility vehicle steering kinematics. These functions include tools for performing series optimizations (optim_series), grid-based optimization searches (grid_optim), and objective calculations (steering_objective, objective°). Additionally, checkConstraints and checkConstraints° ensure that optimization results satisfy necessary system constraints.
 ```@docs
-optim_series
-optim
+create_model_for_pose
+get_model_solution
+optim_at_pose
+optim_series_at_pose
 grid_optim
+create_model_for_range
+optim_over_range
 checkConstraints
 checkConstraints°
-steering_objective
-objective°
+ackermann_deviation
+ackermann_deviation_for_pose
+ackermann_deviation_over_range
 ```
 
 

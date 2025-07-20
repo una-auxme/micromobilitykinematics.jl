@@ -43,8 +43,8 @@ end
 
 
 
-steering = Steering(61.0, 74.0, 95.0, 228.0)
-
+#steering = Steering(61.0, 74.0, 95.0, 228.0)
+steering = Steering(63.77, 100.00, 110.76, 227.22)
 
 # initialisation of the susfpension
 suspension = Suspension((30,30))
@@ -60,7 +60,7 @@ chassis = Chassis()
 
 steeringkinematics!(angleConfig, steering, suspension)
 
-θ_max = (15.0,5.0,35.0)
+θ_max = (10.0,0.0,35.0)
 GUI_steering(θ_max, chassis , steering, suspension)
 
 
