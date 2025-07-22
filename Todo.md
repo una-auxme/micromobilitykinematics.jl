@@ -14,7 +14,8 @@
 - [ ] Docs: Documentation anpassen
 - [ ] Docs: Beispiel für die anwendung der optimierung 
 - [x] Opt: Rotation um die y-Achse als double
-- [ ] Opt: Opimization over all angles
+- [x] Opt: Opimization over all angles
+- [ ] Einlenkwinkel zum Radwinkel
 
 ## 🛠️ Laufende Todos
 - [ ] GUI

@@ -43,61 +43,23 @@ end
 
 
 
-#steering = Steering(61.0, 74.0, 95.0, 228.0)
-steering = Steering(63.77, 100.00, 110.76, 227.22)
-
-# initialisation of the susfpension
-suspension = Suspension((30,30))
-
-
-# steering setting
-angleConfig = (0.0,0.0,0.0)
-
-suspensionkinematics!(suspension)
-
-
-chassis = Chassis()
-
-steeringkinematics!(angleConfig, steering, suspension)
-
-θ_max = (10.0,0.0,35.0)
-GUI_steering(θ_max, chassis , steering, suspension)
-
-
-
-
-
-
-
-
-
-
-turning_radius(chassis, steering, suspension, (15,5,35))
-
-radii_matrix = steering_radii(chassis, steering, suspension, (15,15,35))
-
-radii_matrix[1,:]
-
-xs = LinRange(0, 10, 100)
-ys = LinRange(0, 15, 100)
-zs = [cos(x) * sin(y) for x in xs, y in ys]
-
-surface(xs, ys, zs, axis=(type=Axis3,))
-
-
-
-A = [1,2,3]
-
-A[end]
-
-fig = Figure()
-
-ax = Axis(fig[1,1])
-
-txt = text!(ax, "aspfadf")
-
-typeof(txt)
-
-a = Text()
-
-typeof()
+##steering = Steering(61.0, 74.0, 95.0, 228.0)
+#steering = Steering(63.77, 100.00, 110.76, 227.22)
+#
+## initialisation of the susfpension
+#suspension = Suspension((30,30))
+#
+#
+## steering setting
+#angleConfig = (0.0,0.0,0.0)
+#
+#suspensionkinematics!(suspension)
+#
+#
+#chassis = Chassis()
+#
+#steeringkinematics!(angleConfig, steering, suspension)
+#
+#θ_max = (10.0,0.0,35.0)
+#GUI_steering(θ_max, chassis , steering, suspension)
+#
