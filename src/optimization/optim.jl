@@ -294,7 +294,7 @@ function grid_optim(upper_border::Tuple{T, T, T, T},lower_border::Tuple{T, T, T,
                 θ_ = (θx,θy,θz)
 
                 # --- perform optimization series at given angle position---
-                opt_series = optim_series(2,θ_,upper_border,lower_border,θ_max)
+                opt_series = optim_series_at_pose(2,θ_,upper_border,lower_border,θ_max)
 
                 # --- save data ---
                 pathTOdata = joinpath(path_data,"opt_series($(θx),$(θy),$(θz)).jld2")

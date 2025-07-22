@@ -38,7 +38,7 @@ save2 = opt2.steering
 
 save = opt.steering
 
-p = getValue(save2)
+p = getValue(save)
 # optimal solution (58.93776580661926, 100.00000099999852, 113.81284143399382, 228.618912533653)
 # optimal solution (63.771311101944455, 100.00000099999696, 110.76251978448404, 227.2229191420079)
 
@@ -54,7 +54,7 @@ suspension = Suspension((30,30))
 
 
 # steering setting
-angleConfig = (0.0,0.0,0.0)
+angleConfig = (0.0,1.0,0.0)
 
 suspensionkinematics!(suspension)
 

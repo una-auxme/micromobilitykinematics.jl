@@ -16,7 +16,7 @@ A result of 100% indicates a perfect match with ideal Ackermann behavior, while 
 
 # Description
 This function evaluates how closely the current steering geometry approximates ideal Ackermann steering. It works by:
-- Computing the `steering_objective`, representing deviation from ideal geometry.
+- Computing the `ackermann_deviation`, representing deviation from ideal geometry.
 - Retrieving the effective wheelbase from the `Measurements` helper struct.
 - Using these values to compute the ratio:
         AckermannRatio = (wheel_base / (wheel_base + objective)) * 100
@@ -33,7 +33,7 @@ function ackermannratio(θ::Tuple{T,T,T},
     #offset = wheel_offset * sind(δo)
 
     measurment = Measurements(chassis, steering)
-    objective = steering_objective(θ, chassis, steering, suspension)
+    objective = ackermann_deviation(θ, chassis, steering, suspension)
 
     L = objective + measurment.wheel_base #+ offset
 

@@ -54,7 +54,7 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
 
         # Calculation
         update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+        obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
         ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
         radius = turning_radius(chassis,steering)
 
@@ -137,7 +137,7 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
 
             # Calculation
             update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+            obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
             ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
             radius = turning_radius(chassis,steering)
 
@@ -226,7 +226,7 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
 
         # Calculation
         update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+        obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
         ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
         radius = turning_radius(chassis,steering)
 
@@ -345,7 +345,7 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
 
         # Calculation
         update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+        obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
         ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
         radius = turning_radius(chassis,steering)
 
@@ -441,7 +441,7 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
 
         # Calculation
         update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+        obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
         ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
         radius = turning_radius(chassis,steering)
 
@@ -864,7 +864,7 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
 
         # Calculation
         update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+        obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
         ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
         radius = turning_radius(chassis,steering)
 
@@ -926,7 +926,7 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
 
         # Calculation
         update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+        obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
         ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
         radius = turning_radius(chassis,steering)
 
@@ -986,7 +986,7 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
 
         # Calculation
         update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+        obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
         ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
         radius = turning_radius(chassis,steering)
 
@@ -1046,7 +1046,7 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
 
         # Calculation
         update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+        obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
         ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
         radius = turning_radius(chassis,steering)
 
@@ -1106,7 +1106,7 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
 
         # Calculation
         update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = steering_objective((θx,θy,θz),chassis,steering,suspension)
+        obj = ackermann_deviation((θx,θy,θz),chassis,steering,suspension)
         ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
         radius = turning_radius(chassis,steering)
 

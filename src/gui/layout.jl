@@ -574,14 +574,14 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
                                             ylabel = "ackermannratio [%]", 
                                             title = "Ratio for (θx, θy, θz) = (0,0,0)", 
                                             xticks = 0:5:40,
-                                            yticks = 50:5:100)
+                                            yticks = 30:5:100)
 
     section_plot.ax_ratio.blockscene.visible[] = false
 
 
     # Limits
     GLMakie.xlims!(section_plot.ax_ratio, 0, 40)
-    GLMakie.ylims!(section_plot.ax_ratio, 50, 105)
+    GLMakie.ylims!(section_plot.ax_ratio, 30, 105)
 
     ############| Ackermannratio Data
 
