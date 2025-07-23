@@ -346,7 +346,7 @@ function create_model_for_range(θ::Tuple{T,T,T}, steering::Steering) where {T<:
 
     # --- extract the maximum steering angles ---
     θx_max, θy_max, θz_max = θ
-    start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = getValue(steering)
+    start_x_rotational_radius, start_z_rotational_radius, start_track_lever_length, start_tie_rod_length = getValue(steering)
 
     # --- selection of the used solver ---
     model = Model(optimizer_with_attributes(Ipopt.Optimizer,

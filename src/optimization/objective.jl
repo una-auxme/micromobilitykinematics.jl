@@ -111,7 +111,7 @@ function ackermann_deviation_for_pose(θx,
                 ackermann_deviation((θx,θy,θz), chassis, steering, suspension)
             catch err
                 # --- Invalid point → assign high cost ---
-                @warn "Error by steering_objective($θx, $θy, $θz): $err"
+                @warn "Error by ackermann_deviation($θx, $θy, $θz): $err"
                 return Inf
             end
 
@@ -119,7 +119,7 @@ function ackermann_deviation_for_pose(θx,
 
     catch err
         # --- Invalid point → assign high cost ---
-        @warn "Error by steering_objective($θx, $θy, $θz): $err"
+        @warn "Error by ackermann_deviation($θx, $θy, $θz): $err"
         return Inf
     end
 

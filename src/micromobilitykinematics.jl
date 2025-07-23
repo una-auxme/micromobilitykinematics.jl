@@ -51,4 +51,5 @@ module micromobilitykinematics
     include("gui/calculation.jl")
     include("gui/events.jl")
     include("gui/save.jl")
+    include("gui/GUI.jl")
 end
