@@ -205,7 +205,10 @@ function layout_section_plot_settings(fig,slot)
     section_plot_settings.lyt[2,1] = section_plot_settings.suplyt
 
     
-    section_plot_settings.menu = Menu(section_plot_settings.suplyt[1, 1], options = ["geometry", "radii", "ackermannratio", "ackermannratio surface plot"], default = "geometry",width = 300)
+    section_plot_settings.menu = Menu(section_plot_settings.suplyt[1, 1], 
+                                        options = ["geometry", "radii", "ackermannratio", "ackermannratio surface plot", "steering vs wheel angles"], 
+                                        default = "geometry", 
+                                        width = 300)
     section_plot_settings.btn_reset = Button(section_plot_settings.suplyt[2, 1], label = "Reset",width = 300)
     section_plot_settings.btn_save = Button(section_plot_settings.suplyt[3, 1], label = "Save current plot",width = 300)
     section_plot_settings.btn_save_all = Button(section_plot_settings.suplyt[4, 1], label = "Save all plots",width = 300)
@@ -378,6 +381,8 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
 
     ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 
+    θ_vs_δ_plot!(fig, section_plot, θ_max, steering)
+
     return section_plot
 end 
 
@@ -502,6 +507,9 @@ function radii_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     row = slot[1]
     col = slot[2]
 
+    θx = steering.θx
+    θy = steering.θy
+    θz = steering.θz
     ############| Radii θz Scene
     section_plot.ax_radii = GLMakie.Axis(fig[row, col], 
                             xlabel = "θz in [°]", 
@@ -516,7 +524,7 @@ function radii_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     #GLMakie.autolimits!(ax_radii)
 
     ############| Radii θz Data
-    radii_θz = steering_radii_θz(1.0,0.0,θz_max,chassis, steering, suspension)
+    radii_θz = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
 
     ############| Radii θz Observervar 
     section_plot.obs_radii_θz = Observable(radii_θz)
@@ -567,6 +575,10 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     row = slot[1]
     col = slot[2]
 
+
+    θx = steering.θx
+    θy = steering.θy
+    θz = steering.θz
     ############| Ackermannratio Scene
 
     section_plot.ax_ratio = GLMakie.Axis(fig[row, col], 
@@ -585,7 +597,7 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 
     ############| Ackermannratio Data
 
-    ratio = ackermannratio_θz(0.0,0.0,θz_max,chassis, steering, suspension)
+    ratio = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
 
     ############| Ackermannratio Observervar 
 
@@ -661,6 +673,9 @@ function ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspen
     row = slot[1]
     col = slot[2]
 
+    θx = steering.θx
+    θy = steering.θy
+    θz = steering.θz
     ############| Ackermannratio Scene
 
     section_plot.ax_ratio_surface = GLMakie.Axis3(fig[row, col],
@@ -681,7 +696,7 @@ function ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspen
 
     ############| Ackermannratio Data
 
-    ratio_surface = ackermannratio_surface(chassis, steering, suspension, θ_max)
+    ratio_surface = ackermannratio_surface(chassis, steering, suspension, (θx_max,θy,θz_max))
 
 
     ############| Ackermannratio Observervar 
@@ -721,7 +736,7 @@ This function is typically called reactively whenever user input modifies the st
 Nothing. Modifies `section_plot` and the steering state in-place.
 """
 function update_geometry!(θ, section_plot, steering, suspension)
-    steeringkinematicsMOVED!(θ, steering, suspension)
+    update!(θ, steering, suspension)
     # 
     rotational_coponent = [Point3f([0,0,0]),
                             Point3f(steering.vec_x_rotational...),
@@ -747,3 +762,76 @@ function update_geometry!(θ, section_plot, steering, suspension)
     section_plot.obs_stationary[] = stationary
 
 end 
+
+
+
+
+
+"""
+    θ_vs_δ_plot!(fig, section_plot, θ_max, steering)
+
+Creates a 3D surface plot showing the relationship between steering input angles and wheel angles.
+
+# Arguments
+- `fig`: A `Figure` object (Makie layout container) where the plot will be drawn.
+- `section_plot`: A `PlotSection` object used to store axes and observables for the plot.
+- `θ_max`: A tuple `(θx_max, θy_max, θz_max)` representing the upper bounds of steering input angles.
+- `steering`: The `Steering` object containing current steering angles and computation functions.
+
+# Description
+This function:
+- Initializes a `GLMakie.Axis3` axis to plot the steering vs. wheel angle surfaces.
+- Uses `ax_θ_vs_δi` and `ax_θ_vs_δo` to compute the inner and outer wheel steering angles across a range of `θx` and `θz`.
+- Stores the generated surface data in `Observable`s to allow reactive updates.
+- Draws both surfaces into the 3D plot using distinct colormaps (`:darkterrain` and `:viridis`).
+
+This visualization helps to assess Ackermann steering behavior and the impact of steering angles on wheel geometry.
+
+# Returns
+Nothing. Modifies `section_plot` in-place by adding plot objects and data observables.
+"""
+function θ_vs_δ_plot!(fig, section_plot, θ_max, steering)
+    θx_max, θy_max, θz_max = θ_max
+
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+
+    θx = steering.θx
+    θy = steering.θy
+    θz = steering.θz
+    ############| Ackermannratio Scene
+
+    section_plot.ax_θ_vs_δ_surface = GLMakie.Axis3(fig[row, col],
+                                            xlabel = "θx in [°]", 
+                                            ylabel = "θz in [°]",
+                                            zlabel = "θ wheel in [°]",
+                                            zticks = 0:10:100, 
+                                            title = "Steering vs. wheel angles",) #
+    #section_plot.ax_ratio_surface.aspect = :data
+    section_plot.ax_θ_vs_δ_surface.aspect = (1, 1, 1)
+    section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
+    
+
+    # Limits
+    GLMakie.xlims!(section_plot.ax_θ_vs_δ_surface, 0, 15)
+    GLMakie.ylims!(section_plot.ax_θ_vs_δ_surface, 0, 30)
+    GLMakie.zlims!(section_plot.ax_θ_vs_δ_surface, 0, 105)
+
+    ############| Ackermannratio Data
+
+    θ_vs_δi_surface = ax_θ_vs_δi(steering, (θx_max, θy, θz_max))
+    θ_vs_δo_surface = ax_θ_vs_δo(steering, (θx_max, θy, θz_max))
+
+
+    ############| Ackermannratio Observervar 
+    section_plot.obs_θ_vs_δi_surface = Observable(θ_vs_δi_surface)
+    section_plot.obs_θ_vs_δo_surface = Observable(θ_vs_δo_surface)
+
+    ############| Ackermannratio Ploting  
+
+    GLMakie.surface!(section_plot.ax_θ_vs_δ_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, section_plot.obs_θ_vs_δi_surface; colormap = :darkterrain)
+    GLMakie.surface!(section_plot.ax_θ_vs_δ_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, section_plot.obs_θ_vs_δo_surface; colormap = :viridis)
+    
+end

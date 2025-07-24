@@ -162,8 +162,11 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
             end
 
 
-            if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
-                section_plot.obs_ratio_surface[] = ackermannratio_surface(chassis, steering, suspension, (θx_max,θy,θz_max))
+            if section_plot_settings.menu.selection.val == "steering vs wheel angles"
+                section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+                section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+                section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, (θx_max, θy, θz_max))
+                section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, (θx_max, θy, θz_max))
             end
 
 
@@ -366,6 +369,11 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
             section_plot.obs_ratio_max[] = maximum(ratio_θz)
         end
 
+        if section_plot_settings.menu.selection.val == "steering vs wheel angles"
+            section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+            section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, (θx_max, θy, θz_max))
+            section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, (θx_max, θy, θz_max))
+        end
 
         #Updating
         section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
@@ -460,6 +468,12 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
             section_plot.obs_ratio_θz[] = ratio_θz
             section_plot.obs_ratio_min[] = minimum(ratio_θz)
             section_plot.obs_ratio_max[] = maximum(ratio_θz)
+        end
+
+        if section_plot_settings.menu.selection.val == "steering vs wheel angles"
+            section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+            section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, (θx_max, θy, θz_max))
+            section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, (θx_max, θy, θz_max))
         end
 
 
@@ -557,6 +571,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             section_plot.ax_radii.blockscene.visible[] = false
             section_plot.ax_ratio.blockscene.visible[] = false
             section_plot.ax_ratio_surface.blockscene.visible[] = false
+            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
 
             # sliders
             section_angle.sg_θ.sliders[1].blockscene.visible[] = true
@@ -572,6 +587,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             section_plot.ax_radii.blockscene.visible[] = true
             section_plot.ax_ratio.blockscene.visible[] = false
             section_plot.ax_ratio_surface.blockscene.visible[] = false
+            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
 
             # sliders
             section_angle.sg_θ.sliders[1].blockscene.visible[] = true
@@ -591,6 +607,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             section_plot.ax_radii.blockscene.visible[] = false
             section_plot.ax_ratio.blockscene.visible[] = true
             section_plot.ax_ratio_surface.blockscene.visible[] = false
+            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
 
             # sliders
             section_angle.sg_θ.sliders[1].blockscene.visible[] = true
@@ -609,6 +626,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             section_plot.ax_radii.blockscene.visible[] = false
             section_plot.ax_ratio.blockscene.visible[] = false
             section_plot.ax_ratio_surface.blockscene.visible[] = true
+            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
             # sliders
             section_angle.sg_θ.sliders[1].blockscene.visible[] = false
             section_angle.sg_θ.sliders[2].blockscene.visible[] = true
@@ -619,6 +637,24 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             section_plot.obs_ratio_surface[] = ackermannratio_surface(chassis, steering, suspension, (θx_max,θy,θz_max))
 
 
+        end
+
+        if sel =="steering vs wheel angles"
+            section_plot.ax_geom.blockscene.visible[] = false
+            section_plot.ax_radii.blockscene.visible[] = false
+            section_plot.ax_ratio.blockscene.visible[] = false
+            section_plot.ax_ratio_surface.blockscene.visible[] = false
+            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = true
+            # sliders
+            section_angle.sg_θ.sliders[1].blockscene.visible[] = false
+            section_angle.sg_θ.sliders[2].blockscene.visible[] = true
+            section_angle.sg_θ.sliders[3].blockscene.visible[] = false
+
+            θy = section_angle.sg_θ.sliders[2].value.val
+
+            section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+            section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, (θx_max, θy, θz_max))
+            section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, (θx_max, θy, θz_max))
         end
 
     end

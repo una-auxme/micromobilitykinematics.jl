@@ -26,7 +26,8 @@ suspensionkinematics!(suspension)
 
 chassis = Chassis()
 
-steeringkinematics!(angleConfig, st, suspension)
+update!(angleConfig, st, suspension)
 
-θ_max = (15.0,0.0,35.0)
+
+θ_max = (15.0,5.0,35.0)
 GUI_steering(θ_max, chassis , st, suspension)

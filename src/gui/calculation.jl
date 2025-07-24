@@ -313,3 +313,98 @@ function ackermannratio_surface(chassis::Chassis,
     end 
     return ratio
 end
+
+"""
+    ax_θ_vs_δi(steering::Steering, θ_max::Tuple{T,T,T}; step_size = 1) where {T <: Any}
+
+Generates a matrix of inner wheel steering angles (`δi`) over a grid of steering input angles.
+
+# Arguments
+- `steering`: The `Steering` object, which provides access to current kinematic state and computes updated angles.
+- `θ_max`: A tuple `(θx_max, θy, θz_max)` defining the maximum steering angles to sample.
+- `step_size`: Optional; step resolution for θx and θz sampling (default: `1`).
+
+# Description
+This function:
+- Constructs a grid of steering input angles `(θx, θy, θz)` where `θx` and `θz` are varied over their ranges.
+- Calls `update!` for each angle combination to compute the steering state.
+- Extracts the inner wheel angle `δi` from the `steering` object and stores it in a 2D matrix.
+- Handles the case where `δo == 0.0` by inserting `NaN` to avoid divide-by-zero or undefined states.
+
+This function is typically used to prepare surface data for plotting steering behavior, e.g., in `ax_θ_vs_δ_plot!`.
+
+# Returns
+A 2D array (`Matrix{Float64}`) of computed inner wheel angles `δi` indexed by discretized `θx` and `θz`.
+"""
+function ax_θ_vs_δi(steering::Steering,
+                        θ_max::Tuple{T,T,T};
+                        step_size = 1 ) where {T <: Any}
+
+    θx_max , θy, θz_max = θ_max
+    θ_matrix = [(θx, θy, θz) for θx in 0.0:step_size:θx_max, θz in 0.0:step_size:θz_max]
+    δi = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+
+    for θ in θ_matrix
+        θx, θy, θz = θ
+        update!(θ, steering, suspension)
+
+        θx_i = Int(round(θx))
+        θz_i = Int(round(θz))
+
+        if steering.δo == 0.0
+            δi[θx_i+1,θz_i+1] = NaN
+        else
+    
+        δi[θx_i+1,θz_i+1] = steering.δi
+        end
+    end 
+    return δi
+end
+
+
+"""
+    ax_θ_vs_δo(steering::Steering, θ_max::Tuple{T,T,T}; step_size = 1) where {T <: Any}
+
+Generates a matrix of outer wheel steering angles (`δo`) over a grid of steering input angles.
+
+# Arguments
+- `steering`: The `Steering` object, which holds the kinematic model and computes steering responses.
+- `θ_max`: A tuple `(θx_max, θy, θz_max)` defining the maximum values for the steering input angles.
+- `step_size`: Optional; resolution of the sampling grid for `θx` and `θz` (default: `1`).
+
+# Description
+This function:
+- Constructs a 2D parameter grid of steering angles `(θx, θy, θz)`, keeping `θy` fixed.
+- Iteratively calls `update!` on the `steering` object for each angle combination.
+- Records the outer wheel steering angle `δo` into a matrix indexed by `θx` and `θz`.
+- Fills matrix entries with `NaN` when `δo` is zero, signaling invalid or unresponsive configurations.
+
+The resulting matrix is used for visualization of steering behavior in 3D surface plots (e.g., `ax_θ_vs_δ_plot!`).
+
+# Returns
+A 2D array (`Matrix{Float64}`) containing outer wheel angles `δo` over the sampled input range.
+"""
+function ax_θ_vs_δo(steering::Steering,
+                        θ_max::Tuple{T,T,T};
+                        step_size = 1 ) where {T <: Any}
+
+    θx_max , θy, θz_max = θ_max
+    θ_matrix = [(θx, θy, θz) for θx in 0.0:step_size:θx_max, θz in 0.0:step_size:θz_max]
+    δo = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+
+    for θ in θ_matrix
+        θx, θy, θz = θ
+        update!(θ, steering, suspension)
+
+        θx_i = Int(round(θx))
+        θz_i = Int(round(θz))
+
+        if steering.δo == 0.0
+            δo[θx_i+1,θz_i+1] = NaN
+        else
+    
+        δo[θx_i+1,θz_i+1] = steering.δo
+        end
+    end 
+    return δo
+end

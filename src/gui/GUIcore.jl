@@ -47,6 +47,7 @@ mutable struct PlotSection  <: AbstractPlotSection
     ax_radii::Union{Axis,Nothing}
     ax_ratio::Union{Axis,Nothing}
     ax_ratio_surface::Union{Axis3,Nothing}
+    ax_θ_vs_δ_surface ::Union{Axis3,Nothing}
 
     txt_ratio_max::Union{Makie.Text,Nothing}
     txt_ratio_min::Union{Makie.Text,Nothing}
@@ -65,6 +66,9 @@ mutable struct PlotSection  <: AbstractPlotSection
     obs_ratio_max::Union{Observable,Nothing}
     obs_ratio_min::Union{Observable,Nothing}
 
+    obs_θ_vs_δi_surface::Union{Observable,Nothing}
+    obs_θ_vs_δo_surface ::Union{Observable,Nothing}
+
     function PlotSection()
         inst = new()
         inst.slot = nothing 
@@ -73,6 +77,7 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.ax_radii = nothing
         inst.ax_ratio = nothing 
         inst.ax_ratio_surface = nothing
+        inst.ax_θ_vs_δ_surface = nothing
 
         inst.txt_ratio_max = nothing 
         inst.txt_ratio_min = nothing 
@@ -86,6 +91,8 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.obs_ratio_surface = nothing
         inst.obs_ratio_max = nothing
         inst.obs_ratio_min = nothing
+        inst.obs_θ_vs_δi_surface = nothing
+        inst.obs_θ_vs_δo_surface = nothing
 
         return inst
     end 
