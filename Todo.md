@@ -12,6 +12,7 @@
 - [ ] GUI: neuer plot compression zum Einschlagwinkel 
 - [ ] GUI: tracking der Kameraeinstellung der Plots
 - [x] GUI: Einlenkwinkel zum Radwinkel
+- [ ] GUI: Error Text field
 - [ ] Docs: Documentation anpassen
 - [ ] Docs: Beispiel für die anwendung der optimierung 
 - [x] Opt: Rotation um die y-Achse als double

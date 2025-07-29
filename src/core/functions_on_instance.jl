@@ -207,5 +207,5 @@ Returns important length values of steering components
 - `(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)`: important length values of steering components 
 """
 function getValue(steering::Steering)    
-return steering.rotational_component.x_rotational_radius, steering.rotational_component.z_rotational_radius, steering.track_lever.length, steering.tie_rod.length
+    return steering.rotational_component.x_rotational_radius, steering.rotational_component.z_rotational_radius, steering.track_lever.length, steering.tie_rod.length
 end
