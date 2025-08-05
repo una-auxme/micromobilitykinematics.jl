@@ -46,6 +46,16 @@ function geometry_plot(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspens
     geo_ax.aspect = :data
 
 
+
+
+    
+
+    # Limits
+    GLMakie.xlims!(geo_ax, -200, 50)
+    GLMakie.ylims!(geo_ax, -300, 300)
+    GLMakie.zlims!(geo_ax, -200, 50)
+
+
     ###| Geometry Plot
     rotational_coponent = [Point3f([0,0,0]),
                             Point3f(steering.vec_x_rotational...),

@@ -56,9 +56,8 @@ function ackermann_deviation(θ::Tuple{T,T,T},
     y = mo * x2 + b
 
 
-    return abs(y)
+    return y
 end
-
 
 
 """
@@ -108,7 +107,7 @@ function ackermann_deviation_for_pose(θx,
 
             # --- Evaluate Ackermann deviation for given pose --- 
             cost = try
-                ackermann_deviation((θx,θy,θz), chassis, steering, suspension)
+                abs(ackermann_deviation((θx,θy,θz), chassis, steering, suspension))
             catch err
                 # --- Invalid point → assign high cost ---
                 @warn "Error by ackermann_deviation($θx, $θy, $θz): $err"
@@ -190,7 +189,7 @@ function ackermann_deviation_over_range(θx_max,
 
                     # Evaluate error
                     error = try
-                        ackermann_deviation(θ_, chassis, steering, suspension)
+                        abs(ackermann_deviation(θ_, chassis, steering, suspension))
                     catch err
                         @warn "Error in ackermann_deviation(θ=$θ): $err"
                         return Inf  # ungültiger Punkt → hohe Kosten

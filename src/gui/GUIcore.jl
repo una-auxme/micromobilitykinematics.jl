@@ -47,10 +47,15 @@ mutable struct PlotSection  <: AbstractPlotSection
     ax_radii::Union{Axis,Nothing}
     ax_ratio::Union{Axis,Nothing}
     ax_ratio_surface::Union{Axis3,Nothing}
-    ax_θ_vs_δ_surface ::Union{Axis3,Nothing}
+    ax_θ_vs_δ_surface::Union{Axis3,Nothing}
+    ax_deviation::Union{Axis,Nothing}
+    ax_deviation_surface::Union{Axis3,Nothing}
+    ax_compr_vs_δi::Union{Axis3,Nothing}
 
     txt_ratio_max::Union{Makie.Text,Nothing}
     txt_ratio_min::Union{Makie.Text,Nothing}
+    txt_deviation_max::Union{Makie.Text,Nothing}
+    txt_deviation_min::Union{Makie.Text,Nothing}
 
     #######| Observation
 
@@ -67,7 +72,16 @@ mutable struct PlotSection  <: AbstractPlotSection
     obs_ratio_min::Union{Observable,Nothing}
 
     obs_θ_vs_δi_surface::Union{Observable,Nothing}
-    obs_θ_vs_δo_surface ::Union{Observable,Nothing}
+    obs_θ_vs_δo_surface::Union{Observable,Nothing}
+
+    obs_deviation_θz::Union{Observable,Nothing}
+    obs_deviation_max::Union{Observable,Nothing}
+    obs_deviation_min::Union{Observable,Nothing}
+
+    obs_deviation_surface::Union{Observable,Nothing}
+
+    obs_compr_vs_δi::Union{Observable,Nothing}
+
 
     function PlotSection()
         inst = new()
@@ -78,9 +92,12 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.ax_ratio = nothing 
         inst.ax_ratio_surface = nothing
         inst.ax_θ_vs_δ_surface = nothing
+        inst.ax_deviation = nothing
 
         inst.txt_ratio_max = nothing 
         inst.txt_ratio_min = nothing 
+        inst.txt_deviation_max = nothing
+        inst.txt_deviation_min = nothing
 
         inst.obs_rotation = nothing
         inst.obs_geom_left = nothing
@@ -93,6 +110,11 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.obs_ratio_min = nothing
         inst.obs_θ_vs_δi_surface = nothing
         inst.obs_θ_vs_δo_surface = nothing
+        inst.obs_deviation_θz = nothing
+        inst.obs_deviation_max = nothing
+        inst.obs_deviation_min = nothing
+
+        inst.obs_deviation_surface = nothing
 
         return inst
     end 

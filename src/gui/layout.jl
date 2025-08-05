@@ -32,13 +32,14 @@ function interactionlyt(θ_max, chassis, steering, suspension)
 
     interaction_lyt = InteractionLyt()
 
-    # Figure
+    # Figure'
     interaction_lyt.fig = GLMakie.Figure(size = (1400, 1200))
 
+    
 
-    interaction_lyt.section_plot = layout_section_plot(interaction_lyt.fig,(1:2,1:3), θ_max, chassis, steering, suspension)
-    interaction_lyt.section_angle = layout_section_angles(interaction_lyt.fig,(3,1),θ_max)
-    interaction_lyt.section_param = layout_section_param(interaction_lyt.fig,(3,2), steering)
+    interaction_lyt.section_plot = layout_section_plot(interaction_lyt.fig,(1:2,1:3), θ_max, deepcopy(chassis), deepcopy(steering), deepcopy(suspension))
+    interaction_lyt.section_angle = layout_section_angles(interaction_lyt.fig,(3,1),θ_max, deepcopy(steering))
+    interaction_lyt.section_param = layout_section_param(interaction_lyt.fig,(3,2), deepcopy(steering))
     interaction_lyt.section_damper = layout_section_damper(interaction_lyt.fig,(3,3))
     interaction_lyt.section_plot_settings = layout_section_plot_settings(interaction_lyt.fig,(4,1)) 
     interaction_lyt.section_info = layout_section_info(interaction_lyt.fig,(4,3))
@@ -77,11 +78,14 @@ The returned `AngleSection` struct contains references to the sliders and layout
 # Returns
 - `AngleSection`: A structured object containing the slider layout, title label, and angle values.
 """
-function layout_section_angles(fig, slot, θ_max) 
+function layout_section_angles(fig, slot, θ_max, steering) 
 
     angle_section = AngleSection()
 
     θx_max , θy_max, θz_max  = θ_max
+    θx = steering.θx 
+    θy = steering.θy 
+    θz = steering.θz 
 
     angle_section.lyt = GridLayout(tellheight = false)
 
@@ -95,9 +99,9 @@ function layout_section_angles(fig, slot, θ_max)
 
 
     angle_section.sg_θ = SliderGrid( angle_section.lyt[2, 1],
-                                    (label = "θx", range = 0.0:1.0:θx_max, format = "{:.1f}°", startvalue = 0),
-                                    (label = "θy", range = 0.0:0.1:θy_max, format = "{:.1f}°", startvalue = 0),
-                                    (label = "θz", range = 0.0:1.0:θz_max, format = "{:.1f}°", startvalue = 0),
+                                    (label = "θx", range = 0.0:1.0:θx_max, format = "{:.1f}°", startvalue = θx),
+                                    (label = "θy", range = 0.0:0.1:θy_max, format = "{:.1f}°", startvalue = θy),
+                                    (label = "θz", range = 0.0:1.0:θz_max, format = "{:.1f}°", startvalue = θz),
                                     width = 350,
                                     tellheight = false)
 
@@ -206,7 +210,14 @@ function layout_section_plot_settings(fig,slot)
 
     
     section_plot_settings.menu = Menu(section_plot_settings.suplyt[1, 1], 
-                                        options = ["geometry", "radii", "ackermannratio", "ackermannratio surface plot", "steering vs wheel angles"], 
+                                        options = ["geometry", 
+                                                    "radii", 
+                                                    "ackermannratio", 
+                                                    "ackermannratio surface plot", 
+                                                    "steering vs wheel angles", 
+                                                    "ackermann deviation", 
+                                                    "ackermann deviation surface",
+                                                    "compression vs wheel angles"], 
                                         default = "geometry", 
                                         width = 300)
     section_plot_settings.btn_reset = Button(section_plot_settings.suplyt[2, 1], label = "Reset",width = 300)
@@ -377,11 +388,22 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
 
 
     ##############| ackermannratio Plot
-    ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
+    ratio_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
 
     ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 
-    θ_vs_δ_plot!(fig, section_plot, θ_max, steering)
+
+    ##############| θ_vs_δ Plot
+    θ_vs_δ_plot!(fig, section_plot, θ_max, steering, suspension) 
+
+
+    ##############| ackermann devitation Plot
+    deviation_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
+
+    deviation_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
+
+
+    compr_vs_δi_plot!(fig, section_plot, steering, suspension)
 
     return section_plot
 end 
@@ -625,7 +647,7 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     
     section_plot.txt_ratio_max = GLMakie.text!(section_plot.ax_ratio, 
                                                 Point(35, 55),#Point(xs[end-15], observer_max[]),
-                                                text = "Min → $(round(section_plot.obs_ratio_max[], digits=2))%",
+                                                text = "Max → $(round(section_plot.obs_ratio_max[], digits=2))%",
                                                 align = (:left, :bottom),
                                                 color = :red)  
 
@@ -638,6 +660,7 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     end
 
 end
+
 
 
 """
@@ -707,6 +730,148 @@ function ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspen
     GLMakie.surface!(section_plot.ax_ratio_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, section_plot.obs_ratio_surface; colormap = :darkterrain)
     
 end
+
+
+
+function deviation_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
+
+    θx_max, θy_max, θz_max = θ_max
+
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+
+    θx = steering.θx
+    θy = steering.θy
+    θz = steering.θz
+    ############| Ackermannratio Scene
+
+    section_plot.ax_deviation = GLMakie.Axis(fig[row, col], 
+                                            xlabel = "θz in [°]", 
+                                            ylabel = "ackermann_deviation [mm]", 
+                                            title = "Ratio for (θx, θy, θz) = (0,0,0)", 
+                                            xticks = 0:5:40,
+                                            yticks = -500:100:500)
+
+    section_plot.ax_deviation.blockscene.visible[] = false
+
+
+    # Limits
+    GLMakie.xlims!(section_plot.ax_deviation, 0, 40)
+    GLMakie.ylims!(section_plot.ax_deviation, -500,500 )
+
+    ############| Ackermannratio Data
+
+    deviation = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+
+    ############| Ackermannratio Observervar 
+
+    section_plot.obs_deviation_θz = Observable(deviation)
+    section_plot.obs_deviation_min = Observable(minimum(deviation))
+    section_plot.obs_deviation_max = Observable(maximum(deviation))
+
+
+
+    ############| Ackermannratio Ploting  
+    xs = [θz for θz in 0.0:1.0:θz_max] 
+
+    GLMakie.lines!(section_plot.ax_deviation, xs, section_plot.obs_deviation_θz)
+
+    #
+    GLMakie.hlines!(section_plot.ax_deviation, section_plot.obs_deviation_min, linestyle = :dash, color = :orange)
+    GLMakie.hlines!(section_plot.ax_deviation, section_plot.obs_deviation_max, linestyle = :dash, color = :red)
+
+
+    section_plot.txt_deviation_min = GLMakie.text!(section_plot.ax_deviation, 
+                                                Point(30, 55),#Point(xs[end-15], observer_min[]),
+                                                text = "Min → $(round(section_plot.obs_deviation_min[], digits=2))mm",
+                                                align = (:left, :bottom),
+                                                color = :orange)
+    
+    section_plot.txt_deviation_max = GLMakie.text!(section_plot.ax_deviation, 
+                                                Point(35, 55),#Point(xs[end-15], observer_max[]),
+                                                text = "Max → $(round(section_plot.obs_deviation_max[], digits=2))mm",
+                                                align = (:left, :bottom),
+                                                color = :red)  
+
+    lift(section_plot.obs_deviation_min ) do val
+        section_plot.txt_deviation_min.text = "Min → $(round(val, digits=2))mm"
+    end
+
+    lift(section_plot.obs_deviation_max) do val
+        section_plot.txt_deviation_max.text = "Max → $(round(val, digits=2))mm"
+    end
+
+end
+
+
+
+function deviation_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
+    θx_max, θy_max, θz_max = θ_max
+
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+    θx = steering.θx
+    θy = steering.θy
+    θz = steering.θz
+    ############| Ackermannratio Scene
+
+    section_plot.ax_deviation_surface = GLMakie.Axis3(fig[row, col],
+                                                    xlabel = "θx in [°]", 
+                                                    ylabel = "θz in [°]",
+                                                    zlabel = "deviation in [mm]",
+                                                    zticks = -500:100:500, 
+                                                    title = "Ackermann deviation surface",) #
+    #section_plot.ax_deviation_surface.aspect = :data
+    section_plot.ax_deviation_surface.aspect = (1, 1, 1)
+    section_plot.ax_deviation_surface.blockscene.visible[] = false
+    
+
+    # Limits
+    GLMakie.xlims!(section_plot.ax_deviation_surface, 0, 20)
+    GLMakie.ylims!(section_plot.ax_deviation_surface, 0, 40)
+    GLMakie.zlims!(section_plot.ax_deviation_surface, -500, 500)
+
+    ############| Ackermannratio Data
+
+    deviation_surface = ackermann_deviation_surface(chassis, steering, suspension, (θx_max,θy,θz_max))
+
+
+    ############| Ackermannratio Observervar 
+    section_plot.obs_deviation_surface = Observable(deviation_surface)
+
+    ############| Ackermannratio Ploting  
+
+    GLMakie.surface!(section_plot.ax_deviation_surface, 
+                        0.0:1.0:θx_max, 
+                        0.0:1.0:θz_max, 
+                        section_plot.obs_deviation_surface; 
+                        colormap = :darkterrain)
+
+    # XY-Ebene (z = 0) farblich hervorheben – ohne Farbmuster
+    x_vals = 0.0:1.0:θx_max
+    y_vals = 0.0:1.0:θz_max
+    x_grid = repeat(collect(x_vals)', length(y_vals), 1)
+    y_grid = repeat(collect(y_vals), 1, length(x_vals))
+    z_grid = fill(0.0, size(x_grid))  # Z = 0 → XY-Ebene
+
+    GLMakie.surface!(section_plot.ax_deviation_surface,
+                        x_grid,
+                        y_grid,
+                        z_grid,
+                        color = :red,
+                        transparency = true,
+                        alpha = 0.3)
+    
+end
+
+
+
+
+
 
 
 
@@ -790,7 +955,7 @@ This visualization helps to assess Ackermann steering behavior and the impact of
 # Returns
 Nothing. Modifies `section_plot` in-place by adding plot objects and data observables.
 """
-function θ_vs_δ_plot!(fig, section_plot, θ_max, steering)
+function θ_vs_δ_plot!(fig, section_plot, θ_max, steering, suspension)
     θx_max, θy_max, θz_max = θ_max
 
     slot = section_plot.slot
@@ -821,8 +986,8 @@ function θ_vs_δ_plot!(fig, section_plot, θ_max, steering)
 
     ############| Ackermannratio Data
 
-    θ_vs_δi_surface = ax_θ_vs_δi(steering, (θx_max, θy, θz_max))
-    θ_vs_δo_surface = ax_θ_vs_δo(steering, (θx_max, θy, θz_max))
+    θ_vs_δi_surface = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
+    θ_vs_δo_surface = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
 
 
     ############| Ackermannratio Observervar 
@@ -833,5 +998,49 @@ function θ_vs_δ_plot!(fig, section_plot, θ_max, steering)
 
     GLMakie.surface!(section_plot.ax_θ_vs_δ_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, section_plot.obs_θ_vs_δi_surface; colormap = :darkterrain)
     GLMakie.surface!(section_plot.ax_θ_vs_δ_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, section_plot.obs_θ_vs_δo_surface; colormap = :viridis)
+    
+end
+
+
+
+function compr_vs_δi_plot!(fig, section_plot, steering, suspension)
+
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+
+    θx = steering.θx
+    θy = steering.θy
+    θz = steering.θz
+    ############| Ackermannratio Scene
+
+    section_plot.ax_compr_vs_δi = GLMakie.Axis3(fig[row, col],
+                                            xlabel = "compression left in [%]", 
+                                            ylabel = "compression right in [%]",
+                                            zlabel = "δi in [°]",
+                                            zticks = 0:5:70, 
+                                            title = "compression vs. wheel angles",) #
+    #section_plot.ax_ratio_surface.aspect = :data
+    section_plot.ax_compr_vs_δi.aspect = (1, 1, 1)
+    section_plot.ax_compr_vs_δi.blockscene.visible[] = false
+    
+
+    # Limits
+    GLMakie.xlims!(section_plot.ax_compr_vs_δi, 0, 100)
+    GLMakie.ylims!(section_plot.ax_compr_vs_δi, 0, 100)
+    GLMakie.zlims!(section_plot.ax_compr_vs_δi, 0, 70)
+
+    ############| compression vs δi Data
+
+    compr_vs_δi_ = compr_vs_δi((θx, θy, θz), steering, suspension)
+
+
+    ############| Ackermannratio Observervar 
+    section_plot.obs_compr_vs_δi = Observable(compr_vs_δi_)
+
+    ############| Ackermannratio Ploting  
+
+    GLMakie.surface!(section_plot.ax_compr_vs_δi , 1.0:1.0:100, 1.0:1.0:100, section_plot.obs_compr_vs_δi; colormap = :darkterrain)
     
 end

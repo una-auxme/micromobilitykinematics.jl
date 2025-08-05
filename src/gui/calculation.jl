@@ -33,13 +33,14 @@ function ackermannratio(θ::Tuple{T,T,T},
     #offset = wheel_offset * sind(δo)
 
     measurment = Measurements(chassis, steering)
-    objective = ackermann_deviation(θ, chassis, steering, suspension)
+    objective = abs(ackermann_deviation(θ, chassis, steering, suspension))
 
     L = objective + measurment.wheel_base #+ offset
 
     return (measurment.wheel_base/L)*100
 
-end
+end 
+
 
 """
     turning_radius(chassis::Chassis, steering::Steering)
@@ -260,6 +261,7 @@ function ackermannratio_θz(θx::T,
 
 end
 
+
 """
     ackermannratio_surface(chassis::Chassis, 
                            steering::Steering, 
@@ -287,7 +289,7 @@ If the outer wheel steering angle `δo` is zero, the corresponding ratio value i
 # Returns:
 - A 2D Array of Float64 values representing the Ackermann ratio [%] across the θx–θz parameter space.
 """
-function ackermannratio_surface(chassis::Chassis, 
+function ackermannratio_surface(ackermannratio_surface::Chassis, 
                                     steering::Steering, 
                                     suspension::Suspension, 
                                     θ_max::Tuple{T,T,T};
@@ -314,6 +316,62 @@ function ackermannratio_surface(chassis::Chassis,
     return ratio
 end
 
+function ackermann_deviation_θz(θx::T, 
+                                    θy::T, 
+                                    θz_max::T, 
+                                    chassis::Chassis, 
+                                    steering::Steering, 
+                                    suspension::Suspension; 
+                                    step_size = 1 ) where {T <: Any}
+
+    θ_matrix = [i for i in 0:step_size:θz_max]
+    deviation = []
+
+
+    for θ in θ_matrix
+        θz = θ
+        update!((θx, θy, θz), steering, suspension)
+
+        if steering.δo == 0.0
+            push!(deviation,ackermann_deviation((θx, θy, θz+1.0),chassis, steering, suspension))
+        else
+            push!(deviation,ackermann_deviation((θx, θy, θz),chassis, steering, suspension))
+        end
+    end 
+    return deviation
+
+end
+
+
+function ackermann_deviation_surface(chassis::Chassis, 
+                                        steering::Steering, 
+                                        suspension::Suspension, 
+                                        θ_max::Tuple{T,T,T};
+                                        step_size = 1 ) where {T <: Any}
+
+    θx_max , θy, θz_max = θ_max
+    θ_matrix = [(θx, θy, θz) for θx in 0.0:step_size:θx_max, θz in 0.0:step_size:θz_max]
+    deviation = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+
+    for θ in θ_matrix
+        θx, θy, θz = θ
+        update!(θ, steering, suspension)
+
+        θx_i = Int(round(θx))
+        θz_i = Int(round(θz))
+
+        if steering.δo == 0.0
+            deviation[θx_i+1,θz_i+1] = NaN
+        else
+    
+        deviation[θx_i+1,θz_i+1] = ackermann_deviation(θ,chassis, steering, suspension)
+        end
+    end 
+    return deviation
+end
+
+
+
 """
     ax_θ_vs_δi(steering::Steering, θ_max::Tuple{T,T,T}; step_size = 1) where {T <: Any}
 
@@ -337,6 +395,7 @@ This function is typically used to prepare surface data for plotting steering be
 A 2D array (`Matrix{Float64}`) of computed inner wheel angles `δi` indexed by discretized `θx` and `θz`.
 """
 function ax_θ_vs_δi(steering::Steering,
+                        suspension::Suspension, 
                         θ_max::Tuple{T,T,T};
                         step_size = 1 ) where {T <: Any}
 
@@ -385,6 +444,7 @@ The resulting matrix is used for visualization of steering behavior in 3D surfac
 A 2D array (`Matrix{Float64}`) containing outer wheel angles `δo` over the sampled input range.
 """
 function ax_θ_vs_δo(steering::Steering,
+                        suspension::Suspension, 
                         θ_max::Tuple{T,T,T};
                         step_size = 1 ) where {T <: Any}
 
@@ -407,4 +467,41 @@ function ax_θ_vs_δo(steering::Steering,
         end
     end 
     return δo
+end
+
+
+
+function compr_vs_δi(θ::Tuple{T,T,T},
+                        steering::Steering,
+                        suspension::Suspension;
+                        step_size = 1 ) where {T <: Any}
+
+
+    compr_matrix = [(l, r) for l in 1.0:step_size:100, r in 1.0:step_size:100]
+    δi = [ 0.0 for l in 1:step_size:100, r in 1:step_size:100]
+
+    for compr in compr_matrix
+        l_compr, r_compr = compr
+
+
+        suspension.damper[1].compression = l_compr
+        suspension.damper[2].compression = r_compr
+        l_compr_i = Int(round(l_compr))
+        r_compr_i = Int(round(r_compr))
+
+        try
+            update!(θ, steering, suspension)
+
+            δi[l_compr_i,r_compr_i] = steering.δi
+        catch err
+            #println(l_compr, r_compr)
+
+            δi[l_compr_i,r_compr_i] = NaN
+
+        end
+        
+       
+    end 
+    
+    return δi
 end

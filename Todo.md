@@ -2,17 +2,18 @@
 
 # 📝 To-Do Liste
 
-## 📌 Heute
-
+## 📌 Heutee       
 
 ## 🔁 Alle To-Dos auf einen Blick
 - [x] rotation der Rotationscomponente um die y-Achse anpassen
 - [ ] Core: add Parameters to Suspension class
 - [x] GUI: plots skalen anpassen
-- [ ] GUI: neuer plot compression zum Einschlagwinkel 
+- [x] GUI: neuer plot compression zum Einschlagwinkel 
 - [ ] GUI: tracking der Kameraeinstellung der Plots
 - [x] GUI: Einlenkwinkel zum Radwinkel
 - [ ] GUI: Error Text field
+- [x] GUI: neuer plot ackermann deviation 
+- [x] GUI: neuer plot ackermann deviation surface
 - [ ] Docs: Documentation anpassen
 - [ ] Docs: Beispiel für die anwendung der optimierung 
 - [x] Opt: Rotation um die y-Achse als double
