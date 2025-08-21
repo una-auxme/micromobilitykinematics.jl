@@ -379,7 +379,7 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
     #####################| Layout 3D Axis
     ############| Geometry Plot
 
-    geom_plot!(fig,section_plot,steering)
+    geom_plot!(fig,section_plot,steering, suspension)
 
 
     #############| Radii Plot
@@ -433,7 +433,7 @@ These `Observable`s can later be updated reactively as the user modifies input p
 # Returns
 Nothing. Updates `section_plot` in-place by attaching the plot and setting its observables.
 """
-function geom_plot!(fig,section_plot, steering)
+function geom_plot!(fig,section_plot, steering, suspension)
 
     slot = section_plot.slot
     row = slot[1]
@@ -470,7 +470,39 @@ function geom_plot!(fig,section_plot, steering)
 
     # stationary
     stationary = [Point3f(steering.wishbone_ucs_position[1]...),
-                        Point3f(steering.wishbone_ucs_position[2]...)]        
+                        Point3f(steering.wishbone_ucs_position[2]...)]
+                        
+    # lower_wishbone
+
+    conversion = (i,pos) -> steering.wishbone_ucs_position[i] + pos
+
+    left_lower_wishbone_axis = [Point3f(steering.wishbone_ucs_position[1]...),
+                                Point3f(conversion(1, suspension.lowerwishbone[1].bearing_front)...)]
+    right_lower_wishbone_axis = [Point3f(steering.wishbone_ucs_position[2]...),
+                                Point3f(conversion(2, suspension.lowerwishbone[2].bearing_front)...)]
+
+    left_upper_wishbone_axis = [Point3f(conversion(1, suspension.upperwishbone[1].bearing_rear)...),
+                                Point3f(conversion(1, suspension.upperwishbone[1].bearing_front)...)]
+    right_upper_wishbone_axis = [Point3f(conversion(2, suspension.upperwishbone[2].bearing_rear)...),
+                                Point3f(conversion(2, suspension.upperwishbone[2].bearing_front)...)]              
+
+    left_wishbone_sphere_joint = [Point3f(conversion(1, suspension.lowerwishbone[1].sphere_joint)...),
+                                   Point3f(conversion(1, suspension.upperwishbone[1].sphere_joint)...)]
+    right_wishbone_sphere_joint = [Point3f(conversion(2, suspension.lowerwishbone[2].sphere_joint .*[1.0, -1.0, 1.0])...),
+                                   Point3f(conversion(2, suspension.upperwishbone[2].sphere_joint .*[1.0, -1.0, 1.0])...)]
+
+
+    left_lower_wishbone = [Point3f(conversion(1, suspension.lowerwishbone[1].bearing_rear + [suspension.lowerwishbone[1].distance_to_joint_x, 0, 0])...),
+                            Point3f(conversion(1, suspension.lowerwishbone[1].sphere_joint)...)]   
+
+    left_upper_wishbone = [Point3f(conversion(1, suspension.upperwishbone[1].bearing_rear + [suspension.upperwishbone[1].distance_to_joint_x, 0, 0] )...),
+                            Point3f(conversion(1, suspension.upperwishbone[1].sphere_joint)...)]                     
+
+    right_lower_wishbone = [Point3f(conversion(2, (suspension.lowerwishbone[2].bearing_rear + [suspension.lowerwishbone[2].distance_to_joint_x, 0, 0])  )...),
+                            Point3f(conversion(2, suspension.lowerwishbone[2].sphere_joint.*[1.0, -1.0, 1.0])...)] 
+
+    right_upper_wishbone = [Point3f(conversion(2, suspension.upperwishbone[2].bearing_rear + [suspension.upperwishbone[2].distance_to_joint_x, 0, 0] )...),
+                            Point3f(conversion(2, suspension.upperwishbone[2].sphere_joint.*[1.0, -1.0, 1.0])...)] 
 
 
 
@@ -479,6 +511,23 @@ function geom_plot!(fig,section_plot, steering)
     section_plot.obs_geom_left = Observable(left_steering_connections)
     section_plot.obs_geom_right = Observable(right_steering_connections)
     section_plot.obs_stationary = Observable(stationary)
+    ############| Suspension Observervar  
+    section_plot.obs_left_lower_wishbone_axis = Observable(left_lower_wishbone_axis)
+    section_plot.obs_right_lower_wishbone_axis = Observable(right_lower_wishbone_axis)
+
+    section_plot.obs_left_upper_wishbone_axis = Observable(left_upper_wishbone_axis)
+    section_plot.obs_right_upper_wishbone_axis = Observable(right_upper_wishbone_axis)
+
+    section_plot.obs_left_wishbone_sphere_joint = Observable(left_wishbone_sphere_joint)
+    section_plot.obs_right_wishbone_sphere_joint = Observable(right_wishbone_sphere_joint)
+
+    section_plot.obs_left_lower_wishbone = Observable(left_lower_wishbone)
+    section_plot.obs_left_upper_wishbone = Observable(left_upper_wishbone)
+    section_plot.obs_right_lower_wishbone = Observable(right_lower_wishbone)
+    section_plot.obs_right_upper_wishbone = Observable(right_upper_wishbone)
+
+
+
 
 
 
@@ -487,10 +536,34 @@ function geom_plot!(fig,section_plot, steering)
     GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_geom_left, markersize=10)
     GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_geom_right, markersize=10)
     GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_stationary, markersize=10)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_left_lower_wishbone_axis, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_lower_wishbone_axis, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_left_upper_wishbone_axis, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_upper_wishbone_axis, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_left_wishbone_sphere_joint, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_wishbone_sphere_joint, markersize=10; color = :black)
+
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_left_lower_wishbone, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_left_upper_wishbone, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_lower_wishbone, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_upper_wishbone, markersize=10; color = :black)
+
 
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_rotation)
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_geom_left)
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_geom_right)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_left_lower_wishbone_axis; linestyle = :dash, color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_lower_wishbone_axis; linestyle = :dash, color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_left_upper_wishbone_axis; linestyle = :dash, color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_upper_wishbone_axis; linestyle = :dash, color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_left_wishbone_sphere_joint; linestyle = :dash, color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_wishbone_sphere_joint; linestyle = :dash, color = :black)
+
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_left_lower_wishbone; color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_left_upper_wishbone; color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_lower_wishbone; color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_upper_wishbone; color = :black)
+
 
 end 
 
@@ -921,10 +994,62 @@ function update_geometry!(θ, section_plot, steering, suspension)
     stationary = [Point3f(steering.wishbone_ucs_position[1]...),
                     Point3f(steering.wishbone_ucs_position[2]...)]        
 
+    # stationary
+    stationary = [Point3f(steering.wishbone_ucs_position[1]...),
+                        Point3f(steering.wishbone_ucs_position[2]...)]
+                        
+     # lower_wishbone
+
+    conversion = (i,pos) -> steering.wishbone_ucs_position[i] + pos
+
+    left_lower_wishbone_axis = [Point3f(steering.wishbone_ucs_position[1]...),
+                                Point3f(conversion(1, suspension.lowerwishbone[1].bearing_front)...)]
+
+    right_lower_wishbone_axis = [Point3f(steering.wishbone_ucs_position[2]...),
+                                Point3f(conversion(2, suspension.lowerwishbone[2].bearing_front)...)]
+
+    left_upper_wishbone_axis = [Point3f(conversion(1, suspension.upperwishbone[1].bearing_rear)...),
+                                Point3f(conversion(1, suspension.upperwishbone[1].bearing_front)...)]
+
+    right_upper_wishbone_axis = [Point3f(conversion(2, suspension.upperwishbone[2].bearing_rear)...),
+                                Point3f(conversion(2, suspension.upperwishbone[2].bearing_front)...)]              
+
+    left_wishbone_sphere_joint = [Point3f(conversion(1, suspension.lowerwishbone[1].sphere_joint)...),
+                                   Point3f(conversion(1, suspension.upperwishbone[1].sphere_joint)...)]
+
+    right_wishbone_sphere_joint = [Point3f(conversion(2, suspension.lowerwishbone[2].sphere_joint .*[1.0, -1.0, 1.0])...),
+                                   Point3f(conversion(2, suspension.upperwishbone[2].sphere_joint .*[1.0, -1.0, 1.0])...)]
+
+
+    left_lower_wishbone = [Point3f(conversion(1, suspension.lowerwishbone[1].bearing_rear + [suspension.lowerwishbone[1].distance_to_joint_x, 0, 0])...),
+                            Point3f(conversion(1, suspension.lowerwishbone[1].sphere_joint)...)]   
+
+    left_upper_wishbone = [Point3f(conversion(1, suspension.upperwishbone[1].bearing_rear + [suspension.upperwishbone[1].distance_to_joint_x, 0, 0] )...),
+                            Point3f(conversion(1, suspension.upperwishbone[1].sphere_joint)...)]                     
+
+    right_lower_wishbone = [Point3f(conversion(2, suspension.lowerwishbone[2].bearing_rear + [suspension.lowerwishbone[2].distance_to_joint_x, 0, 0] )...),
+                            Point3f(conversion(2, suspension.lowerwishbone[2].sphere_joint.*[1.0, -1.0, 1.0])...)] 
+
+    right_upper_wishbone = [Point3f(conversion(2, suspension.upperwishbone[2].bearing_rear + [suspension.upperwishbone[2].distance_to_joint_x, 0, 0] )...),
+                            Point3f(conversion(2, suspension.upperwishbone[2].sphere_joint.*[1.0, -1.0, 1.0])...)] 
+
+
     section_plot.obs_rotation[] = rotational_coponent
     section_plot.obs_geom_left[] = left_steering_connections
     section_plot.obs_geom_right[] = right_steering_connections
     section_plot.obs_stationary[] = stationary
+    section_plot.obs_left_lower_wishbone_axis[] = left_lower_wishbone_axis
+    section_plot.obs_right_lower_wishbone_axis[] = right_lower_wishbone_axis
+    section_plot.obs_left_upper_wishbone_axis[] = left_upper_wishbone_axis
+    section_plot.obs_right_upper_wishbone_axis[] = right_upper_wishbone_axis
+    section_plot.obs_left_wishbone_sphere_joint[] = left_wishbone_sphere_joint
+    section_plot.obs_right_wishbone_sphere_joint[] = right_wishbone_sphere_joint
+
+    section_plot.obs_left_lower_wishbone[] = left_lower_wishbone
+    section_plot.obs_left_upper_wishbone[] = left_upper_wishbone
+    section_plot.obs_right_lower_wishbone[] = right_lower_wishbone
+    section_plot.obs_right_upper_wishbone[] = right_upper_wishbone
+
 
 end 
 

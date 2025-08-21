@@ -63,6 +63,17 @@ mutable struct PlotSection  <: AbstractPlotSection
     obs_geom_left::Union{Observable,Nothing}
     obs_geom_right::Union{Observable,Nothing}
     obs_stationary::Union{Observable,Nothing}
+    obs_left_lower_wishbone_axis::Union{Observable,Nothing}
+    obs_right_lower_wishbone_axis::Union{Observable,Nothing}
+    obs_left_upper_wishbone_axis::Union{Observable,Nothing}
+    obs_right_upper_wishbone_axis::Union{Observable,Nothing}
+    obs_left_wishbone_sphere_joint::Union{Observable,Nothing}
+    obs_right_wishbone_sphere_joint::Union{Observable,Nothing}
+
+    obs_left_lower_wishbone::Union{Observable,Nothing}
+    obs_left_upper_wishbone::Union{Observable,Nothing}
+    obs_right_lower_wishbone::Union{Observable,Nothing}
+    obs_right_upper_wishbone::Union{Observable,Nothing}
 
     obs_radii_θz::Union{Observable,Nothing}
     
