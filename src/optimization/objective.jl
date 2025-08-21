@@ -55,7 +55,6 @@ function ackermann_deviation(θ::Tuple{T,T,T},
     # -> y-Coordinate
     y = mo * x2 + b
 
-
     return y
 end
 

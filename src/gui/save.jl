@@ -92,6 +92,38 @@ end
 
 
 
+function radii_plot(θx,θy,θz_max,chassis, steering, suspension)
+
+    fig = GLMakie.Figure(size = (900, 600))
+
+    ############| Radii θz Scene
+    ax_radii = GLMakie.Axis(fig[1:2, 1:3], 
+                            xlabel = "θz in [°]", 
+                            ylabel = "radius in [mm]", 
+                            title = "Radii for (θx, θy, θz) = (0,0,0)",
+                            yticks = 0:5000:40000) 
+    #ax_radii.blockscene.visible[] = false
+    # Limits
+    GLMakie.xlims!(ax_radii, 0, 35)
+    GLMakie.ylims!(ax_radii, 0, 20000)
+
+    #GLMakie.autolimits!(ax_radii)
+
+    ############| Radii θz Data
+    radii_θz = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+
+
+    ############| Radii θz Ploting  
+    xs = [θz for θz in 0.0:1.0:θz_max] 
+
+    GLMakie.lines!(ax_radii, xs, radii_θz)
+
+    return fig
+
+end
+
+
+
 """
     ackermannratio_θz_plot(θx::T,
                                 θy::T,
@@ -124,9 +156,9 @@ The plot helps visualize how the Ackermann ratio behaves across a sweep of inner
 # Returns
 - `fig::Figure`: A Makie figure containing the 2D Ackermann ratio plot.
 """
-function ackermannratio_θz_plot(args...) where{T <: Any}
+function ackermannratio_θz_plot(θx,θy,θz_max,chassis, steering, suspension) where{T <: Any}
 
-    ratio = ackermannratio_θz(args...)
+    ratio = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
 
     fig = GLMakie.Figure(size = (900, 600))
 
@@ -170,76 +202,222 @@ function ackermannratio_θz_plot(args...) where{T <: Any}
 end
 
 
-function radii_plot()
+function ratio_surface_plot(θy, θ_max, chassis, steering, suspension)
+    θx_max, θy_max, θz_max = θ_max
 
+    fig = GLMakie.Figure(size = (900, 600))
 
+    ############| Ackermannratio Scene
 
+    ax_ratio_surface = GLMakie.Axis3(fig[1:2, 1:3],
+                                        xlabel = "θx in [°]", 
+                                        ylabel = "θz in [°]",
+                                        zlabel = "ratio in [%]",
+                                        zticks = 50:10:100, 
+                                        title = "Ackermannratio surface",) #
+    #section_plot.ax_ratio_surface.aspect = :data
+    #ax_ratio_surface.aspect = (1, 1, 1)
+    #ax_ratio_surface.blockscene.visible[] = false
+    
 
- ###| Radii Plot
-    ax_radii = GLMakie.Axis(fig[1:2, 1:3], 
-                            xlabel = "θz in [°]", 
-                            ylabel = "radius in [mm]", 
-                            title = "Radii for (θx, θy, θz) = (0,0,0)",
-                            yticks = 0:1000:40000) 
-    ax_radii.blockscene.visible[] = false
     # Limits
-    GLMakie.xlims!(ax_radii, 0, 35)
-    GLMakie.ylims!(ax_radii, 0, 20000)
+    GLMakie.xlims!(ax_ratio_surface, 0, 15)
+    GLMakie.ylims!(ax_ratio_surface, 0, 30)
+    GLMakie.zlims!(ax_ratio_surface, 50, 105)
 
+    ############| Ackermannratio Data
 
+    ratio_surface = ackermannratio_surface(chassis, steering, suspension, (θx_max,θy,θz_max))
+
+    ############| Ackermannratio Ploting  
+
+    GLMakie.surface!(ax_ratio_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, ratio_surface; colormap = :darkterrain)
+
+    return fig
+    
 end
 
 
 
-
-"""
-    ackermannratio_sufrace_plot(args...)
+function deviation_plot(θx,θy,θz_max,chassis, steering, suspension)
 
 
-    Generates a 3D surface plot of the Ackermann ratio across a grid of steering angles θx and θz.
 
-    # Arguments
-    - `args...`: A variadic argument list expected to include:
-      - `chassis::Chassis`: Vehicle chassis configuration.
-      - `steering::Steering`: Steering system object.
-      - `suspension::Suspension`: Suspension model.
-      - `(θx_max, θy_fixed, θz_max)::Tuple`: Maximum bounds for θx and θz (sweep dimensions) and a fixed θy value.
+    fig = GLMakie.Figure(size = (900, 600))
+
+    ############| Ackermannratio Scene
+
+    ax_deviation = GLMakie.Axis(fig[1:2, 1:3], 
+                                    xlabel = "θz in [°]", 
+                                    ylabel = "ackermann_deviation [mm]", 
+                                    title = "Ratio for (θx, θy, θz) = (0,0,0)", 
+                                    xticks = 0:5:40,
+                                    yticks = -500:100:500)
+
+    ax_deviation.blockscene.visible[] = false
+
+
+    # Limits
+    GLMakie.xlims!(ax_deviation, 0, 40)
+    GLMakie.ylims!(ax_deviation, -500,500 )
+
+    ############| Ackermannratio Data
+
+    deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+    deviation_min = minimum(deviation_θz)
+    deviation_max = maximum(deviation_θz)
+
+    ############| Ackermannratio Ploting  
+    xs = [θz for θz in 0.0:1.0:θz_max] 
+
+    GLMakie.lines!(ax_deviation, xs, deviation_θz)
+
+    #
+    GLMakie.hlines!(ax_deviation, deviation_min, linestyle = :dash, color = :orange)
+    GLMakie.hlines!(ax_deviation, deviation_max, linestyle = :dash, color = :red)
+
+
+    txt_deviation_min = GLMakie.text!(ax_deviation, 
+                                                Point(30, 55),#Point(xs[end-15], observer_min[]),
+                                                text = "Min → $(round(deviation_min[], digits=2))mm",
+                                                align = (:left, :bottom),
+                                                color = :orange)
     
-    # Description
-    This function:
-    - Computes the Ackermann ratio across a meshgrid of `θx` and `θz` angles while holding `θy` constant.
-    - Creates a 3D surface plot of the result using `GLMakie.surface!`.
-    - Sets up labeled axes, a fixed colormap (`:darkterrain`), and value ranges for better interpretability.
-    - Useful for assessing how different combinations of steering input influence the Ackermann behavior.
-    
-    Note: The ratio is expected to be precomputed using `ackermannratio_surface`.
-    
-    # Returns
-    - `fig::Figure`: A Makie 3D figure showing the Ackermann ratio surface.
-"""
-function ackermannratio_sufrace_plot(args...)
-    θx_max,θx_max,θz_max = args[4]
-    ratio = ackermannratio_surface(args...)
+    txt_deviation_max = GLMakie.text!(ax_deviation, 
+                                                Point(35, 55),#Point(xs[end-15], observer_max[]),
+                                                text = "Max → $(round(deviation_max[], digits=2))mm",
+                                                align = (:left, :bottom),
+                                                color = :red)  
 
-    fig = GLMakie.Figure(size = (900, 1300))
+    return fig
 
-    ratio_su = GLMakie.Axis3(fig[1:2, 1:3],
-                            xlabel = "θx in [°]", 
-                            ylabel = "θz in [°]",
-                            zlabel = "ratio in [%]",
-                            zticks = 50:5:100, 
-                            title = "Ackermannratio surface",) #
-    ratio_su.aspect = :data
+end
+
+
+function deviation_surface_plot(θy, θ_max, chassis, steering, suspension)
+    θx_max, θy_max, θz_max = θ_max
+
+    fig = GLMakie.Figure(size = (900, 600))
+
+    ############| Ackermannratio Scene
+
+    ax_deviation_surface = GLMakie.Axis3(fig[1:2, 1:3],
+                                            xlabel = "θx in [°]", 
+                                            ylabel = "θz in [°]",
+                                            zlabel = "deviation in [mm]",
+                                            zticks = -500:100:500, 
+                                            title = "Ackermann deviation surface",) #
+    #section_plot.ax_deviation_surface.aspect = :data
+    #section_plot.ax_deviation_surface.aspect = (1, 1, 1)
+    #section_plot.ax_deviation_surface.blockscene.visible[] = false
     
 
     # Limits
-    GLMakie.xlims!(ratio_su, 0, 15)
-    GLMakie.ylims!(ratio_su, 0, 30)
-    GLMakie.zlims!(ratio_su, 50, 105)
+    GLMakie.xlims!(ax_deviation_surface, 0, 20)
+    GLMakie.ylims!(ax_deviation_surface, 0, 40)
+    GLMakie.zlims!(ax_deviation_surface, -500, 500)
+
+    ############| Ackermannratio Data
+
+    deviation_surface = ackermann_deviation_surface(chassis, steering, suspension, (θx_max,θy,θz_max))
 
 
-    GLMakie.surface!(ratio_su, 0:1:θx_max, 0:1:θz_max, ratio; colormap = :darkterrain)
+    ############| Ackermannratio Ploting  
 
+    GLMakie.surface!(ax_deviation_surface, 
+                        0.0:1.0:θx_max, 
+                        0.0:1.0:θz_max, 
+                        deviation_surface; 
+                        colormap = :darkterrain)
+
+    # XY-Ebene (z = 0) farblich hervorheben – ohne Farbmuster
+    x_vals = 0.0:1.0:θx_max
+    y_vals = 0.0:1.0:θz_max
+    x_grid = repeat(collect(x_vals)', length(y_vals), 1)
+    y_grid = repeat(collect(y_vals), 1, length(x_vals))
+    z_grid = fill(0.0, size(x_grid))  # Z = 0 → XY-Ebene
+
+    GLMakie.surface!(ax_deviation_surface,
+                        x_grid,
+                        y_grid,
+                        z_grid,
+                        color = :red,
+                        transparency = true,
+                        alpha = 0.3)
+    
+    return fig
+end
+
+
+function θ_vs_δ_plot(θy, θ_max, steering, suspension)
+    θx_max, θy_max, θz_max = θ_max
+
+    fig = GLMakie.Figure(size = (900, 600))
+
+    ############| Ackermannratio Scene
+
+    ax_θ_vs_δ_surface = GLMakie.Axis3(fig[1:2, 1:3],
+                                        xlabel = "θx in [°]", 
+                                        ylabel = "θz in [°]",
+                                        zlabel = "θ wheel in [°]",
+                                        zticks = 0:10:100, 
+                                        title = "Steering vs. wheel angles",) #
+    #section_plot.ax_ratio_surface.aspect = :data
+    #section_plot.ax_θ_vs_δ_surface.aspect = (1, 1, 1)
+    #section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
+    
+
+    # Limits
+    GLMakie.xlims!(ax_θ_vs_δ_surface, 0, 15)
+    GLMakie.ylims!(ax_θ_vs_δ_surface, 0, 30)
+    GLMakie.zlims!(ax_θ_vs_δ_surface, 0, 105)
+
+    ############| Ackermannratio Data
+
+    θ_vs_δi_surface = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
+    θ_vs_δo_surface = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
+
+    ############| Ackermannratio Ploting  
+
+    GLMakie.surface!(ax_θ_vs_δ_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, θ_vs_δi_surface; colormap = :darkterrain)
+    GLMakie.surface!(ax_θ_vs_δ_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, θ_vs_δo_surface; colormap = :viridis)
+    
+    return fig
+end
+
+
+function compr_vs_δi_plot(θx, θy, θz, steering, suspension)
+
+    fig = GLMakie.Figure(size = (900, 600))
+
+
+    ############| Ackermannratio Scene
+
+    ax_compr_vs_δi = GLMakie.Axis3(fig[1:2, 1:3],
+                                    xlabel = "compression left in [%]", 
+                                    ylabel = "compression right in [%]",
+                                    zlabel = "δi in [°]",
+                                    zticks = 0:5:70, 
+                                    title = "compression vs. wheel angles",) #
+    #section_plot.ax_ratio_surface.aspect = :data
+    #section_plot.ax_compr_vs_δi.aspect = (1, 1, 1)
+    #section_plot.ax_compr_vs_δi.blockscene.visible[] = false
+    
+
+    # Limits
+    GLMakie.xlims!(ax_compr_vs_δi, 0, 100)
+    GLMakie.ylims!(ax_compr_vs_δi, 0, 100)
+    GLMakie.zlims!(ax_compr_vs_δi, 0, 70)
+
+    ############| compression vs δi Data
+
+    compr_vs_δi_ = compr_vs_δi((θx, θy, θz), steering, suspension)
+
+
+    ############| Ackermannratio Ploting  
+
+    GLMakie.surface!(ax_compr_vs_δi , 1.0:1.0:100, 1.0:1.0:100, compr_vs_δi_; colormap = :darkterrain)
 
     return fig
+    
 end

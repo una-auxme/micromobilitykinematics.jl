@@ -682,45 +682,25 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
     on(section_plot_settings.menu.selection) do sel
 
         if sel == "geometry"
-            section_plot.ax_geom.blockscene.visible[] = true 
-            section_plot.ax_radii.blockscene.visible[] = false
-            section_plot.ax_ratio.blockscene.visible[] = false
-            section_plot.ax_ratio_surface.blockscene.visible[] = false
-            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
-            section_plot.ax_deviation.blockscene.visible[] = false
-            section_plot.ax_deviation_surface.blockscene.visible[] = false
-            section_plot.ax_compr_vs_δi.blockscene.visible[] = false
 
-            # sliders
-            section_angle.sg_θ.sliders[1].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[2].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[3].blockscene.visible[] = true
-
-            section_damper.sg_compr.sliders[1].blockscene.visible[] = true
-            section_damper.sg_compr.sliders[2].blockscene.visible[] = true
-
-
+            update_layout_visibility!(interaction_lyt; 
+                                        geom = true, 
+                                        sg_θx = true, 
+                                        sg_θy = true, 
+                                        sg_θz = true, 
+                                        comprL = true, 
+                                        comprR = true)
         end
 
 
         if sel == "radii"
-            section_plot.ax_geom.blockscene.visible[] = false
-            section_plot.ax_radii.blockscene.visible[] = true
-            section_plot.ax_ratio.blockscene.visible[] = false
-            section_plot.ax_ratio_surface.blockscene.visible[] = false
-            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
-            section_plot.ax_deviation.blockscene.visible[] = false
-            section_plot.ax_deviation_surface.blockscene.visible[] = false
-            section_plot.ax_compr_vs_δi.blockscene.visible[] = false
 
-            # sliders
-            section_angle.sg_θ.sliders[1].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[2].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[3].blockscene.visible[] = false
-
-            section_damper.sg_compr.sliders[1].blockscene.visible[] = true
-            section_damper.sg_compr.sliders[2].blockscene.visible[] = true
-
+            update_layout_visibility!(interaction_lyt; 
+                                        radii = true, 
+                                        sg_θx = true, 
+                                        sg_θy = true,
+                                        comprL = true, 
+                                        comprR = true)
 
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -730,23 +710,13 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
 
 
         if sel == "ackermannratio"
-            section_plot.ax_geom.blockscene.visible[] = false
-            section_plot.ax_radii.blockscene.visible[] = false
-            section_plot.ax_ratio.blockscene.visible[] = true
-            section_plot.ax_ratio_surface.blockscene.visible[] = false
-            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
-            section_plot.ax_deviation.blockscene.visible[] = false
-            section_plot.ax_deviation_surface.blockscene.visible[] = false
-            section_plot.ax_compr_vs_δi.blockscene.visible[] = false
 
-            # sliders
-            section_angle.sg_θ.sliders[1].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[2].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[3].blockscene.visible[] = false
-
-            section_damper.sg_compr.sliders[1].blockscene.visible[] = true
-            section_damper.sg_compr.sliders[2].blockscene.visible[] = true
-
+            update_layout_visibility!(interaction_lyt; 
+                                        ratio = true, 
+                                        sg_θx = true, 
+                                        sg_θy = true,
+                                        comprL = true, 
+                                        comprR = true)
 
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -755,21 +725,12 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
         end
 
         if sel == "ackermannratio surface plot"
-            section_plot.ax_geom.blockscene.visible[] = false
-            section_plot.ax_radii.blockscene.visible[] = false
-            section_plot.ax_ratio.blockscene.visible[] = false
-            section_plot.ax_ratio_surface.blockscene.visible[] = true
-            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
-            section_plot.ax_deviation.blockscene.visible[] = false
-            section_plot.ax_deviation_surface.blockscene.visible[] = false
-            section_plot.ax_compr_vs_δi.blockscene.visible[] = false
-            # sliders
-            section_angle.sg_θ.sliders[1].blockscene.visible[] = false
-            section_angle.sg_θ.sliders[2].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[3].blockscene.visible[] = false
 
-            section_damper.sg_compr.sliders[1].blockscene.visible[] = true
-            section_damper.sg_compr.sliders[2].blockscene.visible[] = true
+            update_layout_visibility!(interaction_lyt; 
+                                        ratio_surf = true,
+                                        sg_θy = true,
+                                        comprL = true, 
+                                        comprR = true)
 
             θy = section_angle.sg_θ.sliders[2].value.val
 
@@ -777,21 +738,12 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
         end
 
         if sel == "steering vs wheel angles"
-            section_plot.ax_geom.blockscene.visible[] = false
-            section_plot.ax_radii.blockscene.visible[] = false
-            section_plot.ax_ratio.blockscene.visible[] = false
-            section_plot.ax_ratio_surface.blockscene.visible[] = false
-            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = true
-            section_plot.ax_deviation.blockscene.visible[] = false
-            section_plot.ax_deviation_surface.blockscene.visible[] = false
-            section_plot.ax_compr_vs_δi.blockscene.visible[] = false
-            # sliders
-            section_angle.sg_θ.sliders[1].blockscene.visible[] = false
-            section_angle.sg_θ.sliders[2].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[3].blockscene.visible[] = false
 
-            section_damper.sg_compr.sliders[1].blockscene.visible[] = true
-            section_damper.sg_compr.sliders[2].blockscene.visible[] = true
+            update_layout_visibility!(interaction_lyt; 
+                                        θ_vs_δ = true,
+                                        sg_θy = true,
+                                        comprL = true, 
+                                        comprR = true)
 
             θy = section_angle.sg_θ.sliders[2].value.val
 
@@ -801,19 +753,15 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
         end
 
         if sel == "ackermann deviation"
-            section_plot.ax_geom.blockscene.visible[] = false
-            section_plot.ax_radii.blockscene.visible[] = false
-            section_plot.ax_ratio.blockscene.visible[] = false
-            section_plot.ax_ratio_surface.blockscene.visible[] = false
-            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
-            section_plot.ax_deviation.blockscene.visible[] = true
-            section_plot.ax_deviation_surface.blockscene.visible[] = false
-            section_plot.ax_compr_vs_δi.blockscene.visible[] = false
-            # sliders
-            section_angle.sg_θ.sliders[1].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[2].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[3].blockscene.visible[] = false
 
+            update_layout_visibility!(interaction_lyt; 
+                                        deviation = true, 
+                                        sg_θx = true, 
+                                        sg_θy = true,
+                                        comprL = true, 
+                                        comprR = true)
+
+            θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
 
             section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
@@ -821,21 +769,12 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
         end
 
          if sel == "ackermann deviation surface"
-            section_plot.ax_geom.blockscene.visible[] = false
-            section_plot.ax_radii.blockscene.visible[] = false
-            section_plot.ax_ratio.blockscene.visible[] = false
-            section_plot.ax_ratio_surface.blockscene.visible[] = false
-            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
-            section_plot.ax_deviation.blockscene.visible[] = false
-            section_plot.ax_deviation_surface.blockscene.visible[] = true
-            section_plot.ax_compr_vs_δi.blockscene.visible[] = false
-            # sliders
-            section_angle.sg_θ.sliders[1].blockscene.visible[] = false
-            section_angle.sg_θ.sliders[2].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[3].blockscene.visible[] = false
 
-            section_damper.sg_compr.sliders[1].blockscene.visible[] = true
-            section_damper.sg_compr.sliders[2].blockscene.visible[] = true
+            update_layout_visibility!(interaction_lyt; 
+                                        deviation_surf = true,
+                                        sg_θy = true,
+                                        comprL = true, 
+                                        comprR = true)
 
             θy = section_angle.sg_θ.sliders[2].value.val
 
@@ -847,22 +786,12 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
         end
 
         if sel == "compression vs wheel angles"
-            section_plot.ax_geom.blockscene.visible[] = false
-            section_plot.ax_radii.blockscene.visible[] = false
-            section_plot.ax_ratio.blockscene.visible[] = false
-            section_plot.ax_ratio_surface.blockscene.visible[] = false
-            section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
-            section_plot.ax_deviation.blockscene.visible[] = false
-            section_plot.ax_deviation_surface.blockscene.visible[] = false
-            section_plot.ax_compr_vs_δi.blockscene.visible[] = true
-            # sliders
-            section_angle.sg_θ.sliders[1].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[2].blockscene.visible[] = true
-            section_angle.sg_θ.sliders[3].blockscene.visible[] = true
 
-
-            section_damper.sg_compr.sliders[1].blockscene.visible[] = false
-            section_damper.sg_compr.sliders[2].blockscene.visible[] = false
+            update_layout_visibility!(interaction_lyt; 
+                                        compr_vs_δi = true, 
+                                        sg_θx = true, 
+                                        sg_θy = true, 
+                                        sg_θz = true)
 
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -935,31 +864,121 @@ function event_btn_save(interaction_lyt::InteractionLyt,
         θ = (θx, θy, θz)
 
         if section_plot_settings.menu.selection.val == "geometry"
+            # Deine Plot-Funktion: sollte z. B. (fig=..., geo_ax=Axis3(...)) liefern
             fig_geo = geometry_plot(θ, steering, suspension)
-            GLMakie.save("geometry(θx,θy,θz)=($θx,$θy,$θz).png",fig_geo)
+
+            ax_geo = first(values(fig_geo.content))
+
+            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
+            ax_geo.azimuth[]   = section_plot.ax_geom.azimuth[]
+            ax_geo.elevation[] = section_plot.ax_geom.elevation[]
+            #fig_geo.geo_ax.zoom[]      = section_plot.ax_geom.zoom[]  # optional
+
+            GLMakie.save("geometry(θx,θy,θz)=($θx,$θy,$θz).png",fig_geo; px_per_unit = 20)
+            GLMakie.display(fig)
+
+        end
+
+        if section_plot_settings.menu.selection.val == "radii"
+            # Deine Plot-Funktion: sollte z. B. (fig=..., geo_ax=Axis3(...)) liefern
+            fig_radii = radii_plot(θx,θy,θz_max,chassis, steering, suspension)
+
+            ax_geo = first(values(fig_radii.content))
+
+            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
+            #ax_geo.azimuth[]   = section_plot.ax_geom.azimuth[]
+            #ax_geo.elevation[] = section_plot.ax_geom.elevation[]
+            #fig_geo.geo_ax.zoom[]      = section_plot.ax_geom.zoom[]  # optional
+
+            GLMakie.save("radii(θx,θy,θz)=($θx,$θy,$θz).png",fig_radii; px_per_unit = 20)
             GLMakie.display(fig)
 
         end
 
         if section_plot_settings.menu.selection.val == "ackermannratio"
             fig_ratio = ackermannratio_θz_plot(θx,θy,θz_max, chassis, steering, suspension)
+
+            ax_ratio = first(values(fig_ratio.content))
+
+            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
+            #ax_ratio.azimuth[]   = section_plot.ax_ratio.azimuth[]
+            #ax_ratio.elevation[] = section_plot.ax_ratio.elevation[]
+
+
             GLMakie.save("ackermannratio(θx,θy,θz)=($θx,$θy,θz).png",fig_ratio)
             GLMakie.display(fig)
         end
 
-        if section_plot_settings.menu.selection.val == "radii"
-
-        end
-
         if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
-            fig_ratio = ackermannratio_sufrace_plot(chassis, steering, suspension,(θx_max,θy,θz_max))
-            GLMakie.save("ackermannratio_surface_plot.png",fig_ratio)
+            fig_ratio_surface = ratio_surface_plot(θy, θ_max, chassis, steering, suspension)
+
+            ax_ratio_surface = first(values(fig_ratio_surface.content))
+
+            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
+            ax_ratio_surface.azimuth[]   = section_plot.ax_ratio_surface.azimuth[]
+            ax_ratio_surface.elevation[] = section_plot.ax_ratio_surface.elevation[]
+
+            GLMakie.save("ackermannratio_surface_plot.png",fig_ratio_surface)
             GLMakie.display(fig)
         end
 
+
+        if section_plot_settings.menu.selection.val == "steering vs wheel angles"
+            fig_θ_vs_δ_surface = θ_vs_δ_plot(θy, θ_max, steering, suspension)
+
+            ax_θ_vs_δ_surface = first(values(fig_θ_vs_δ_surface.content))
+
+            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
+            ax_θ_vs_δ_surface.azimuth[]   = section_plot.ax_θ_vs_δ_surface.azimuth[]
+            ax_θ_vs_δ_surface.elevation[] = section_plot.ax_θ_vs_δ_surface.elevation[]
+
+            GLMakie.save("steering_vs_wheel_angles.png",fig_θ_vs_δ_surface)
+            GLMakie.display(fig)
+        end
+
+        if section_plot_settings.menu.selection.val == "ackermann deviation"
+            fig_deviation = deviation_plot(θx, θy, θz_max, chassis, steering, suspension)
+
+            ax_deviation = first(values(fig_deviation.content))
+
+            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
+            #ax_deviation.azimuth[]   = section_plot.ax_deviation.azimuth[]
+            #ax_deviation.elevation[] = section_plot.ax_deviation.elevation[]
+
+            GLMakie.save("ackermann_deviation.png",fig_deviation)
+            GLMakie.display(fig)
+        end
+
+        if section_plot_settings.menu.selection.val == "ackermann deviation surface"
+            fig_deviation_surface = deviation_surface_plot(θy, θ_max, chassis, steering, suspension)
+
+            ax_deviation_surface = first(values(fig_deviation_surface.content))
+
+            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
+            ax_deviation_surface.azimuth[]   = section_plot.ax_deviation_surface.azimuth[]
+            ax_deviation_surface.elevation[] = section_plot.ax_deviation_surface.elevation[]
+
+            GLMakie.save("ackermann_deviation_surface.png",fig_deviation_surface)
+            GLMakie.display(fig)
+        end
+
+        if section_plot_settings.menu.selection.val == "compression vs wheel angles"
+            fig_compr_vs_δi = compr_vs_δi_plot(θx, θy, θz, steering, suspension)
+
+            ax_compr_vs_δi = first(values(fig_compr_vs_δi.content))
+
+            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
+            ax_compr_vs_δi.azimuth[]   = section_plot.ax_compr_vs_δi.azimuth[]
+            ax_compr_vs_δi.elevation[] = section_plot.ax_compr_vs_δi.elevation[]
+
+            GLMakie.save("compression_vs_wheel_angles.png",fig_deviation_surface)
+            GLMakie.display(fig)
+        end
+
+
+
     end
 end
-
 
 
 """
@@ -1020,20 +1039,89 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         θ = (θx, θy, θz)
 
+        ####
+        fig_geo = geometry_plot(θ, steering, suspension)
 
-        fig_geom = geometry_plot(θ, steering, suspension)
-        GLMakie.save("geometry(θx,θy,θz)=($θx,$θy,$θz).png",fig_geom)
-        GLMakie.display(fig)
+        ax_geo = first(values(fig_geo.content))
+
+        ax_geo.azimuth[]   = section_plot.ax_geom.azimuth[]
+        ax_geo.elevation[] = section_plot.ax_geom.elevation[]
+
+        GLMakie.save("geometry(θx,θy,θz)=($θx,$θy,$θz).png",fig_geo; px_per_unit = 20)
 
 
+
+        ###
+        fig_radii = radii_plot(θx,θy,θz_max,chassis, steering, suspension)
+
+        ax_geo = first(values(fig_radii.content))
+
+        GLMakie.save("radii(θx,θy,θz)=($θx,$θy,$θz).png",fig_radii; px_per_unit = 20)
+
+
+
+        ###
         fig_ratio = ackermannratio_θz_plot(θx,θy,θz_max, chassis, steering, suspension)
+
+        ax_ratio = first(values(fig_ratio.content))
+
         GLMakie.save("ackermannratio(θx,θy,θz)=($θx,$θy,θz).png",fig_ratio)
-        GLMakie.display(fig)
 
 
-        fig_ratio = ackermannratio_sufrace_plot(chassis, steering, suspension,(θx_max,θy,θz_max))
-        GLMakie.save("ackermannratio_surface_plot.png",fig_ratio)
-        GLMakie.display(fig)
+
+        ###
+        fig_ratio_surface = ratio_surface_plot(θy, θ_max, chassis, steering, suspension)
+
+        ax_ratio_surface = first(values(fig_ratio_surface.content))
+
+
+        ax_ratio_surface.azimuth[]   = section_plot.ax_ratio_surface.azimuth[]
+        ax_ratio_surface.elevation[] = section_plot.ax_ratio_surface.elevation[]
+
+        GLMakie.save("ackermannratio_surface_plot.png",fig_ratio_surface)
+
+
+        ###
+        fig_θ_vs_δ_surface = θ_vs_δ_plot(θy, θ_max, steering, suspension)
+
+        ax_θ_vs_δ_surface = first(values(fig_θ_vs_δ_surface.content))
+
+        ax_θ_vs_δ_surface.azimuth[]   = section_plot.ax_θ_vs_δ_surface.azimuth[]
+        ax_θ_vs_δ_surface.elevation[] = section_plot.ax_θ_vs_δ_surface.elevation[]
+
+        GLMakie.save("steering_vs_wheel_angles.png",fig_θ_vs_δ_surface)
+
+
+
+        ###
+        fig_deviation = deviation_plot(θx, θy, θz_max, chassis, steering, suspension)
+
+        ax_deviation = first(values(fig_deviation.content))
+
+        GLMakie.save("ackermann_deviation.png",fig_deviation)
+
+
+        ###
+        fig_deviation_surface = deviation_surface_plot(θy, θ_max, chassis, steering, suspension)
+
+        ax_deviation_surface = first(values(fig_deviation_surface.content))
+
+        ax_deviation_surface.azimuth[]   = section_plot.ax_deviation_surface.azimuth[]
+        ax_deviation_surface.elevation[] = section_plot.ax_deviation_surface.elevation[]
+
+        GLMakie.save("ackermann_deviation_surface.png",fig_deviation_surface)
+
+
+
+        ###
+        fig_compr_vs_δi = compr_vs_δi_plot(θx, θy, θz, steering, suspension)
+
+        ax_compr_vs_δi = first(values(fig_compr_vs_δi.content))
+
+        ax_compr_vs_δi.azimuth[]   = section_plot.ax_compr_vs_δi.azimuth[]
+        ax_compr_vs_δi.elevation[] = section_plot.ax_compr_vs_δi.elevation[]
+
+        GLMakie.save("compression_vs_wheel_angles.png",fig_deviation_surface)
 
     end
 
@@ -1547,35 +1635,4 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
         section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
     end
 
-end
-
-
-
-#TODO plot exeposition tracking for saving
-function geteyepostion(interaction_lyt::InteractionLyt,
-                        θ_max, 
-                        chassis::Chassis, 
-                        steering::Steering,
-                        suspension::Suspension)
-
-    θx_max, θy_max, θz_max = θ_max          
-
-    fig = interaction_lyt.fig
-    section_plot =  interaction_lyt.section_plot
-    section_angle =  interaction_lyt.section_angle
-    section_param =  interaction_lyt.section_param
-    section_damper =  interaction_lyt.section_damper
-    section_plot_settings = interaction_lyt.section_plot_settings
-    section_info =  interaction_lyt.section_info
-
-
-
-    # Interaktive 3D-Kamera aktivieren
-    cam = cam3d!(section_plot.ax_geom.scene)
-
-    # Zeige die Kamera-Position
-    @info "Position" cam.eyeposition[]
-    @info "Look-at target" cam.lookat[]
-    @info "Up vector" cam.upvector[]
-    
 end

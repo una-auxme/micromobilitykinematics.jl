@@ -1,5 +1,37 @@
+using GLMakie
+using Makie: update_cam!   # wichtig: diese Methode importieren
 
+function test_camera_plot(; eye = (5.0, 5.0, 3.0), lookat = (0.0, 0.0, 0.0), up = (0.0, 0.0, 1.0))
+    fig = Figure(size = (800, 600))                  # kein :resolution mehr
+    ax  = Axis3(fig[1, 1]; title = "Kamera-Test", xlabel = "X", ylabel = "Y", zlabel = "Z")
 
+    scatter!(ax, randn(200), randn(200), randn(200), markersize = 8)
+
+    # *** Der korrekte Call in v0.11.x: auf der Scene + Tuples ***
+    cam = cameracontrols(ax.scene)
+    update_cam!(ax.scene, cam, eye, lookat, up)
+
+    display(fig)
+    return fig
+end
+
+# ausprobieren:
+test_camera_plot(eye = (5.0, 5.0, 3.0), lookat = (0.0, 0.0, 0.0))
+# weitere Perspektiven:
+# test_camera_plot(eye = (0.0, -10.0, 5.0))
+# test_camera_plot(eye = (0.0, 0.0, 10.0))
+using GLMakie
+using Makie: update_cam!
+
+fig = Figure(size = (800, 600))
+ax  = Axis3(fig[1, 1])
+
+scatter!(ax, randn(200), randn(200), randn(200), markersize = 8)
+
+# RICHTIG in v0.11.x:
+update_cam!(ax.scene, Vec3f(4.5, 2.5, 3.5), Vec3f(0))
+
+display(fig)
 
 lower_bourder = (50.0,
 50.0, 
