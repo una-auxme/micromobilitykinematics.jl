@@ -472,7 +472,7 @@ function geom_plot!(fig,section_plot, steering, suspension)
     stationary = [Point3f(steering.wishbone_ucs_position[1]...),
                         Point3f(steering.wishbone_ucs_position[2]...)]
                         
-    # lower_wishbone
+    # wishbone
 
     conversion = (i,pos) -> steering.wishbone_ucs_position[i] + pos
 
@@ -504,6 +504,13 @@ function geom_plot!(fig,section_plot, steering, suspension)
     right_upper_wishbone = [Point3f(conversion(2, suspension.upperwishbone[2].bearing_rear + [suspension.upperwishbone[2].distance_to_joint_x, 0, 0] )...),
                             Point3f(conversion(2, suspension.upperwishbone[2].sphere_joint.*[1.0, -1.0, 1.0])...)] 
 
+    # Damper
+
+    left_damper = [Point3f(conversion(1,  suspension.damper[1].upper_fixture)...),
+                         Point3f(conversion(1, suspension.damper[1].lower_fixture)...)]
+
+    right_damper = [Point3f(conversion(2, suspension.damper[2].upper_fixture .*[1.0, -1.0, 1.0])...),
+                         Point3f(conversion(2, suspension.damper[2].lower_fixture .*[1.0, -1.0, 1.0])...)]
 
 
     ############| Geometry Observervar                
@@ -526,8 +533,8 @@ function geom_plot!(fig,section_plot, steering, suspension)
     section_plot.obs_right_lower_wishbone = Observable(right_lower_wishbone)
     section_plot.obs_right_upper_wishbone = Observable(right_upper_wishbone)
 
-
-
+    section_plot.obs_left_damper = Observable(left_damper)
+    section_plot.obs_right_damper = Observable(right_damper)
 
 
 
@@ -548,6 +555,9 @@ function geom_plot!(fig,section_plot, steering, suspension)
     GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_lower_wishbone, markersize=10; color = :black)
     GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_upper_wishbone, markersize=10; color = :black)
 
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_left_damper, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_damper, markersize=10; color = :black)
+
 
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_rotation)
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_geom_left)
@@ -564,6 +574,8 @@ function geom_plot!(fig,section_plot, steering, suspension)
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_lower_wishbone; color = :black)
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_upper_wishbone; color = :black)
 
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_left_damper; linestyle = :dash, color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_damper; linestyle = :dash, color = :black)
 
 end 
 
@@ -1034,6 +1046,15 @@ function update_geometry!(θ, section_plot, steering, suspension)
                             Point3f(conversion(2, suspension.upperwishbone[2].sphere_joint.*[1.0, -1.0, 1.0])...)] 
 
 
+    # Damper
+
+    left_damper = [Point3f(conversion(1,  suspension.damper[1].upper_fixture)...),
+                         Point3f(conversion(1, suspension.damper[1].lower_fixture)...)]
+
+    right_damper = [Point3f(conversion(2, suspension.damper[2].upper_fixture .*[1.0, -1.0, 1.0])...),
+                         Point3f(conversion(2, suspension.damper[2].lower_fixture .*[1.0, -1.0, 1.0])...)]
+
+
     section_plot.obs_rotation[] = rotational_coponent
     section_plot.obs_geom_left[] = left_steering_connections
     section_plot.obs_geom_right[] = right_steering_connections
@@ -1049,6 +1070,9 @@ function update_geometry!(θ, section_plot, steering, suspension)
     section_plot.obs_left_upper_wishbone[] = left_upper_wishbone
     section_plot.obs_right_lower_wishbone[] = right_lower_wishbone
     section_plot.obs_right_upper_wishbone[] = right_upper_wishbone
+
+    section_plot.obs_left_damper[] = left_damper
+    section_plot.obs_right_damper[] = right_damper
 
 
 end 

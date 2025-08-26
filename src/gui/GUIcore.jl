@@ -75,6 +75,9 @@ mutable struct PlotSection  <: AbstractPlotSection
     obs_right_lower_wishbone::Union{Observable,Nothing}
     obs_right_upper_wishbone::Union{Observable,Nothing}
 
+    obs_left_damper::Union{Observable,Nothing}
+    obs_right_damper::Union{Observable,Nothing}
+
     obs_radii_θz::Union{Observable,Nothing}
     
     obs_ratio_θz::Union{Observable,Nothing}

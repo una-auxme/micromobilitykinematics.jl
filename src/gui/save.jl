@@ -38,12 +38,12 @@ function geometry_plot(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspens
 
 
     ###| Geometry Plot
-    geo_ax = GLMakie.Axis3(fig[1:2, 1:3],
+    ax_geom = GLMakie.Axis3(fig[1:2, 1:3],
                             xlabel = "x in [mm]", 
                             ylabel = "y in [mm]",
                             zlabel = "z in [mm]", 
                             title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)",) #
-    geo_ax.aspect = :data
+    ax_geom.aspect = :data
 
 
 
@@ -51,40 +51,113 @@ function geometry_plot(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspens
     
 
     # Limits
-    GLMakie.xlims!(geo_ax, -200, 50)
-    GLMakie.ylims!(geo_ax, -300, 300)
-    GLMakie.zlims!(geo_ax, -200, 50)
+    GLMakie.xlims!(ax_geom, -200, 50)
+    GLMakie.ylims!(ax_geom, -300, 300)
+    GLMakie.zlims!(ax_geom, -200, 50)
 
 
-    ###| Geometry Plot
-    rotational_coponent = [Point3f([0,0,0]),
-                            Point3f(steering.vec_x_rotational...),
-                            Point3f(steering.vec_z_rotational...)]
+        ############| Geometry Data
+    rotation = [Point3f([0,0,0]),
+                                Point3f(steering.vec_x_rotational...),
+                                Point3f(steering.vec_z_rotational...)]
 
-    left_steering_connections = [Point3f(steering.vec_z_rotational...),
+    geom_left = [Point3f(steering.vec_z_rotational...),
                                     Point3f(steering.sphere_joints[1]...),
                                     Point3f(steering.circle_joints[1]...),
                                     Point3f(steering.track_lever_mounting_points_ucs[1]...)]
 
-    right_steering_connections = [Point3f(steering.vec_z_rotational...),
-                                    Point3f(steering.sphere_joints[2]...),
-                                    Point3f(steering.circle_joints[2]...),
-                                    Point3f(steering.track_lever_mounting_points_ucs[2]...)]
+    geom_right = [Point3f(steering.vec_z_rotational...),
+                                     Point3f(steering.sphere_joints[2]...),
+                                     Point3f(steering.circle_joints[2]...),
+                                     Point3f(steering.track_lever_mounting_points_ucs[2]...)]
 
     # stationary
     stationary = [Point3f(steering.wishbone_ucs_position[1]...),
-                    Point3f(steering.wishbone_ucs_position[2]...)]  
+                        Point3f(steering.wishbone_ucs_position[2]...)]
+                        
+    # wishbone
 
-    
-                    ###| Geometry Plot
-    GLMakie.scatter!(geo_ax, rotational_coponent, markersize=10)
-    GLMakie.scatter!(geo_ax, left_steering_connections, markersize=10)
-    GLMakie.scatter!(geo_ax, right_steering_connections, markersize=10)
-    GLMakie.scatter!(geo_ax, stationary, markersize=10)
+    conversion = (i,pos) -> steering.wishbone_ucs_position[i] + pos
 
-    GLMakie.lines!(geo_ax, rotational_coponent)
-    GLMakie.lines!(geo_ax, left_steering_connections)
-    GLMakie.lines!(geo_ax, right_steering_connections)
+    left_lower_wishbone_axis = [Point3f(steering.wishbone_ucs_position[1]...),
+                                Point3f(conversion(1, suspension.lowerwishbone[1].bearing_front)...)]
+    right_lower_wishbone_axis = [Point3f(steering.wishbone_ucs_position[2]...),
+                                Point3f(conversion(2, suspension.lowerwishbone[2].bearing_front)...)]
+
+    left_upper_wishbone_axis = [Point3f(conversion(1, suspension.upperwishbone[1].bearing_rear)...),
+                                Point3f(conversion(1, suspension.upperwishbone[1].bearing_front)...)]
+    right_upper_wishbone_axis = [Point3f(conversion(2, suspension.upperwishbone[2].bearing_rear)...),
+                                Point3f(conversion(2, suspension.upperwishbone[2].bearing_front)...)]              
+
+    left_wishbone_sphere_joint = [Point3f(conversion(1, suspension.lowerwishbone[1].sphere_joint)...),
+                                   Point3f(conversion(1, suspension.upperwishbone[1].sphere_joint)...)]
+    right_wishbone_sphere_joint = [Point3f(conversion(2, suspension.lowerwishbone[2].sphere_joint .*[1.0, -1.0, 1.0])...),
+                                   Point3f(conversion(2, suspension.upperwishbone[2].sphere_joint .*[1.0, -1.0, 1.0])...)]
+
+
+    left_lower_wishbone = [Point3f(conversion(1, suspension.lowerwishbone[1].bearing_rear + [suspension.lowerwishbone[1].distance_to_joint_x, 0, 0])...),
+                            Point3f(conversion(1, suspension.lowerwishbone[1].sphere_joint)...)]   
+
+    left_upper_wishbone = [Point3f(conversion(1, suspension.upperwishbone[1].bearing_rear + [suspension.upperwishbone[1].distance_to_joint_x, 0, 0] )...),
+                            Point3f(conversion(1, suspension.upperwishbone[1].sphere_joint)...)]                     
+
+    right_lower_wishbone = [Point3f(conversion(2, (suspension.lowerwishbone[2].bearing_rear + [suspension.lowerwishbone[2].distance_to_joint_x, 0, 0])  )...),
+                            Point3f(conversion(2, suspension.lowerwishbone[2].sphere_joint.*[1.0, -1.0, 1.0])...)] 
+
+    right_upper_wishbone = [Point3f(conversion(2, suspension.upperwishbone[2].bearing_rear + [suspension.upperwishbone[2].distance_to_joint_x, 0, 0] )...),
+                            Point3f(conversion(2, suspension.upperwishbone[2].sphere_joint.*[1.0, -1.0, 1.0])...)] 
+
+    # Damper
+
+    left_damper = [Point3f(conversion(1,  suspension.damper[1].upper_fixture)...),
+                         Point3f(conversion(1, suspension.damper[1].lower_fixture)...)]
+
+    right_damper = [Point3f(conversion(2, suspension.damper[2].upper_fixture .*[1.0, -1.0, 1.0])...),
+                         Point3f(conversion(2, suspension.damper[2].lower_fixture .*[1.0, -1.0, 1.0])...)]
+
+
+
+    ############| Geometry Ploting   
+    GLMakie.scatter!(ax_geom, rotation, markersize=10)
+    GLMakie.scatter!(ax_geom, geom_left, markersize=10)
+    GLMakie.scatter!(ax_geom, geom_right, markersize=10)
+    GLMakie.scatter!(ax_geom, stationary, markersize=10)
+    GLMakie.scatter!(ax_geom, left_lower_wishbone_axis, markersize=10; color = :black)
+    GLMakie.scatter!(ax_geom, right_lower_wishbone_axis, markersize=10; color = :black)
+    GLMakie.scatter!(ax_geom, left_upper_wishbone_axis, markersize=10; color = :black)
+    GLMakie.scatter!(ax_geom, right_upper_wishbone_axis, markersize=10; color = :black)
+    GLMakie.scatter!(ax_geom, left_wishbone_sphere_joint, markersize=10; color = :black)
+    GLMakie.scatter!(ax_geom, right_wishbone_sphere_joint, markersize=10; color = :black)
+
+    GLMakie.scatter!(ax_geom, left_lower_wishbone, markersize=10; color = :black)
+    GLMakie.scatter!(ax_geom, left_upper_wishbone, markersize=10; color = :black)
+    GLMakie.scatter!(ax_geom, right_lower_wishbone, markersize=10; color = :black)
+    GLMakie.scatter!(ax_geom, right_upper_wishbone, markersize=10; color = :black)
+
+    GLMakie.scatter!(ax_geom, left_damper, markersize=10; color = :black)
+    GLMakie.scatter!(ax_geom, right_damper, markersize=10; color = :black)
+
+
+    GLMakie.lines!(ax_geom, rotation)
+    GLMakie.lines!(ax_geom, geom_left)
+    GLMakie.lines!(ax_geom, geom_right)
+    GLMakie.lines!(ax_geom, left_lower_wishbone_axis; linestyle = :dash, color = :black)
+    GLMakie.lines!(ax_geom, right_lower_wishbone_axis; linestyle = :dash, color = :black)
+    GLMakie.lines!(ax_geom, left_upper_wishbone_axis; linestyle = :dash, color = :black)
+    GLMakie.lines!(ax_geom, right_upper_wishbone_axis; linestyle = :dash, color = :black)
+    GLMakie.lines!(ax_geom, left_wishbone_sphere_joint; linestyle = :dash, color = :black)
+    GLMakie.lines!(ax_geom, right_wishbone_sphere_joint; linestyle = :dash, color = :black)
+
+    GLMakie.lines!(ax_geom, left_lower_wishbone; color = :black)
+    GLMakie.lines!(ax_geom, left_upper_wishbone; color = :black)
+    GLMakie.lines!(ax_geom, right_lower_wishbone; color = :black)
+    GLMakie.lines!(ax_geom, right_upper_wishbone; color = :black)
+
+    GLMakie.lines!(ax_geom, left_damper; linestyle = :dash, color = :black)
+    GLMakie.lines!(ax_geom, right_damper; linestyle = :dash, color = :black)
+
+
+
 
 
     return fig
