@@ -386,14 +386,14 @@ function θ_vs_δ_plot(θy, θ_max, steering, suspension)
 end
 
 
-function compr_vs_δi_plot(θx, θy, θz, steering, suspension)
+function compr_vs_δ_plot(θx, θy, θz, steering, suspension)
 
     fig = GLMakie.Figure(size = (900, 600))
 
 
     ############| Ackermannratio Scene
 
-    ax_compr_vs_δi = GLMakie.Axis3(fig[1:2, 1:3],
+    ax_compr_vs_δ = GLMakie.Axis3(fig[1:2, 1:3],
                                     xlabel = "compression left in [%]", 
                                     ylabel = "compression right in [%]",
                                     zlabel = "δi in [°]",
@@ -405,18 +405,19 @@ function compr_vs_δi_plot(θx, θy, θz, steering, suspension)
     
 
     # Limits
-    GLMakie.xlims!(ax_compr_vs_δi, 0, 100)
-    GLMakie.ylims!(ax_compr_vs_δi, 0, 100)
-    GLMakie.zlims!(ax_compr_vs_δi, 0, 70)
+    GLMakie.xlims!(ax_compr_vs_δ, 0, 100)
+    GLMakie.ylims!(ax_compr_vs_δ, 0, 100)
+    GLMakie.zlims!(ax_compr_vs_δ, 0, 70)
 
     ############| compression vs δi Data
 
-    compr_vs_δi_ = compr_vs_δi((θx, θy, θz), steering, suspension)
+    compr_vs_δi, compr_vs_δo= compr_vs_δ((θx, θy, θz), steering, suspension)
 
 
     ############| Ackermannratio Ploting  
 
-    GLMakie.surface!(ax_compr_vs_δi , 1.0:1.0:100, 1.0:1.0:100, compr_vs_δi_; colormap = :darkterrain)
+    GLMakie.surface!(ax_compr_vs_δ , 1.0:1.0:100, 1.0:1.0:100, compr_vs_δi; colormap = :darkterrain)
+    GLMakie.surface!(ax_compr_vs_δ , 1.0:1.0:100, 1.0:1.0:100, compr_vs_δo; colormap = :darkterrain)
 
     return fig
     

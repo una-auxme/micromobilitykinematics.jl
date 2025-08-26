@@ -8,7 +8,7 @@
                                 ax_θ_vs_δ = false, 
                                 deviation = false, 
                                 deviation_surf = false, 
-                                compr_vs_δi = false, 
+                                compr_vs_δ = false, 
                                 sg_θx = false, 
                                 sg_θy = false, 
                                 sg_θz = false, 
@@ -28,7 +28,7 @@ Controls the visibility of plots and sliders in the `InteractionLyt` layout.
 - `ax_θ_vs_δ`: Show or hide the θ vs δ surface plot.
 - `deviation`: Show or hide the deviation plot.
 - `deviation_surf`: Show or hide the deviation surface plot.
-- `compr_vs_δi`: Show or hide the compression vs δi plot.
+- `compr_vs_δ`: Show or hide the compression vs δi plot.
 - `sg_θx`: Show or hide the θx angle slider.
 - `sg_θy`: Show or hide the θy angle slider.
 - `sg_θz`: Show or hide the θz angle slider.
@@ -51,7 +51,7 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
                                         θ_vs_δ = false, 
                                         deviation = false, 
                                         deviation_surf = false, 
-                                        compr_vs_δi = false, 
+                                        compr_vs_δ = false, 
                                         sg_θx = false, 
                                         sg_θy = false, 
                                         sg_θz = false, 
@@ -77,7 +77,7 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
     section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = θ_vs_δ
     section_plot.ax_deviation.blockscene.visible[] = deviation
     section_plot.ax_deviation_surface.blockscene.visible[] = deviation_surf
-    section_plot.ax_compr_vs_δi.blockscene.visible[] = compr_vs_δi
+    section_plot.ax_compr_vs_δ.blockscene.visible[] = compr_vs_δ
 
     # Toggle angle slider visibility
     section_angle.sg_θ.sliders[1].blockscene.visible[] = sg_θx

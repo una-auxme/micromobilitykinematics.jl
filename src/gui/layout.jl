@@ -403,7 +403,7 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
     deviation_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 
 
-    compr_vs_δi_plot!(fig, section_plot, steering, suspension)
+    compr_vs_δ_plot!(fig, section_plot, steering, suspension)
 
     return section_plot
 end 
@@ -1128,7 +1128,7 @@ end
 
 
 
-function compr_vs_δi_plot!(fig, section_plot, steering, suspension)
+function compr_vs_δ_plot!(fig, section_plot, steering, suspension)
 
     slot = section_plot.slot
     row = slot[1]
@@ -1140,32 +1140,34 @@ function compr_vs_δi_plot!(fig, section_plot, steering, suspension)
     θz = steering.θz
     ############| Ackermannratio Scene
 
-    section_plot.ax_compr_vs_δi = GLMakie.Axis3(fig[row, col],
+    section_plot.ax_compr_vs_δ = GLMakie.Axis3(fig[row, col],
                                             xlabel = "compression left in [%]", 
                                             ylabel = "compression right in [%]",
                                             zlabel = "δi in [°]",
                                             zticks = 0:5:70, 
                                             title = "compression vs. wheel angles",) #
     #section_plot.ax_ratio_surface.aspect = :data
-    section_plot.ax_compr_vs_δi.aspect = (1, 1, 1)
-    section_plot.ax_compr_vs_δi.blockscene.visible[] = false
+    section_plot.ax_compr_vs_δ.aspect = (1, 1, 1)
+    section_plot.ax_compr_vs_δ.blockscene.visible[] = false
     
 
     # Limits
-    GLMakie.xlims!(section_plot.ax_compr_vs_δi, 0, 100)
-    GLMakie.ylims!(section_plot.ax_compr_vs_δi, 0, 100)
-    GLMakie.zlims!(section_plot.ax_compr_vs_δi, 0, 70)
+    GLMakie.xlims!(section_plot.ax_compr_vs_δ, 0, 100)
+    GLMakie.ylims!(section_plot.ax_compr_vs_δ, 0, 100)
+    GLMakie.zlims!(section_plot.ax_compr_vs_δ, 0, 70)
 
     ############| compression vs δi Data
 
-    compr_vs_δi_ = compr_vs_δi((θx, θy, θz), steering, suspension)
+    compr_vs_δi, compr_vs_δo = compr_vs_δ((θx, θy, θz), steering, suspension)
 
 
     ############| Ackermannratio Observervar 
-    section_plot.obs_compr_vs_δi = Observable(compr_vs_δi_)
+    section_plot.obs_compr_vs_δi = Observable(compr_vs_δi)
+    section_plot.obs_compr_vs_δo = Observable(compr_vs_δo)
 
     ############| Ackermannratio Ploting  
 
-    GLMakie.surface!(section_plot.ax_compr_vs_δi , 1.0:1.0:100, 1.0:1.0:100, section_plot.obs_compr_vs_δi; colormap = :darkterrain)
+    GLMakie.surface!(section_plot.ax_compr_vs_δ , 1.0:1.0:100, 1.0:1.0:100, section_plot.obs_compr_vs_δi; colormap = :darkterrain)
+    GLMakie.surface!(section_plot.ax_compr_vs_δ , 1.0:1.0:100, 1.0:1.0:100, section_plot.obs_compr_vs_δo; colormap = :darkterrain)
     
 end

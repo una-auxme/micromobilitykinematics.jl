@@ -50,7 +50,7 @@ mutable struct PlotSection  <: AbstractPlotSection
     ax_θ_vs_δ_surface::Union{Axis3,Nothing}
     ax_deviation::Union{Axis,Nothing}
     ax_deviation_surface::Union{Axis3,Nothing}
-    ax_compr_vs_δi::Union{Axis3,Nothing}
+    ax_compr_vs_δ::Union{Axis3,Nothing}
 
     txt_ratio_max::Union{Makie.Text,Nothing}
     txt_ratio_min::Union{Makie.Text,Nothing}
@@ -92,6 +92,7 @@ mutable struct PlotSection  <: AbstractPlotSection
     obs_deviation_surface::Union{Observable,Nothing}
 
     obs_compr_vs_δi::Union{Observable,Nothing}
+    obs_compr_vs_δo::Union{Observable,Nothing}
 
 
     function PlotSection()
@@ -126,6 +127,9 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.obs_deviation_min = nothing
 
         inst.obs_deviation_surface = nothing
+
+        inst.obs_compr_vs_δi = nothing
+        inst.obs_compr_vs_δo = nothing
 
         return inst
     end 

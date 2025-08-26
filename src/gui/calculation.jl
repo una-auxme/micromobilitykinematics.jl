@@ -471,7 +471,7 @@ end
 
 
 
-function compr_vs_δi(θ::Tuple{T,T,T},
+function compr_vs_δ(θ::Tuple{T,T,T},
                         steering::Steering,
                         suspension::Suspension;
                         step_size = 1 ) where {T <: Any}
@@ -479,6 +479,7 @@ function compr_vs_δi(θ::Tuple{T,T,T},
 
     compr_matrix = [(l, r) for l in 1.0:step_size:100, r in 1.0:step_size:100]
     δi = [ 0.0 for l in 1:step_size:100, r in 1:step_size:100]
+    δo = [ 0.0 for l in 1:step_size:100, r in 1:step_size:100]
 
     for compr in compr_matrix
         l_compr, r_compr = compr
@@ -493,15 +494,15 @@ function compr_vs_δi(θ::Tuple{T,T,T},
             update!(θ, steering, suspension)
 
             δi[l_compr_i,r_compr_i] = steering.δi
+            δo[l_compr_i,r_compr_i] = steering.δo
         catch err
             #println(l_compr, r_compr)
-
             δi[l_compr_i,r_compr_i] = NaN
-
+            δo[l_compr_i,r_compr_i] = NaN
         end
         
        
     end 
     
-    return δi
+    return δi, δo
 end

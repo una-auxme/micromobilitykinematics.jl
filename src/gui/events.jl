@@ -84,10 +84,10 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δi.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
             steering_copy = deepcopy(steering)
             suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[] = compr_vs_δi((θx,θy,θz),steering_copy, suspension_copy)
+            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
         end
 
 
@@ -193,10 +193,10 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-                section_plot.ax_compr_vs_δi.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
                 steering_copy = deepcopy(steering)
                 suspension_copy = deepcopy(suspension)
-                section_plot.obs_compr_vs_δi[] = compr_vs_δi((θx,θy,θz),steering_copy, suspension_copy)
+                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
             end
 
 
@@ -297,10 +297,10 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δi.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
             steering_copy = deepcopy(steering)
             suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[] = compr_vs_δi((θx,θy,θz),steering_copy, suspension_copy)
+            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
         end
 
 
@@ -788,7 +788,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
         if sel == "compression vs wheel angles"
 
             update_layout_visibility!(interaction_lyt; 
-                                        compr_vs_δi = true, 
+                                        compr_vs_δ = true, 
                                         sg_θx = true, 
                                         sg_θy = true, 
                                         sg_θz = true)
@@ -800,7 +800,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             steering_copy = deepcopy(steering)
             suspension_copy = deepcopy(suspension)
 
-            section_plot.obs_compr_vs_δi[] = compr_vs_δi((θx, θy, θz) ,steering_copy, suspension_copy)
+            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx, θy, θz) ,steering_copy, suspension_copy)
         end
 
     end
@@ -963,13 +963,13 @@ function event_btn_save(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            fig_compr_vs_δi = compr_vs_δi_plot(θx, θy, θz, steering, suspension)
+            fig_compr_vs_δ = compr_vs_δ_plot(θx, θy, θz, steering, suspension)
 
-            ax_compr_vs_δi = first(values(fig_compr_vs_δi.content))
+            ax_compr_vs_δ = first(values(fig_compr_vs_δ.content))
 
             # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
-            ax_compr_vs_δi.azimuth[]   = section_plot.ax_compr_vs_δi.azimuth[]
-            ax_compr_vs_δi.elevation[] = section_plot.ax_compr_vs_δi.elevation[]
+            ax_compr_vs_δ.azimuth[]   = section_plot.ax_compr_vs_δ.azimuth[]
+            ax_compr_vs_δ.elevation[] = section_plot.ax_compr_vs_δ.elevation[]
 
             GLMakie.save("compression_vs_wheel_angles.png",fig_deviation_surface)
             GLMakie.display(fig)
@@ -1114,12 +1114,12 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
 
         ###
-        fig_compr_vs_δi = compr_vs_δi_plot(θx, θy, θz, steering, suspension)
+        fig_compr_vs_δ = compr_vs_δ_plot(θx, θy, θz, steering, suspension)
 
-        ax_compr_vs_δi = first(values(fig_compr_vs_δi.content))
+        ax_compr_vs_δ = first(values(fig_compr_vs_δ.content))
 
-        ax_compr_vs_δi.azimuth[]   = section_plot.ax_compr_vs_δi.azimuth[]
-        ax_compr_vs_δi.elevation[] = section_plot.ax_compr_vs_δi.elevation[]
+        ax_compr_vs_δ.azimuth[]   = section_plot.ax_compr_vs_δ.azimuth[]
+        ax_compr_vs_δ.elevation[] = section_plot.ax_compr_vs_δ.elevation[]
 
         GLMakie.save("compression_vs_wheel_angles.png",fig_deviation_surface)
 
@@ -1196,10 +1196,10 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
         set_close_to!(section_param.sg_param.sliders[4], steering.init_steering.tie_rod_length)
 
 
-        @show steering.rotational_component.x_rotational_radius = steering.init_steering.θx_radius
-        @show steering.rotational_component.z_rotational_radius = steering.init_steering.θz_radius
-        @show steering.track_lever.length = steering.init_steering.track_lever_length
-        @show steering.tie_rod.length = steering.init_steering.tie_rod_length
+        steering.rotational_component.x_rotational_radius = steering.init_steering.θx_radius
+        steering.rotational_component.z_rotational_radius = steering.init_steering.θz_radius
+        steering.track_lever.length = steering.init_steering.track_lever_length
+        steering.tie_rod.length = steering.init_steering.tie_rod_length
 
 
 
@@ -1252,10 +1252,10 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δi.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
             steering_copy = deepcopy(steering)
             suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[] = compr_vs_δi((θx,θy,θz),steering_copy, suspension_copy)
+            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
         end
 
         #Updating
@@ -1345,10 +1345,10 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δi.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
             steering_copy = deepcopy(steering)
             suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[] = compr_vs_δi((θx,θy,θz), steering_copy, suspension_copy)
+            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
         end
 
         #Updating
@@ -1436,10 +1436,10 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δi.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
             steering_copy = deepcopy(steering)
             suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[] = compr_vs_δi((θx,θy,θz),steering_copy, suspension_copy)
+            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
         end
 
 
@@ -1528,10 +1528,10 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δi.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
             steering_copy = deepcopy(steering)
             suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[] = compr_vs_δi((θx,θy,θz),steering_copy, suspension_copy)
+            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
         end
 
         #Updating
@@ -1620,10 +1620,10 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δi.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
             steering_copy = deepcopy(steering)
             suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[] = compr_vs_δi((θx,θy,θz),steering_copy, suspension_copy)
+            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
         end
 
 
