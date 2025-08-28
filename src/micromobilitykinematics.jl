@@ -11,6 +11,7 @@ module micromobilitykinematics
     include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
     using .GeoSpatialRelations
     using GLMakie
+    #using Colors  # (oder: using ColorTypes)
 
     
     using JuMP
@@ -47,10 +48,10 @@ module micromobilitykinematics
     include("utils/insights.jl")    
     include("utils/io.jl")
     include("gui/GUIcore.jl")
+    include("gui/helper.jl")
     include("gui/layout.jl")
     include("gui/calculation.jl")
     include("gui/events.jl")
     include("gui/save.jl")
-    include("gui/helper.jl")
     include("gui/GUI.jl")
 end

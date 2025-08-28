@@ -107,7 +107,14 @@ function steeringkinematicsMOVED!(θ::Tuple, steering::Steering, suspension::Sus
     plane = GeoSpatialRelations.Plane(lower_end_of_rotational_component, [0.0,0.0,1.0])
 
     # --- Intersection point gives offset for wheel_ucs to track lever mounting point ---
-    inter = GeoSpatialRelations.intersection(line, plane)
+    inter = nothing
+
+    try
+        inter = GeoSpatialRelations.intersection(line, plane)
+    catch err
+        error("Steering kinematics MVOED calculation failed -> could not determine track lever mounting positions")
+    end
+
     vec_offset = inter - suspension.lowerwishbone[1].sphere_joint_neutral
     offset_length = norm(vec_offset)
     
@@ -131,7 +138,16 @@ function steeringkinematicsMOVED!(θ::Tuple, steering::Steering, suspension::Sus
         circ = GeoSpatialRelations.Circle(track_lever_mount_IN_steering_ucs,steering.track_lever.length,steering.base_vec_wheel_ucs[index][:,3])
         sphere = GeoSpatialRelations.Sphere(steering.sphere_joints[index],steering.tie_rod.length)
 
-        circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
+        circle_joints_1, circle_joints_2 = nothing, nothing
+
+
+        try
+            circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
+        catch err
+            error("Steering kinematics MOVED calculation failed -> could not determine circle joints positions")
+        end
+
+
 
         # --- Choose valid intersection based on x-distance ---
         if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          
@@ -219,7 +235,9 @@ function steeringkinematicsNEUTRAL!(θ::Tuple, steering::Steering, suspension::S
     wheel_ucs = [[1.0;0.0;0.0] [0.0;1.0;0.0] [0.0;0.0;1.0]]
 
     # --- Update suspension state ---
+    
     suspensionkinematics!(suspension)
+
 
     # --- Get wheel positions from suspension ---
     wheel_ucs_position = (suspension.lowerwishbone[1].sphere_joint, suspension.lowerwishbone[2].sphere_joint)
@@ -247,7 +265,13 @@ function steeringkinematicsNEUTRAL!(θ::Tuple, steering::Steering, suspension::S
     plane = GeoSpatialRelations.Plane(lower_end_of_rotational_component, [0.0,0.0,1.0])
 
     # --- Intersection point gives offset for wheel_ucs to track lever mounting point ---
-    inter = GeoSpatialRelations.intersection(line, plane)
+    inter = nothing
+    try
+        inter = GeoSpatialRelations.intersection(line, plane)
+    catch err
+        error("Steering kinematics NEUTRAL calculation failed -> could not determine track lever mounting positions")
+    end
+    
     
     vec_offset = inter - suspension.lowerwishbone[1].sphere_joint_neutral
     offset_length = norm(vec_offset)
@@ -274,7 +298,14 @@ function steeringkinematicsNEUTRAL!(θ::Tuple, steering::Steering, suspension::S
         circ = GeoSpatialRelations.Circle(track_lever_mount_IN_steering_ucs,steering.track_lever.length,base_vec_wheel_ucs[index][:,3])
         sphere = GeoSpatialRelations.Sphere(steering.sphere_joints_neutral[index],steering.tie_rod.length)
 
-        circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
+        circle_joints_1, circle_joints_2 = nothing, nothing
+
+        try
+            circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
+        catch err
+            error("Steering kinematics NEUTRAL calculation failed -> could not determine circle joints positions")
+        end
+        
         
         # --- Choose valid intersection based on x-distance ---
         if circle_joints_2[1] - track_lever_mount_IN_steering_ucs[1] < circle_joints_1[1] - track_lever_mount_IN_steering_ucs[1]                          

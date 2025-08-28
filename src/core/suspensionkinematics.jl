@@ -29,8 +29,14 @@ function suspensionkinematicsMOVED!(suspension::Suspension)
         normal =  suspension.lowerwishbone[index].rotation_axis
         circ_lowerwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, convert(Vector{Real},normal))
 
-        damper_lower_fixture = GeoSpatialRelations.intersection(circ_damper, circ_lowerwishbone)
-    
+        damper_lower_fixture = nothing
+        
+         try
+            damper_lower_fixture = GeoSpatialRelations.intersection(circ_damper, circ_lowerwishbone)
+        catch err
+            error("Suspension kinematics MOVED calculation failed -> could not determine $(side) damper lower fixture positions")
+        end
+
 
 
         damper_lower_fixture = damper_lower_fixture[1]
@@ -53,8 +59,13 @@ function suspensionkinematicsMOVED!(suspension::Suspension)
         radius = suspension.wheelmount.length
 
         sphere_lower_sphere_joint = GeoSpatialRelations.Sphere(center, radius)
-    
-        suspension.upperwishbone[index].sphere_joint = collect(GeoSpatialRelations.intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1])
+
+        try
+            suspension.upperwishbone[index].sphere_joint = collect(GeoSpatialRelations.intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1])
+        catch err
+            error("Suspension kinematics MOVED calculation failed -> could not determine $(side) upper wishbone sphere joint positions")
+        end
+
     end
 end
 
@@ -89,8 +100,14 @@ function suspensionkinematicsNEUTRAL!(suspension::Suspension)
         normal =  suspension.lowerwishbone[index].rotation_axis
         circ_lowerwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, convert(Vector{Real},normal))
 
-        damper_lower_fixture = GeoSpatialRelations.intersection(circ_damper, circ_lowerwishbone)
-    
+        damper_lower_fixture = nothing
+        
+
+        try
+            damper_lower_fixture = GeoSpatialRelations.intersection(circ_damper, circ_lowerwishbone)
+        catch err
+            error("Suspension kinematics NEUTRAL calculation failed -> could not determine $(side) damper lower fixture positions")
+        end
 
 
         damper_lower_fixture = damper_lower_fixture[1]
@@ -112,8 +129,14 @@ function suspensionkinematicsNEUTRAL!(suspension::Suspension)
         center = suspension.lowerwishbone[index].sphere_joint_neutral
         radius = suspension.wheelmount.length
         sphere_lower_sphere_joint = GeoSpatialRelations.Sphere(center, radius)
-    
-        suspension.upperwishbone[index].sphere_joint_neutral = collect(GeoSpatialRelations.intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1])
+        
+        try
+            suspension.upperwishbone[index].sphere_joint_neutral = collect(GeoSpatialRelations.intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1])
+        catch err
+            error("Suspension kinematics NEUTRAL calculation failed -> could not determine $(side) upper wishbone sphere joint positions")
+        end
+
+       
     end
 end
 

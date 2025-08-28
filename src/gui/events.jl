@@ -43,61 +43,63 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
-
+    section_error =  interaction_lyt.section_error
 
 
 
     on(section_angle.sg_θ.sliders[1].value) do val
-        θx = val
-        θy = section_angle.sg_θ.sliders[2].value.val
-        θz = section_angle.sg_θ.sliders[3].value.val
+         @safe_ui interaction_lyt begin
+            θx = val
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
 
-        # Calculation
-        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-        radius = turning_radius(chassis,steering)
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
 
-        if section_plot_settings.menu.selection.val == "geometry"
-            section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            if section_plot_settings.menu.selection.val == "geometry"
+                section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            end
+
+            if section_plot_settings.menu.selection.val == "radii"
+                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio"
+                section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_ratio_θz[] = ratio_θz
+                section_plot.obs_ratio_min[] = minimum(ratio_θz)
+                section_plot.obs_ratio_max[] = maximum(ratio_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation"
+                section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
+                deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_deviation_θz[] = deviation_θz
+                section_plot.obs_deviation_min[] = minimum(deviation_θz)
+                section_plot.obs_deviation_max[] = maximum(deviation_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "compression vs wheel angles"
+                section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+            end
+
+
+
+            #Updating
+            section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
+            section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
+            section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
+            section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
+            section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
         end
-
-        if section_plot_settings.menu.selection.val == "radii"
-            section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio"
-            section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
-            ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_ratio_θz[] = ratio_θz
-            section_plot.obs_ratio_min[] = minimum(ratio_θz)
-            section_plot.obs_ratio_max[] = maximum(ratio_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation"
-            section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
-            deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_deviation_θz[] = deviation_θz
-            section_plot.obs_deviation_min[] = minimum(deviation_θz)
-            section_plot.obs_deviation_max[] = maximum(deviation_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
-        end
-
-
-
-        #Updating
-        section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
-        section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
-        section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
-        section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
-        section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
     end
 
 end
@@ -144,9 +146,11 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
 
     on(section_angle.sg_θ.sliders[2].value) do val
+         @safe_ui interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = val
             θz = section_angle.sg_θ.sliders[3].value.val
@@ -207,6 +211,7 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
         end
+    end
 end
 
 
@@ -251,66 +256,69 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
     
     on(section_angle.sg_θ.sliders[3].value) do val
-        θx = section_angle.sg_θ.sliders[1].value.val
-        θy = section_angle.sg_θ.sliders[2].value.val
-        θz = val
+         @safe_ui interaction_lyt begin
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = val
 
-        # Calculation
-        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-        radius = turning_radius(chassis,steering)
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
 
-        #
+            #
 
-        if section_plot_settings.menu.selection.val == "geometry"
-            section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"      
+            if section_plot_settings.menu.selection.val == "geometry"
+                section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"      
+            end
+
+            if section_plot_settings.menu.selection.val == "radii"
+                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio"
+                section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                ratio_θz = ackermannratio_θz(θx, θy, θz_max, chassis, steering, suspension)
+                section_plot.obs_ratio_θz[] = ratio_θz
+                section_plot.obs_ratio_min[] = minimum(ratio_θz)
+                section_plot.obs_ratio_max[] = maximum(ratio_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "steering vs wheel angles"
+                section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+                section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
+                section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation"
+                section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
+                deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_deviation_θz[] = deviation_θz
+                section_plot.obs_deviation_min[] = minimum(deviation_θz)
+                section_plot.obs_deviation_max[] = maximum(deviation_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "compression vs wheel angles"
+                section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+            end
+
+
+
+            # Updating 
+            section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
+            section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
+            section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
+            section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
+            section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
         end
-
-        if section_plot_settings.menu.selection.val == "radii"
-            section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio"
-            section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
-            ratio_θz = ackermannratio_θz(θx, θy, θz_max, chassis, steering, suspension)
-            section_plot.obs_ratio_θz[] = ratio_θz
-            section_plot.obs_ratio_min[] = minimum(ratio_θz)
-            section_plot.obs_ratio_max[] = maximum(ratio_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "steering vs wheel angles"
-            section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
-            section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
-            section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation"
-            section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
-            deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_deviation_θz[] = deviation_θz
-            section_plot.obs_deviation_min[] = minimum(deviation_θz)
-            section_plot.obs_deviation_max[] = maximum(deviation_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
-        end
-
-
-
-        # Updating 
-        section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
-        section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
-        section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
-        section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
-        section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
     end
 
 end
@@ -397,82 +405,85 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
     on(section_damper.sg_compr.sliders[1].value) do val
+         @safe_ui interaction_lyt begin
 
-        θx = section_angle.sg_θ.sliders[1].value.val
-        θy = section_angle.sg_θ.sliders[2].value.val
-        θz = section_angle.sg_θ.sliders[3].value.val
-
-
-        left_compr = val
-        right_compr = section_damper.sg_compr.sliders[2].value.val
-
-        suspension.damper[1].compression = left_compr
-        suspension.damper[2].compression = right_compr
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
 
 
-        # Calculation
-        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-        radius = turning_radius(chassis,steering)
+            left_compr = val
+            right_compr = section_damper.sg_compr.sliders[2].value.val
 
-        if section_plot_settings.menu.selection.val == "geometry"
-            section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            suspension.damper[1].compression = left_compr
+            suspension.damper[2].compression = right_compr
+
+
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
+
+            if section_plot_settings.menu.selection.val == "geometry"
+                section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            end
+
+            if section_plot_settings.menu.selection.val == "radii"
+                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio"
+                section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_ratio_θz[] = ratio_θz
+                section_plot.obs_ratio_min[] = minimum(ratio_θz)
+                section_plot.obs_ratio_max[] = maximum(ratio_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
+                section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
+                section_plot.obs_ratio_surface[] = ratio_surface
+            end
+
+            if section_plot_settings.menu.selection.val == "steering vs wheel angles"
+                section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+                section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
+                section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation"
+                section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
+                deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_deviation_θz[] = deviation_θz
+                section_plot.obs_deviation_min[] = minimum(deviation_θz)
+                section_plot.obs_deviation_max[] = maximum(deviation_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation surface"
+                section_plot.ax_deviation.title = "ackermann deviation surface"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
+            end
+
+
+            #Updating
+            section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
+            section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
+            section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
+            section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
+            section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
         end
-
-        if section_plot_settings.menu.selection.val == "radii"
-            section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio"
-            section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
-            ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_ratio_θz[] = ratio_θz
-            section_plot.obs_ratio_min[] = minimum(ratio_θz)
-            section_plot.obs_ratio_max[] = maximum(ratio_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
-            section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
-            section_plot.obs_ratio_surface[] = ratio_surface
-        end
-
-        if section_plot_settings.menu.selection.val == "steering vs wheel angles"
-            section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
-            section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
-            section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation"
-            section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
-            deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_deviation_θz[] = deviation_θz
-            section_plot.obs_deviation_min[] = minimum(deviation_θz)
-            section_plot.obs_deviation_max[] = maximum(deviation_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation surface"
-            section_plot.ax_deviation.title = "ackermann deviation surface"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
-        end
-
-
-        #Updating
-        section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
-        section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
-        section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
-        section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
-        section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
     end
 end
 
@@ -523,81 +534,84 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
     on(section_damper.sg_compr.sliders[2].value) do val
+         @safe_ui interaction_lyt begin
 
-        θx = section_angle.sg_θ.sliders[1].value.val
-        θy = section_angle.sg_θ.sliders[2].value.val
-        θz = section_angle.sg_θ.sliders[3].value.val
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
 
 
-        left_compr = section_damper.sg_compr.sliders[1].value.val
-        right_compr = val
+            left_compr = section_damper.sg_compr.sliders[1].value.val
+            right_compr = val
 
-        suspension.damper[1].compression = left_compr
-        suspension.damper[2].compression = right_compr
+            suspension.damper[1].compression = left_compr
+            suspension.damper[2].compression = right_compr
 
-        # Calculation
-        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-        radius = turning_radius(chassis,steering)
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
 
-        if section_plot_settings.menu.selection.val == "geometry"
-            section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            if section_plot_settings.menu.selection.val == "geometry"
+                section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            end
+
+            if section_plot_settings.menu.selection.val == "radii"
+                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio"
+                section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_ratio_θz[] = ratio_θz
+                section_plot.obs_ratio_min[] = minimum(ratio_θz)
+                section_plot.obs_ratio_max[] = maximum(ratio_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
+                section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
+                section_plot.obs_ratio_surface[] = ratio_surface
+            end
+
+            if section_plot_settings.menu.selection.val == "steering vs wheel angles"
+                section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+                section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
+                section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation"
+                section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
+                deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_deviation_θz[] = deviation_θz
+                section_plot.obs_deviation_min[] = minimum(deviation_θz)
+                section_plot.obs_deviation_max[] = maximum(deviation_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation surface"
+                section_plot.ax_deviation.title = "ackermann deviation surface"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
+            end
+
+
+            #Updating
+            section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
+            section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
+            section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
+            section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
+            section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
         end
-
-        if section_plot_settings.menu.selection.val == "radii"
-            section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio"
-            section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
-            ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_ratio_θz[] = ratio_θz
-            section_plot.obs_ratio_min[] = minimum(ratio_θz)
-            section_plot.obs_ratio_max[] = maximum(ratio_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
-            section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
-            section_plot.obs_ratio_surface[] = ratio_surface
-        end
-
-        if section_plot_settings.menu.selection.val == "steering vs wheel angles"
-            section_plot.ax_θ_vs_δ_surface.title = "steering vs wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
-            section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
-            section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation"
-            section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
-            deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_deviation_θz[] = deviation_θz
-            section_plot.obs_deviation_min[] = minimum(deviation_θz)
-            section_plot.obs_deviation_max[] = maximum(deviation_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation surface"
-            section_plot.ax_deviation.title = "ackermann deviation surface"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
-        end
-
-
-        #Updating
-        section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
-        section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
-        section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
-        section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
-        section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
     end
 end
 
@@ -678,6 +692,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
     on(section_plot_settings.menu.selection) do sel
 
@@ -854,6 +869,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
     on(section_plot_settings.btn_save.clicks) do n
 
@@ -1029,6 +1045,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
 
     on(section_plot_settings.btn_save_all.clicks) do n
@@ -1173,6 +1190,7 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
 
     on(section_plot_settings.btn_reset.clicks) do n
@@ -1285,78 +1303,81 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
 
     on(section_param.sg_param.sliders[1].value) do val
-        θx = section_angle.sg_θ.sliders[1].value.val
-        θy = section_angle.sg_θ.sliders[2].value.val
-        θz = section_angle.sg_θ.sliders[3].value.val
+         @safe_ui interaction_lyt begin
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
 
 
-        steering.rotational_component.x_rotational_radius = val
- 
+            steering.rotational_component.x_rotational_radius = val
+    
 
-        # Calculation
-        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-        radius = turning_radius(chassis,steering)
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
 
-        if section_plot_settings.menu.selection.val == "geometry"
-            section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            if section_plot_settings.menu.selection.val == "geometry"
+                section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            end
+
+            if section_plot_settings.menu.selection.val == "radii"
+                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio"
+                section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_ratio_θz[] = ratio_θz
+                section_plot.obs_ratio_min[] = minimum(ratio_θz)
+                section_plot.obs_ratio_max[] = maximum(ratio_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
+                section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
+                section_plot.obs_ratio_surface[] = ratio_surface
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation"
+                section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
+                deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_deviation_θz[] = deviation_θz
+                section_plot.obs_deviation_min[] = minimum(deviation_θz)
+                section_plot.obs_deviation_max[] = maximum(deviation_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation surface"
+                section_plot.ax_deviation.title = "ackermann deviation surface"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
+            end
+
+            if section_plot_settings.menu.selection.val == "compression vs wheel angles"
+                section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+            end
+
+            #Updating
+            section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
+            section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
+            section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
+            section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
+            section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
         end
-
-        if section_plot_settings.menu.selection.val == "radii"
-            section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio"
-            section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
-            ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_ratio_θz[] = ratio_θz
-            section_plot.obs_ratio_min[] = minimum(ratio_θz)
-            section_plot.obs_ratio_max[] = maximum(ratio_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
-            section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
-            section_plot.obs_ratio_surface[] = ratio_surface
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation"
-            section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
-            deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_deviation_θz[] = deviation_θz
-            section_plot.obs_deviation_min[] = minimum(deviation_θz)
-            section_plot.obs_deviation_max[] = maximum(deviation_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation surface"
-            section_plot.ax_deviation.title = "ackermann deviation surface"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
-        end
-
-        if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
-        end
-
-        #Updating
-        section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
-        section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
-        section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
-        section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
-        section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
     end
 
 end
@@ -1377,78 +1398,81 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
 
     on(section_param.sg_param.sliders[2].value) do val
-        θx = section_angle.sg_θ.sliders[1].value.val
-        θy = section_angle.sg_θ.sliders[2].value.val
-        θz = section_angle.sg_θ.sliders[3].value.val
+         @safe_ui interaction_lyt begin
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
 
 
-        steering.rotational_component.z_rotational_radius = val
+            steering.rotational_component.z_rotational_radius = val
 
-        # Calculation
-        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-        radius = turning_radius(chassis,steering)
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
 
-        if section_plot_settings.menu.selection.val == "geometry"
-            section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            if section_plot_settings.menu.selection.val == "geometry"
+                section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            end
+
+            if section_plot_settings.menu.selection.val == "radii"
+                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio"
+                section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_ratio_θz[] = ratio_θz
+                section_plot.obs_ratio_min[] = minimum(ratio_θz)
+                section_plot.obs_ratio_max[] = maximum(ratio_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
+                section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
+                section_plot.obs_ratio_surface[] = ratio_surface
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation"
+                section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
+                deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_deviation_θz[] = deviation_θz
+                section_plot.obs_deviation_min[] = minimum(deviation_θz)
+                section_plot.obs_deviation_max[] = maximum(deviation_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation surface"
+                section_plot.ax_deviation.title = "ackermann deviation surface"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
+            end
+
+            if section_plot_settings.menu.selection.val == "compression vs wheel angles"
+                section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+            end
+
+
+            #Updating
+            section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
+            section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
+            section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
+            section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
+            section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
         end
-
-        if section_plot_settings.menu.selection.val == "radii"
-            section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio"
-            section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
-            ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_ratio_θz[] = ratio_θz
-            section_plot.obs_ratio_min[] = minimum(ratio_θz)
-            section_plot.obs_ratio_max[] = maximum(ratio_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
-            section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
-            section_plot.obs_ratio_surface[] = ratio_surface
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation"
-            section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
-            deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_deviation_θz[] = deviation_θz
-            section_plot.obs_deviation_min[] = minimum(deviation_θz)
-            section_plot.obs_deviation_max[] = maximum(deviation_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation surface"
-            section_plot.ax_deviation.title = "ackermann deviation surface"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
-        end
-
-        if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
-        end
-
-
-        #Updating
-        section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
-        section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
-        section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
-        section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
-        section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
     end
 
 end
@@ -1468,78 +1492,81 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
 
-    on(section_param.sg_param.sliders[3].value) do val
-        θx = section_angle.sg_θ.sliders[1].value.val
-        θy = section_angle.sg_θ.sliders[2].value.val
-        θz = section_angle.sg_θ.sliders[3].value.val
+    on(section_param.sg_param.sliders[4].value) do val
+         @safe_ui interaction_lyt begin
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
 
 
-        steering.tie_rod.length = val
-        #steering.TrackLever.length = 
+            steering.tie_rod.length = val
+            #steering.TrackLever.length = 
 
-        # Calculation
-        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-        radius = turning_radius(chassis,steering)
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
 
-        if section_plot_settings.menu.selection.val == "geometry"
-            section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            if section_plot_settings.menu.selection.val == "geometry"
+                section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            end
+
+            if section_plot_settings.menu.selection.val == "radii"
+                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio"
+                section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_ratio_θz[] = ratio_θz
+                section_plot.obs_ratio_min[] = minimum(ratio_θz)
+                section_plot.obs_ratio_max[] = maximum(ratio_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
+                section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
+                section_plot.obs_ratio_surface[] = ratio_surface
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation"
+                section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
+                deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_deviation_θz[] = deviation_θz
+                section_plot.obs_deviation_min[] = minimum(deviation_θz)
+                section_plot.obs_deviation_max[] = maximum(deviation_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation surface"
+                section_plot.ax_deviation.title = "ackermann deviation surface"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
+            end
+
+            if section_plot_settings.menu.selection.val == "compression vs wheel angles"
+                section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+            end
+
+            #Updating
+            section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
+            section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
+            section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
+            section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
+            section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
         end
-
-        if section_plot_settings.menu.selection.val == "radii"
-            section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio"
-            section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
-            ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_ratio_θz[] = ratio_θz
-            section_plot.obs_ratio_min[] = minimum(ratio_θz)
-            section_plot.obs_ratio_max[] = maximum(ratio_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
-            section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
-            section_plot.obs_ratio_surface[] = ratio_surface
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation"
-            section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
-            deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_deviation_θz[] = deviation_θz
-            section_plot.obs_deviation_min[] = minimum(deviation_θz)
-            section_plot.obs_deviation_max[] = maximum(deviation_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation surface"
-            section_plot.ax_deviation.title = "ackermann deviation surface"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
-        end
-
-        if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
-        end
-
-        #Updating
-        section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
-        section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
-        section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
-        section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
-        section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
     end
 
 end
@@ -1560,79 +1587,82 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
     section_damper =  interaction_lyt.section_damper
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
 
 
-    on(section_param.sg_param.sliders[4].value) do val
-        θx = section_angle.sg_θ.sliders[1].value.val
-        θy = section_angle.sg_θ.sliders[2].value.val
-        θz = section_angle.sg_θ.sliders[3].value.val
+    on(section_param.sg_param.sliders[3].value) do val
+        @safe_ui interaction_lyt begin
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
 
 
-        steering.track_lever.length = val
+            steering.track_lever.length = val
 
-        # Calculation
-        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-        radius = turning_radius(chassis,steering)
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
 
-        if section_plot_settings.menu.selection.val == "geometry"
-            section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            if section_plot_settings.menu.selection.val == "geometry"
+                section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
+            end
+
+            if section_plot_settings.menu.selection.val == "radii"
+                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio"
+                section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_ratio_θz[] = ratio_θz
+                section_plot.obs_ratio_min[] = minimum(ratio_θz)
+                section_plot.obs_ratio_max[] = maximum(ratio_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
+                section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
+                section_plot.obs_ratio_surface[] = ratio_surface
+            end
+
+            
+            if section_plot_settings.menu.selection.val == "ackermann deviation"
+                section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
+                deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_deviation_θz[] = deviation_θz
+                section_plot.obs_deviation_min[] = minimum(deviation_θz)
+                section_plot.obs_deviation_max[] = maximum(deviation_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "ackermann deviation surface"
+                section_plot.ax_deviation.title = "ackermann deviation surface"
+                chassis_copy = deepcopy(chassis)
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
+            end
+
+            if section_plot_settings.menu.selection.val == "compression vs wheel angles"
+                section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                steering_copy = deepcopy(steering)
+                suspension_copy = deepcopy(suspension)
+                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+            end
+
+
+            #Updating
+            section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
+            section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
+            section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
+            section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
+            section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
         end
-
-        if section_plot_settings.menu.selection.val == "radii"
-            section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio"
-            section_plot.ax_ratio.title = "ackermannratio for (θx, θy, θz) = ($θx,$θy,$θz)"
-            ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_ratio_θz[] = ratio_θz
-            section_plot.obs_ratio_min[] = minimum(ratio_θz)
-            section_plot.obs_ratio_max[] = maximum(ratio_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermannratio surface plot"
-            section_plot.ax_ratio_surface.title = "ackermannratio surface plot"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max))
-            section_plot.obs_ratio_surface[] = ratio_surface
-        end
-
-        
-        if section_plot_settings.menu.selection.val == "ackermann deviation"
-            section_plot.ax_deviation.title = "ackermann deviation for (θx, θy, θz) = ($θx,$θy,$θz)"
-            deviation_θz = ackermann_deviation_θz(θx,θy,θz_max,chassis, steering, suspension)
-            section_plot.obs_deviation_θz[] = deviation_θz
-            section_plot.obs_deviation_min[] = minimum(deviation_θz)
-            section_plot.obs_deviation_max[] = maximum(deviation_θz)
-        end
-
-        if section_plot_settings.menu.selection.val == "ackermann deviation surface"
-            section_plot.ax_deviation.title = "ackermann deviation surface"
-            chassis_copy = deepcopy(chassis)
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
-        end
-
-        if section_plot_settings.menu.selection.val == "compression vs wheel angles"
-            section_plot.ax_compr_vs_δ.title = "compression vs wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
-        end
-
-
-        #Updating
-        section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
-        section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
-        section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
-        section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
-        section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
     end
 
 end

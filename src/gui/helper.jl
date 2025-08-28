@@ -90,3 +90,35 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
     nothing
 
 end
+
+
+
+
+
+
+
+"""
+    safe_ui begin
+        ...
+    end
+
+Führt den Block mit try/catch aus. Tritt ein Fehler auf, wird er samt Stacktrace
+über `sprint(showerror, e, bt)` formatiert und in die Konsole geschrieben.
+Du kannst die Fehlerbehandlung unten anpassen (z. B. in ein Observable pushen).
+"""
+macro safe_ui(lyt, ex)
+    quote
+        try
+            $(esc(ex))
+            $(esc(lyt)).section_error.tb_error.displayed_string = "Error: " 
+            $(esc(lyt)).section_error.tb_error.boxcolor = :white
+            $(esc(lyt)).section_error.tb_error.textcolor = :black
+        catch err
+            if err isa ErrorException              
+                $(esc(lyt)).section_error.tb_error.displayed_string = "Error: $(err.msg)"
+                $(esc(lyt)).section_error.tb_error.boxcolor = :lightsalmon
+                $(esc(lyt)).section_error.tb_error.textcolor = (:black, 1) 
+            end
+        end
+    end
+end

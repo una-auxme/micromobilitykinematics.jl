@@ -7,7 +7,7 @@ abstract type AbstractParamSection <: AbstractInteractionLyt end
 abstract type AbstractPlotSettingsSection <: AbstractInteractionLyt end
 abstract type AbstractDamperSection <: AbstractInteractionLyt end
 abstract type AbstractInfoSection <: AbstractInteractionLyt end
-
+abstract type AbstractErrorSection <: AbstractInteractionLyt end
 
 
 
@@ -381,6 +381,40 @@ mutable struct InfoSection <: AbstractInfoSection
 end
 
 
+
+
+mutable struct ErrorSection <: AbstractErrorSection
+    #######| Grid Position
+    slot::Any
+
+    #######| Components
+    lyt::Union{GridLayout,Nothing}
+    title::Union{Label,Nothing}
+
+    suplyt::Union{GridLayout,Nothing}
+
+    # Textboxes
+    tb_error::Union{Textbox, Nothing}
+
+    function ErrorSection()
+        inst = new()
+
+        inst.slot = nothing 
+
+        inst.suplyt = nothing
+        inst.lyt = nothing
+        inst.title = nothing
+
+        inst.tb_error = nothing
+        return inst
+    end
+
+end
+
+
+
+
+
 """
     InteractionLyt <: AbstractInteractionLyt
 
@@ -411,6 +445,7 @@ mutable struct InteractionLyt <: AbstractInteractionLyt
     section_damper::Union{DamperSection,Nothing}
     section_plot_settings::Union{PlotSettingsSection,Nothing}
     section_info::Union{InfoSection,Nothing}
+    section_error::Union{ErrorSection, Nothing}
 
     function InteractionLyt()
         inst = new()

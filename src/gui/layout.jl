@@ -33,9 +33,7 @@ function interactionlyt(θ_max, chassis, steering, suspension)
     interaction_lyt = InteractionLyt()
 
     # Figure'
-    interaction_lyt.fig = GLMakie.Figure(size = (1400, 1200))
-
-    
+    interaction_lyt.fig = GLMakie.Figure(size = (1450, 1200))
 
     interaction_lyt.section_plot = layout_section_plot(interaction_lyt.fig,(1:2,1:3), θ_max, deepcopy(chassis), deepcopy(steering), deepcopy(suspension))
     interaction_lyt.section_angle = layout_section_angles(interaction_lyt.fig,(3,1),θ_max, deepcopy(steering))
@@ -43,10 +41,13 @@ function interactionlyt(θ_max, chassis, steering, suspension)
     interaction_lyt.section_damper = layout_section_damper(interaction_lyt.fig,(3,3))
     interaction_lyt.section_plot_settings = layout_section_plot_settings(interaction_lyt.fig,(4,1)) 
     interaction_lyt.section_info = layout_section_info(interaction_lyt.fig,(4,3))
+    interaction_lyt.section_error =  layout_section_error(interaction_lyt.fig,(5,1:3))
 
     colsize!(interaction_lyt.fig.layout, 1, Relative(0.3))  # Spalte 1 = 30%
     colsize!(interaction_lyt.fig.layout, 2, Relative(0.3))  # Spalte 2 = 30%
     colsize!(interaction_lyt.fig.layout, 3, Relative(0.3))  # Spalte 3 = 30%
+
+    rowgap!(interaction_lyt.fig.layout, 3, -80)
 
     return interaction_lyt
 
@@ -337,6 +338,41 @@ function layout_section_info(fig,slot)
     return section_info
 
 end
+
+
+function layout_section_error(fig,slot)
+
+    section_error = ErrorSection()
+
+    section_error.lyt = GridLayout(tellheight = false)
+
+    row = slot[1]
+    col = slot[2]
+    section_error.slot = slot #slot = (4,3)
+
+    fig[row, col] = section_error.lyt  # Sub-Layout einfügen
+
+    #section_error.title = Label(section_error.lyt[1,1:3], "", fontsize = 15)
+
+    # Füge mehrere Buttons in das verschachtelte Layout ein:
+
+    #section_error.suplyt = GridLayout(tellheight = false)
+    #section_error.lyt[2,1] = section_error.suplyt
+
+    section_error.tb_error = Textbox(section_error.lyt[1:3, 1], placeholder = "Error: ", width = 900)
+
+    rowsize!(fig.layout, row,  Fixed(3))      # Zeile 5 kollabiert
+    rowgap!(fig.layout, row - 1, 0)          # Gap zwischen 4 und 5 = 0
+
+    #rowgap!(section_error.lyt, 1, 0)
+
+    return section_error
+
+end
+
+
+
+
 
 
 
