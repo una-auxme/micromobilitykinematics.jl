@@ -10,7 +10,8 @@ module micromobilitykinematics
     using LightXML
     include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
     using .GeoSpatialRelations
-    using GLMakie
+    using Makie; GLMakie.activate!()  
+
     #using Colors  # (oder: using ColorTypes)
 
     
