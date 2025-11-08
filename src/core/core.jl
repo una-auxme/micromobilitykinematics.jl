@@ -98,6 +98,37 @@ end
 
 
 
+mutable struct ErrorInfo
+
+    id::Any
+    type::Any
+    msg::Any
+    backtrace::Any
+
+    description::Any
+    root_cause::Any
+
+
+    function ErrorInfo()
+
+        inst = new()
+        
+        inst.id = nothing
+        inst.type = nothing
+        inst.msg = nothing
+        inst.backtrace = nothing
+
+        inst.description = nothing
+        inst.root_cause = nothing
+                
+        return inst
+    end
+
+
+end
+
+
+
 mutable struct Steering <: AbstractSteering
     ##### Components
     rotational_component::Union{RotationalComponent,Nothing}
@@ -139,7 +170,10 @@ mutable struct Steering <: AbstractSteering
     ######## objective 
 
     objective::Union{Any, Nothing}         
-    
+
+    ####### Error handling 
+
+    err_info::Union{ErrorInfo, Nothing}  
     
 
     ######## inital Param
@@ -183,6 +217,8 @@ mutable struct Steering <: AbstractSteering
         inst.track_lever_mounting_points_ucs = nothing
 
         inst.objective = nothing
+
+        inst.err_info = ErrorInfo()
 
         inst.init_steering = InitSteeringParam(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 
@@ -350,12 +386,15 @@ mutable struct WheelMount <: AbstractWheelMount
     end
 end
 
+
 mutable struct Suspension <: AbstractSuspension
     ##### Components 
     lowerwishbone::Union{Tuple{LowerWishbone,LowerWishbone},Nothing}    # (left, right)
     upperwishbone::Union{Tuple{UpperWishbone,UpperWishbone},Nothing}    # (left, right)
     damper::Union{Tuple{Damper,Damper},Nothing}                         # (left, right)
-    wheelmount::Union{WheelMount,Nothing}                        
+    wheelmount::Union{WheelMount,Nothing}         
+    
+    err_info::Union{ErrorInfo, Nothing}  
     
     kinematics!::Function
 
@@ -369,6 +408,8 @@ mutable struct Suspension <: AbstractSuspension
         inst.damper = (Damper(compressions[1]), Damper(compressions[2]))                          # (left, right)
 
         inst.wheelmount = WheelMount()
+
+        inst.err_info = ErrorInfo()
 
         inst.kinematics! = suspensionkinematics!
 

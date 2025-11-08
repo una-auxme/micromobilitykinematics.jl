@@ -67,32 +67,32 @@ function handle_tuple(child::XMLElement,field::Symbol,inst::Union{T,D}) where {T
             # In the context of the class Steering, tuples of the form (Vector, Vector) have been defined and are treated as follows: 
     
             for (dim, vec_index) in zip(["_x","_y","_z"],[1,2,3])
-                    properties_child = new_child(child,"properties")
+                properties_child = new_child(child,"properties")
 
-                    name_child = new_child(properties_child, "name")
-                    name_inst = string(typeof(inst))
-                    field_name = string(field)
-                    name = side*name_inst*"_"*field_name*dim
-                    add_text(name_child, name)
+                name_child = new_child(properties_child, "name")
+                name_inst = string(typeof(inst))
+                field_name = string(field)
+                name = side*name_inst*"_"*field_name*dim
+                add_text(name_child, name)
 
-                    typeCode_child = new_child(properties_child, "typeCode")
-                    add_text(typeCode_child, "mm")
+                typeCode_child = new_child(properties_child, "typeCode")
+                add_text(typeCode_child, "mm")
 
-                    value_child = new_child(properties_child, "value")
-                    value = getfield(inst, field)[param_index][vec_index]
-                    add_text(value_child, "$value mm")
+                value_child = new_child(properties_child, "value")
+                value = getfield(inst, field)[param_index][vec_index]
+                add_text(value_child, "$value mm")
 
-                    comment_child = new_child(properties_child, "comment")
-                    add_text(comment_child, "")
+                comment_child = new_child(properties_child, "comment")
+                add_text(comment_child, "")
 
-                    key_child = new_child(properties_child, "key")
-                    add_text(key_child, "")
+                key_child = new_child(properties_child, "key")
+                add_text(key_child, "")
 
-                    tolerance_child = new_child(properties_child, "tolerance")
-                    add_text(tolerance_child, "Vorgabe;Nennwert;Präzise Zeichnungen")
+                tolerance_child = new_child(properties_child, "tolerance")
+                add_text(tolerance_child, "Vorgabe;Nennwert;Präzise Zeichnungen")
 
-                end
             end
+        end
     end
 end
 

@@ -48,16 +48,12 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
 
 
     on(section_angle.sg_θ.sliders[1].value) do val
-         @safe_ui interaction_lyt begin
+         @safe_ui steering suspension interaction_lyt begin
             θx = val
             θy = section_angle.sg_θ.sliders[2].value.val
             θz = section_angle.sg_θ.sliders[3].value.val
 
-            # Calculation
-            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-            radius = turning_radius(chassis,steering)
+            
 
             if section_plot_settings.menu.selection.val == "geometry"
                 section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
@@ -91,7 +87,27 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
                 section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
             end
 
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
 
+            min_radius = nothing 
+            try
+                min_rad_steeerig = deepcopy(steering)
+                min_rad_suspension = deepcopy(suspension)
+                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                min_radius = turning_radius(chassis, min_rad_steeerig)
+            catch err
+                #error("Calculation of the minimal radius failed -> $(err.msg)")
+                steering.err_info.id = :min_raidus_raield 
+                bt = catch_backtrace()
+                capture_error!(steering, err, bt)
+                steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+                #@error "Min radius failed" exception=(err, catch_backtrace())
+                rethrow()
+            end
 
             #Updating
             section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
@@ -99,6 +115,7 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
             section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+            section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
         end
     end
 
@@ -150,16 +167,12 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
 
 
     on(section_angle.sg_θ.sliders[2].value) do val
-         @safe_ui interaction_lyt begin
+         @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = val
             θz = section_angle.sg_θ.sliders[3].value.val
 
-            # Calculation
-            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-            radius = turning_radius(chassis,steering)
+            
 
 
             # 
@@ -204,12 +217,35 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
             end
 
 
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
+
+            min_radius = nothing 
+            try
+                min_rad_steeerig = deepcopy(steering)
+                min_rad_suspension = deepcopy(suspension)
+                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                min_radius = turning_radius(chassis, min_rad_steeerig)
+            catch err
+                #error("Calculation of the minimal radius failed -> $(err.msg)")
+                steering.err_info.id = :min_raidus_raield 
+                bt = catch_backtrace()
+                capture_error!(steering, err, bt)
+                steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+                #@error "Min radius failed" exception=(err, catch_backtrace())
+                rethrow()
+            end
+
             # Updating
             section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
             section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
             section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+            section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
         end
     end
 end
@@ -259,17 +295,10 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
     section_error =  interaction_lyt.section_error
     
     on(section_angle.sg_θ.sliders[3].value) do val
-         @safe_ui interaction_lyt begin
+         @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
             θz = val
-
-            # Calculation
-            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-            radius = turning_radius(chassis,steering)
-
             #
 
             if section_plot_settings.menu.selection.val == "geometry"
@@ -312,12 +341,35 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
 
 
 
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
+
+            min_radius = nothing 
+            try
+                min_rad_steeerig = deepcopy(steering)
+                min_rad_suspension = deepcopy(suspension)
+                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                min_radius = turning_radius(chassis, min_rad_steeerig)
+            catch err
+                #error("Calculation of the minimal radius failed -> $(err.msg)")
+                steering.err_info.id = :min_raidus_raield 
+                bt = catch_backtrace()
+                capture_error!(steering, err, bt)
+                steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+                #@error "Min radius failed" exception=(err, catch_backtrace())
+                rethrow()
+            end
+
             # Updating 
             section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
             section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
             section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+            section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
         end
     end
 
@@ -408,7 +460,7 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
     section_error =  interaction_lyt.section_error
 
     on(section_damper.sg_compr.sliders[1].value) do val
-         @safe_ui interaction_lyt begin
+         @safe_ui steering suspension interaction_lyt begin
 
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -422,11 +474,7 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
             suspension.damper[2].compression = right_compr
 
 
-            # Calculation
-            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-            radius = turning_radius(chassis,steering)
+            
 
             if section_plot_settings.menu.selection.val == "geometry"
                 section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
@@ -477,12 +525,36 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
             end
 
 
+
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
+
+            min_radius = nothing 
+            try
+                min_rad_steeerig = deepcopy(steering)
+                min_rad_suspension = deepcopy(suspension)
+                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                min_radius = turning_radius(chassis, min_rad_steeerig)
+            catch err
+                #error("Calculation of the minimal radius failed -> $(err.msg)")
+                steering.err_info.id = :min_raidus_raield 
+                bt = catch_backtrace()
+                capture_error!(steering, err, bt)
+                steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+                #@error "Min radius failed" exception=(err, catch_backtrace())
+                rethrow()
+            end
+
             #Updating
             section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
             section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
             section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+            section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
         end
     end
 end
@@ -537,7 +609,7 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
     section_error =  interaction_lyt.section_error
 
     on(section_damper.sg_compr.sliders[2].value) do val
-         @safe_ui interaction_lyt begin
+         @safe_ui steering suspension interaction_lyt begin
 
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -550,11 +622,7 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
             suspension.damper[1].compression = left_compr
             suspension.damper[2].compression = right_compr
 
-            # Calculation
-            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-            radius = turning_radius(chassis,steering)
+            
 
             if section_plot_settings.menu.selection.val == "geometry"
                 section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
@@ -605,12 +673,35 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
             end
 
 
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
+            min_radius = nothing 
+            try
+                min_rad_steeerig = deepcopy(steering)
+                min_rad_suspension = deepcopy(suspension)
+                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                min_radius = turning_radius(chassis, min_rad_steeerig)
+            catch err
+                #error("Calculation of the minimal radius failed -> $(err.msg)")
+                steering.err_info.id = :min_raidus_raield 
+                bt = catch_backtrace()
+                capture_error!(steering, err, bt)
+                steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+                #@error "Min radius failed" exception=(err, catch_backtrace())
+                rethrow()
+            end
+            
+
             #Updating
             section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
             section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
             section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+            section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
         end
     end
 end
@@ -1221,12 +1312,6 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
 
 
 
-        # Calculation
-        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-        radius = turning_radius(chassis,steering)
-
         if section_plot_settings.menu.selection.val == "geometry"
             section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
         end
@@ -1276,12 +1361,36 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
             section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
         end
 
+        # Calculation
+        update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+        obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+        ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+        radius = turning_radius(chassis,steering)
+
+         min_radius = nothing 
+        try
+            min_rad_steeerig = deepcopy(steering)
+            min_rad_suspension = deepcopy(suspension)
+            update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+            min_radius = turning_radius(chassis, min_rad_steeerig)
+        catch err
+            #error("Calculation of the minimal radius failed -> $(err.msg)")
+            steering.err_info.id = :min_raidus_raield 
+            bt = catch_backtrace()
+            capture_error!(steering, err, bt)
+            steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+            #@error "Min radius failed" exception=(err, catch_backtrace())
+            rethrow()
+        end
+
+
         #Updating
         section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
         section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
         section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
         section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
         section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+        section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
     end
 
     GLMakie.display(fig)
@@ -1307,20 +1416,13 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
 
 
     on(section_param.sg_param.sliders[1].value) do val
-         @safe_ui interaction_lyt begin
+         @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
             θz = section_angle.sg_θ.sliders[3].value.val
 
 
             steering.rotational_component.x_rotational_radius = val
-    
-
-            # Calculation
-            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-            radius = turning_radius(chassis,steering)
 
             if section_plot_settings.menu.selection.val == "geometry"
                 section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
@@ -1371,12 +1473,36 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
                 section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
             end
 
+
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
+
+            min_radius = nothing 
+            try
+                min_rad_steeerig = deepcopy(steering)
+                min_rad_suspension = deepcopy(suspension)
+                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                min_radius = turning_radius(chassis, min_rad_steeerig)
+            catch err
+                #error("Calculation of the minimal radius failed -> $(err.msg)")
+                steering.err_info.id = :min_raidus_raield 
+                bt = catch_backtrace()
+                capture_error!(steering, err, bt)
+                steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+                #@error "Min radius failed" exception=(err, catch_backtrace())
+                rethrow()
+            end
+
             #Updating
             section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
             section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
             section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+            section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
         end
     end
 
@@ -1402,7 +1528,7 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
 
 
     on(section_param.sg_param.sliders[2].value) do val
-         @safe_ui interaction_lyt begin
+         @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
             θz = section_angle.sg_θ.sliders[3].value.val
@@ -1410,11 +1536,7 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
 
             steering.rotational_component.z_rotational_radius = val
 
-            # Calculation
-            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-            radius = turning_radius(chassis,steering)
+            
 
             if section_plot_settings.menu.selection.val == "geometry"
                 section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
@@ -1466,12 +1588,35 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
             end
 
 
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
+
+            min_radius = nothing 
+            try
+                min_rad_steeerig = deepcopy(steering)
+                min_rad_suspension = deepcopy(suspension)
+                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                min_radius = turning_radius(chassis, min_rad_steeerig)
+            catch err
+                #error("Calculation of the minimal radius failed -> $(err.msg)")
+                steering.err_info.id = :min_raidus_raield 
+                bt = catch_backtrace()
+                capture_error!(steering, err, bt)
+                steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+                #@error "Min radius failed" exception=(err, catch_backtrace())
+                rethrow()
+            end
+
             #Updating
             section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
             section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
             section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+            section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
         end
     end
 
@@ -1496,7 +1641,7 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
 
 
     on(section_param.sg_param.sliders[4].value) do val
-         @safe_ui interaction_lyt begin
+         @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
             θz = section_angle.sg_θ.sliders[3].value.val
@@ -1505,11 +1650,7 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
             steering.tie_rod.length = val
             #steering.TrackLever.length = 
 
-            # Calculation
-            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-            radius = turning_radius(chassis,steering)
+           
 
             if section_plot_settings.menu.selection.val == "geometry"
                 section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
@@ -1560,12 +1701,36 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
                 section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
             end
 
+
+             # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
+
+            min_radius = nothing 
+            try
+                min_rad_steeerig = deepcopy(steering)
+                min_rad_suspension = deepcopy(suspension)
+                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                min_radius = turning_radius(chassis, min_rad_steeerig)
+            catch err
+                #error("Calculation of the minimal radius failed -> $(err.msg)")
+                steering.err_info.id = :min_raidus_raield 
+                bt = catch_backtrace()
+                capture_error!(steering, err, bt)
+                steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+                #@error "Min radius failed" exception=(err, catch_backtrace())
+                rethrow()
+            end
+
             #Updating
             section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
             section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
             section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+            section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
         end
     end
 
@@ -1591,7 +1756,7 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
 
 
     on(section_param.sg_param.sliders[3].value) do val
-        @safe_ui interaction_lyt begin
+        @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
             θz = section_angle.sg_θ.sliders[3].value.val
@@ -1599,11 +1764,7 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
 
             steering.track_lever.length = val
 
-            # Calculation
-            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
-            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
-            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
-            radius = turning_radius(chassis,steering)
+            
 
             if section_plot_settings.menu.selection.val == "geometry"
                 section_plot.ax_geom.title = "Steering geometry for (θx, θy, θz) = ($θx,$θy,$θz)"
@@ -1656,12 +1817,38 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
             end
 
 
+
+            # Calculation
+            update_geometry!((θx,θy,θz),section_plot,steering, suspension)
+            obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
+            ratio = ackermannratio((θx,θy,θz),chassis,steering,suspension)
+            radius = turning_radius(chassis,steering)
+
+            min_radius = nothing 
+            try
+                min_rad_steeerig = deepcopy(steering)
+                min_rad_suspension = deepcopy(suspension)
+                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                min_radius = turning_radius(chassis, min_rad_steeerig)
+            catch err
+                #error("Calculation of the minimal radius failed -> $(err.msg)")
+                steering.err_info.id = :min_raidus_failed
+                bt = catch_backtrace()
+                capture_error!(steering, err, bt)
+
+                steering.err_info.description = "Failed to compute the minimal turning radius due to an invalid kinematic configuration."
+
+                #@error "Min radius failed" exception=(err, catch_backtrace())
+                rethrow()
+            end
+
             #Updating
             section_info.tb_obj.displayed_string = "objective: $(round(obj, digits=4))mm"
             section_info.tb_ratio.displayed_string = "ackermannratio: $(round(ratio, digits=2))%"
             section_info.tb_δi.displayed_string = "δi: $(round(steering.δi, digits=2))°"
             section_info.tb_δo.displayed_string = "δo: $(round(steering.δo, digits=2))°"
             section_info.tb_rad.displayed_string = "radius: $(round(radius, digits=2))mm"
+            section_info.tb_min_rad.displayed_string = "min. radius: $(round(min_radius, digits=2))mm"
         end
     end
 

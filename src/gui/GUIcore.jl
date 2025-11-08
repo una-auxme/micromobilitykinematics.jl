@@ -360,6 +360,7 @@ mutable struct InfoSection <: AbstractInfoSection
     tb_δo::Union{Textbox, Nothing}
     tb_rad::Union{Textbox, Nothing}
     tb_ratio::Union{Textbox, Nothing}
+    tb_min_rad::Union{Textbox, Nothing}
 
     function InfoSection()
         inst = new()
@@ -375,6 +376,7 @@ mutable struct InfoSection <: AbstractInfoSection
         inst.tb_δo = nothing
         inst.tb_rad = nothing
         inst.tb_ratio = nothing
+        inst.tb_min_rad = nothing
 
         return inst
     end
@@ -394,7 +396,9 @@ mutable struct ErrorSection <: AbstractErrorSection
     suplyt::Union{GridLayout,Nothing}
 
     # Textboxes
-    tb_error::Union{Textbox, Nothing}
+    tb_error_id::Union{Textbox, Nothing}
+    tb_error_type::Union{Textbox, Nothing}
+    tb_error_msg::Union{Label, Nothing}
 
     function ErrorSection()
         inst = new()
@@ -404,8 +408,6 @@ mutable struct ErrorSection <: AbstractErrorSection
         inst.suplyt = nothing
         inst.lyt = nothing
         inst.title = nothing
-
-        inst.tb_error = nothing
         return inst
     end
 

@@ -10,6 +10,8 @@ calculates all the movement-dependent positions of the joints in MOVED-Position
 
 """
 function suspensionkinematicsMOVED!(suspension::Suspension)
+
+    suspension.err_info.id = :suspensionkinematicsMOVED
     
     for (side,index) in zip([:Left, :Right], [1,2])
 
@@ -28,14 +30,12 @@ function suspensionkinematicsMOVED!(suspension::Suspension)
         radius = suspension.lowerwishbone[index].distance_rotation_axis_to_lower_damper_fixture
         normal =  suspension.lowerwishbone[index].rotation_axis
         circ_lowerwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, convert(Vector{Real},normal))
-
-        damper_lower_fixture = nothing
         
-         try
-            damper_lower_fixture = GeoSpatialRelations.intersection(circ_damper, circ_lowerwishbone)
-        catch err
-            error("Suspension kinematics MOVED calculation failed -> could not determine $(side) damper lower fixture positions")
-        end
+
+        suspension.err_info.description = "Failed to locate the damper lower mounting point on the lower wishbone."
+        suspension.err_info.root_cause = "The two circles used for the intersection are not coplanar (upper damper fixture is not in the lower wishbone rotation plane and the constructed lower-wishbone circle center is mis-projected), so the circles do not intersect or are too far apart."
+
+        damper_lower_fixture = intersection(suspension, circ_damper, circ_lowerwishbone)
 
 
 
@@ -60,11 +60,7 @@ function suspensionkinematicsMOVED!(suspension::Suspension)
 
         sphere_lower_sphere_joint = GeoSpatialRelations.Sphere(center, radius)
 
-        try
-            suspension.upperwishbone[index].sphere_joint = collect(GeoSpatialRelations.intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1])
-        catch err
-            error("Suspension kinematics MOVED calculation failed -> could not determine $(side) upper wishbone sphere joint positions")
-        end
+        suspension.upperwishbone[index].sphere_joint = collect(intersection(suspension, circ_upperwishbone, sphere_lower_sphere_joint)[1])
 
     end
 end
@@ -81,6 +77,8 @@ calculates all the movement-dependent positions of the joints in NEUTRAL-Positio
 
 """
 function suspensionkinematicsNEUTRAL!(suspension::Suspension)
+
+    suspension.err_info.id = :suspensionkinematicsNEUTRAL
 
     for (side,index) in zip([:Left, :Right], [1,2])
 
@@ -100,14 +98,12 @@ function suspensionkinematicsNEUTRAL!(suspension::Suspension)
         normal =  suspension.lowerwishbone[index].rotation_axis
         circ_lowerwishbone = GeoSpatialRelations.Circle(convert(Vector{Real},center), radius, convert(Vector{Real},normal))
 
-        damper_lower_fixture = nothing
         
+        suspension.err_info.description = "Failed to locate the damper lower mounting point on the lower wishbone."
+        suspension.err_info.root_cause = "The two circles used for the intersection are not coplanar (upper damper fixture is not in the lower wishbone rotation plane and the constructed lower-wishbone circle center is mis-projected), so the circles do not intersect or are too far apart."
 
-        try
-            damper_lower_fixture = GeoSpatialRelations.intersection(circ_damper, circ_lowerwishbone)
-        catch err
-            error("Suspension kinematics NEUTRAL calculation failed -> could not determine $(side) damper lower fixture positions")
-        end
+        
+        damper_lower_fixture = intersection(suspension, circ_damper, circ_lowerwishbone)
 
 
         damper_lower_fixture = damper_lower_fixture[1]
@@ -130,11 +126,8 @@ function suspensionkinematicsNEUTRAL!(suspension::Suspension)
         radius = suspension.wheelmount.length
         sphere_lower_sphere_joint = GeoSpatialRelations.Sphere(center, radius)
         
-        try
-            suspension.upperwishbone[index].sphere_joint_neutral = collect(GeoSpatialRelations.intersection(circ_upperwishbone, sphere_lower_sphere_joint)[1])
-        catch err
-            error("Suspension kinematics NEUTRAL calculation failed -> could not determine $(side) upper wishbone sphere joint positions")
-        end
+        suspension.upperwishbone[index].sphere_joint_neutral = collect(intersection(suspension, circ_upperwishbone, sphere_lower_sphere_joint)[1])
+
 
        
     end

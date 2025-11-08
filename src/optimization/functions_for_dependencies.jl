@@ -17,6 +17,9 @@ For the moving rotational component with the angles (θx, θz), the kinematics o
 """
 function kinematicsUNTILmountMOVED°!(angleConfig::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
 
+    steering.err_info.id = :kinematicsUNTILmountMOVED°
+
+
     # --- extract steering angles ---
     θx, θy, θz = angleConfig
 
@@ -102,7 +105,7 @@ function kinematicsUNTILmountMOVED°!(angleConfig::Tuple{T,T,T}, steering::Steer
     line = Line(suspension.lowerwishbone[1].sphere_joint_neutral, left_base_vec[:,3])
     plane = Plane(lower_end_of_rotational_component, [0.0,0.0,1.0])
     # --- Intersection point gives offset for wheel_ucs to track lever mounting point ---
-    inter = intersection(line, plane)
+    inter = intersection(steering, line, plane)
     vec_offset = inter - suspension.lowerwishbone[1].sphere_joint_neutral
     offset_length = norm(vec_offset)
 
@@ -145,6 +148,9 @@ For the rotation component with the neutral position, the steering kinematics ar
 - No return value due to in-place computation.
 """
 function kinematicsUNTILmountNEUTRAL°!(angleConfig::Tuple{T,T,T}, steering::Steering) where {T<:Any}
+
+    steering.err_info.id = :kinematicsUNTILmountNEUTRAL°
+
     # --- extract steering angles ---
     θx, θy ,θz = angleConfig
 
@@ -253,6 +259,8 @@ For the moving rotational component with angles (θx, θz) and the neutral posit
 """
 function kinematicsASOFmountMOVED°!(steering::Steering)
 
+    steering.err_info.id = :kinematicsASOFmountMOVED°
+
     ############# COMPUTE TRACK LEVER MOUNTING POINT ################
 
 
@@ -266,7 +274,13 @@ function kinematicsASOFmountMOVED°!(steering::Steering)
         sphere = GeoSpatialRelations.Sphere(steering.sphere_joints[index],steering.tie_rod.length)
 
 
-        circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
+        # --- Error Msg ---
+        steering.err_info.description = "The steering kinematics cannot be computed because the joint points of the rotational component (handlebar), the lever arm, and the tie rod cannot be correctly connected."
+        steering.err_info.root_cause = "The rotational axes and joint coordinates originate from different or incorrectly referenced coordinate systems (e.g., axes taken from rows instead of columns, mixing neutral and current positions, wrong variable reference). As a result, the geometric relationship cannot be resolved and the tie-rod length constraint cannot be satisfied."
+    
+
+
+        circle_joints_1, circle_joints_2 = intersection(steering, circ, sphere)
         
         # --- Choose valid intersection based on x-distance ---
         if circle_joints_2[1] - mount[1] < circle_joints_1[1] - mount[1]                          
@@ -297,6 +311,8 @@ for the moving rotational component with the angles (θx, θz), the kinematics o
 """
 function kinematicsASOFmountNEUTRAL°!(steering::Steering)
 
+    steering.err_info.id = :kinematicsASOFmountNEUTRAL°
+
     circle_joints_dict = Dict(:left_joint => Vector{<:Any}(), :right_joint => Vector{<:Any}()) 
 
     for (circle_joint,index,shift) in zip([:left_joint, :right_joint], [1,2], [[1,1,1],[1,-1,1]])
@@ -308,7 +324,13 @@ function kinematicsASOFmountNEUTRAL°!(steering::Steering)
         circ = GeoSpatialRelations.Circle(mount,steering.track_lever.length,steering.base_vec_wheel_ucs[index][:,3])
         sphere = GeoSpatialRelations.Sphere(steering.sphere_joints_neutral[index],steering.tie_rod.length)
 
-        circle_joints_1, circle_joints_2 = GeoSpatialRelations.intersection(circ, sphere)
+        # --- Error Msg ---
+        steering.err_info.description = "The steering kinematics cannot be computed because the joint points of the rotational component (handlebar), the lever arm, and the tie rod cannot be correctly connected."
+        steering.err_info.root_cause = "The rotational axes and joint coordinates originate from different or incorrectly referenced coordinate systems (e.g., axes taken from rows instead of columns, mixing neutral and current positions, wrong variable reference). As a result, the geometric relationship cannot be resolved and the tie-rod length constraint cannot be satisfied."
+    
+
+
+        circle_joints_1, circle_joints_2 = intersection(steering, circ, sphere)
         
         # --- Choose valid intersection based on x-distance ---
         if circle_joints_2[1] - mount[1] < circle_joints_1[1] - mount[1]

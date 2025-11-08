@@ -32,10 +32,12 @@ module micromobilitykinematics
 
     export plot_optda_series, plot_optda_gird_δ, plot_optda_gird_obj
 
-    
+
     include("core/core.jl")
+    include("extras/wrappers.jl")
     include("core/suspensionkinematics.jl")
     include("core/steeringkinematics.jl")
+    include("core/error_handling.jl")
     include("extras/rotations.jl") 
     include("extras/calc_basis_vectors.jl")
     include("core/functions_on_instance.jl")
