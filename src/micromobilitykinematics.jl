@@ -10,7 +10,7 @@ module micromobilitykinematics
     using LightXML
     include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
     using .GeoSpatialRelations
-    using Makie; GLMakie.activate!()  
+    using Makie  
 
     #using Colors  # (oder: using ColorTypes)
 
@@ -32,6 +32,10 @@ module micromobilitykinematics
     export checkConstraints, checkConstraints°, ackermann_deviation, ackermann_deviation_for_pose, ackermann_deviation_over_range
 
     export plot_optda_series, plot_optda_gird_δ, plot_optda_gird_obj
+
+    export GUI_steering
+
+
 
 
     include("core/core.jl")
