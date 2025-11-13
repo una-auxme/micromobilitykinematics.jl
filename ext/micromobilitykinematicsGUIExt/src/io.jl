@@ -229,7 +229,7 @@ The plot helps visualize how the Ackermann ratio behaves across a sweep of inner
 # Returns
 - `fig::Figure`: A Makie figure containing the 2D Ackermann ratio plot.
 """
-function ackermannratio_θz_plot(θx,θy,θz_max,chassis, steering, suspension) where{T <: Any}
+function ackermannratio_θz_plot(θx,θy,θz_max,chassis, steering, suspension)
 
     ratio = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
 
