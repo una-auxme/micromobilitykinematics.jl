@@ -449,11 +449,3 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
 
     return section_plot
 end 
-
-
-
-##############| Plots for layout_section_plot
-
-include("plots.jl")
-
-##############

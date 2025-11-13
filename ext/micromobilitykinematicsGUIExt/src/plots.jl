@@ -23,7 +23,7 @@ These `Observable`s can later be updated reactively as the user modifies input p
 # Returns
 Nothing. Updates `section_plot` in-place by attaching the plot and setting its observables.
 """
-function geom_plot!(fig,section_plot, steering, suspension)
+function geom_plot!(fig, section_plot, steering, suspension)
 
     slot = section_plot.slot
     row = slot[1]
