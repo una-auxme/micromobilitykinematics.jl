@@ -1,6 +1,6 @@
 module micromobilitykinematicsGUIExt
 
-using micromobilitykinematics       # greift auf Core-Funktionen zu
+using micromobilitykinematics: Steering, Suspension, Chassis   # greift auf Core-Funktionen zu
 using GLMakie
 
 
