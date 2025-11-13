@@ -8,8 +8,9 @@ module micromobilitykinematics
     using Plots;gr()
     #using PlotlyJS
     using LightXML
-    using GeoSpatialRelations
-
+    #using GeoSpatialRelations
+    include("GeoSpatialRelations/src/GeoSpatialRelations.jl")
+    using .GeoSpatialRelations  
     #using Colors  # (oder: using ColorTypes)
 
     

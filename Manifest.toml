@@ -2,7 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "cb30899d89a99ed60d6eb1e8b6c18e5d2b89553f"
+project_hash = "36004820397702d0ab71a16d1c2431f11469bea0"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -543,12 +543,6 @@ deps = ["Artifacts", "Bzip2_jll", "Cairo_jll", "FFMPEG_jll", "Fontconfig_jll", "
 git-tree-sha1 = "4b0406b866ea9fdbaf1148bc9c0b887e59f9af68"
 uuid = "d2c73de3-f751-5644-a686-071e5b155ba9"
 version = "0.73.18+0"
-
-[[deps.GeoSpatialRelations]]
-deps = ["LinearAlgebra", "StaticArrays"]
-path = "src/GeoSpatialRelations"
-uuid = "9c2cbfb9-3811-41fb-8b11-4506ae95e66c"
-version = "0.1.0"
 
 [[deps.GeometryBasics]]
 deps = ["EarCut_jll", "Extents", "IterTools", "LinearAlgebra", "PrecompileTools", "Random", "StaticArrays"]
