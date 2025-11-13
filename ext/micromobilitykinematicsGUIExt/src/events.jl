@@ -97,7 +97,7 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
             try
                 min_rad_steeerig = deepcopy(steering)
                 min_rad_suspension = deepcopy(suspension)
-                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
                 min_radius = turning_radius(chassis, min_rad_steeerig)
             catch err
                 #error("Calculation of the minimal radius failed -> $(err.msg)")
@@ -227,7 +227,7 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
             try
                 min_rad_steeerig = deepcopy(steering)
                 min_rad_suspension = deepcopy(suspension)
-                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
                 min_radius = turning_radius(chassis, min_rad_steeerig)
             catch err
                 #error("Calculation of the minimal radius failed -> $(err.msg)")
@@ -351,7 +351,7 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
             try
                 min_rad_steeerig = deepcopy(steering)
                 min_rad_suspension = deepcopy(suspension)
-                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
                 min_radius = turning_radius(chassis, min_rad_steeerig)
             catch err
                 #error("Calculation of the minimal radius failed -> $(err.msg)")
@@ -536,7 +536,7 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
             try
                 min_rad_steeerig = deepcopy(steering)
                 min_rad_suspension = deepcopy(suspension)
-                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
                 min_radius = turning_radius(chassis, min_rad_steeerig)
             catch err
                 #error("Calculation of the minimal radius failed -> $(err.msg)")
@@ -682,7 +682,7 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
             try
                 min_rad_steeerig = deepcopy(steering)
                 min_rad_suspension = deepcopy(suspension)
-                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
                 min_radius = turning_radius(chassis, min_rad_steeerig)
             catch err
                 #error("Calculation of the minimal radius failed -> $(err.msg)")
@@ -1371,7 +1371,7 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
         try
             min_rad_steeerig = deepcopy(steering)
             min_rad_suspension = deepcopy(suspension)
-            update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+            MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
             min_radius = turning_radius(chassis, min_rad_steeerig)
         catch err
             #error("Calculation of the minimal radius failed -> $(err.msg)")
@@ -1484,7 +1484,7 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
             try
                 min_rad_steeerig = deepcopy(steering)
                 min_rad_suspension = deepcopy(suspension)
-                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
                 min_radius = turning_radius(chassis, min_rad_steeerig)
             catch err
                 #error("Calculation of the minimal radius failed -> $(err.msg)")
@@ -1598,7 +1598,7 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
             try
                 min_rad_steeerig = deepcopy(steering)
                 min_rad_suspension = deepcopy(suspension)
-                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
                 min_radius = turning_radius(chassis, min_rad_steeerig)
             catch err
                 #error("Calculation of the minimal radius failed -> $(err.msg)")
@@ -1712,7 +1712,7 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
             try
                 min_rad_steeerig = deepcopy(steering)
                 min_rad_suspension = deepcopy(suspension)
-                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
                 min_radius = turning_radius(chassis, min_rad_steeerig)
             catch err
                 #error("Calculation of the minimal radius failed -> $(err.msg)")
@@ -1828,7 +1828,7 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
             try
                 min_rad_steeerig = deepcopy(steering)
                 min_rad_suspension = deepcopy(suspension)
-                update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
+                MMK.update!((θx_max, θy , θz_max), min_rad_steeerig, min_rad_suspension)
                 min_radius = turning_radius(chassis, min_rad_steeerig)
             catch err
                 #error("Calculation of the minimal radius failed -> $(err.msg)")

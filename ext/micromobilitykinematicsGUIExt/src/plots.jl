@@ -576,7 +576,7 @@ This function is typically called reactively whenever user input modifies the st
 Nothing. Modifies `section_plot` and the steering state in-place.
 """
 function update_geometry!(θ, section_plot, steering, suspension)
-    update!(θ, steering, suspension)
+    MMK.update!(θ, steering, suspension)
     # 
     rotational_coponent = [Point3f([0,0,0]),
                             Point3f(steering.vec_x_rotational...),

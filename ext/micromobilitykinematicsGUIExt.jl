@@ -1,9 +1,14 @@
 module micromobilitykinematicsGUIExt
 
 using GLMakie
-using micromobilitykinematics: Steering, Suspension, Chassis   # greift auf Core-Funktionen zu
+using micromobilitykinematics
+using micromobilitykinematics: Steering, RotationalComponent, TieRod, TrackLever
+using micromobilitykinematics: Suspension, Damper, UpperWishbone, WheelMount, Suspension
+using micromobilitykinematics: Chassis, Measurements
 
 import micromobilitykinematics: lounch_gui
+
+const MMK = micromobilitykinematics  # optional Alias 
 
 
 include("micromobilitykinematicsGUIExt/src/GUIcore.jl")

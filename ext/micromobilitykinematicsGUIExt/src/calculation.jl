@@ -122,7 +122,7 @@ function steering_radii(chassis::Chassis,
 
     for θ in θ_matrix
         θx, θy, θz = θ
-        update!(θ, steering, suspension)
+        MMK.update!(θ, steering, suspension)
 
         θx_i = Int(round(θx))
         θz_i = Int(round(θz))
@@ -187,7 +187,7 @@ function steering_radii_θz(θx::T,
 
     for θ in θ_matrix
         θz = θ
-        update!((θx, θy, θz), steering, suspension)
+        MMK.update!((θx, θy, θz), steering, suspension)
 
         if steering.δo == 0.0
             push!(radii,NaN)
@@ -247,7 +247,7 @@ function ackermannratio_θz(θx::T,
 
     for θ in θ_matrix
         θz = θ
-        update!((θx, θy, θz), steering, suspension)
+        MMK.update!((θx, θy, θz), steering, suspension)
 
 
 
@@ -301,7 +301,7 @@ function ackermannratio_surface(ackermannratio_surface::Chassis,
 
     for θ in θ_matrix
         θx, θy, θz = θ
-        update!(θ, steering, suspension)
+        MMK.update!(θ, steering, suspension)
 
         θx_i = Int(round(θx))
         θz_i = Int(round(θz))
@@ -330,7 +330,7 @@ function ackermann_deviation_θz(θx::T,
 
     for θ in θ_matrix
         θz = θ
-        update!((θx, θy, θz), steering, suspension)
+        MMK.update!((θx, θy, θz), steering, suspension)
 
         if steering.δo == 0.0
             push!(deviation,ackermann_deviation((θx, θy, θz+1.0),chassis, steering, suspension))
@@ -355,7 +355,7 @@ function ackermann_deviation_surface(chassis::Chassis,
 
     for θ in θ_matrix
         θx, θy, θz = θ
-        update!(θ, steering, suspension)
+        MMK.update!(θ, steering, suspension)
 
         θx_i = Int(round(θx))
         θz_i = Int(round(θz))
