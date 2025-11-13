@@ -1,7 +1,9 @@
 module micromobilitykinematicsGUIExt
 
-using micromobilitykinematics: Steering, Suspension, Chassis   # greift auf Core-Funktionen zu
 using GLMakie
+using micromobilitykinematics: Steering, Suspension, Chassis   # greift auf Core-Funktionen zu
+
+import micromobilitykinematics: lounch_gui
 
 
 include("micromobilitykinematicsGUIExt/src/GUIcore.jl")
@@ -42,7 +44,7 @@ This acts as the main entry point for initializing the interactive GUI system fo
 # Returns
 Nothing. Sets up UI and reactive event systems via side effects.
 """
-function micromobilitykinematics.lounch_gui(args...)
+function lounch_gui(args...)
     GUI_steering(args...)
 end
 end 
