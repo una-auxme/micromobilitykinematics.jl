@@ -55,10 +55,10 @@ module micromobilitykinematics
     include("optimization/objective.jl")
     include("optimization/driver.jl")
 
-
-
     include("utils/insights.jl")
     include("utils/io.jl")
     #include("utils/plots.jl")
+
+    include("extension_hooks/gui_stub.jl")
 
 end
