@@ -538,9 +538,9 @@ function deviation_surface_plot!(fig,section_plot, θ_max, chassis, steering, su
                         y_grid,
                         z_grid,
                         color      = :image,          # <- wichtig
-                        olormap   = :reds,           # oder :viridis o.Ä.
-                        olorrange = extrema(z_grid),
-                        ransparency = true,
+                        colormap   = :reds,           # oder :viridis o.Ä.
+                        colorrange = extrema(z_grid),
+                        transparency = true,
                         alpha      = 0.3)
     
 end
