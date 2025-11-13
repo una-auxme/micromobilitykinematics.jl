@@ -289,7 +289,7 @@ If the outer wheel steering angle `δo` is zero, the corresponding ratio value i
 # Returns:
 - A 2D Array of Float64 values representing the Ackermann ratio [%] across the θx–θz parameter space.
 """
-function ackermannratio_surface(ackermannratio_surface::Chassis, 
+function ackermannratio_surface(chassis::Chassis, 
                                     steering::Steering, 
                                     suspension::Suspension, 
                                     θ_max::Tuple{T,T,T};
@@ -405,7 +405,7 @@ function ax_θ_vs_δi(steering::Steering,
 
     for θ in θ_matrix
         θx, θy, θz = θ
-        update!(θ, steering, suspension)
+        MMK.update!(θ, steering, suspension)
 
         θx_i = Int(round(θx))
         θz_i = Int(round(θz))
@@ -454,7 +454,7 @@ function ax_θ_vs_δo(steering::Steering,
 
     for θ in θ_matrix
         θx, θy, θz = θ
-        update!(θ, steering, suspension)
+        MMK.update!(θ, steering, suspension)
 
         θx_i = Int(round(θx))
         θz_i = Int(round(θz))
@@ -491,7 +491,7 @@ function compr_vs_δ(θ::Tuple{T,T,T},
         r_compr_i = Int(round(r_compr))
 
         try
-            update!(θ, steering, suspension)
+            MMK.update!(θ, steering, suspension)
 
             δi[l_compr_i,r_compr_i] = steering.δi
             δo[l_compr_i,r_compr_i] = steering.δo
