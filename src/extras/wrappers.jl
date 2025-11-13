@@ -1,7 +1,3 @@
-include("GeoSpatialRelations/src/GeoSpatialRelations.jl")
-using .GeoSpatialRelations
-
-
 """
     intersection(steering, args...)
 

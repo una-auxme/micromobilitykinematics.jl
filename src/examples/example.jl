@@ -1,3 +1,4 @@
+
 lower_bourder = (50.0, 50.0, 70.0, 195.0)  
 upper_bourder = (100.0, 100.0, 200.0, 260.0)
 max_angleConfig = (15.0, 1.0, 35.0)
@@ -31,3 +32,6 @@ update!(angleConfig, st, suspension)
 
 θ_max = (15.0,5.0,35.0)
 GUI_steering(θ_max, chassis , st, suspension)
+
+
+

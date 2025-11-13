@@ -1,5 +1,37 @@
 ############ TODO ###################
 
+
+
+############ Safety #############################
+
+mutable struct ErrorInfo
+
+    id::Any
+    type::Any
+    msg::Any
+    backtrace::Any
+
+    description::Any
+    root_cause::Any
+
+    function ErrorInfo()
+
+        inst = new()
+        
+        inst.id = nothing
+        inst.type = nothing
+        inst.msg = nothing
+        inst.backtrace = nothing
+
+        inst.description = nothing
+        inst.root_cause = nothing
+                
+        return inst
+    end
+
+end
+
+
 ############ Steering Component Positions #############################
 #
 #                                           
@@ -93,37 +125,6 @@ mutable struct InitSteeringParam
         
         return inst
     end
-
-end
-
-
-
-mutable struct ErrorInfo
-
-    id::Any
-    type::Any
-    msg::Any
-    backtrace::Any
-
-    description::Any
-    root_cause::Any
-
-
-    function ErrorInfo()
-
-        inst = new()
-        
-        inst.id = nothing
-        inst.type = nothing
-        inst.msg = nothing
-        inst.backtrace = nothing
-
-        inst.description = nothing
-        inst.root_cause = nothing
-                
-        return inst
-    end
-
 
 end
 

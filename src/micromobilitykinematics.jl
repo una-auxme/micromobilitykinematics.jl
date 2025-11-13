@@ -8,9 +8,7 @@ module micromobilitykinematics
     using Plots;gr()
     #using PlotlyJS
     using LightXML
-    include("extras/GeoSpatialRelations/src/GeoSpatialRelations.jl")
-    using .GeoSpatialRelations
-    using Makie  
+    using GeoSpatialRelations
 
     #using Colors  # (oder: using ColorTypes)
 
@@ -33,32 +31,33 @@ module micromobilitykinematics
 
     export plot_optda_series, plot_optda_gird_δ, plot_optda_gird_obj
 
-    export GUI_steering
+    export lounch_gui
 
 
 
 
-    include("core/core.jl")
-    include("extras/wrappers.jl")
-    include("core/suspensionkinematics.jl")
-    include("core/steeringkinematics.jl")
-    include("core/error_handling.jl")
-    include("extras/rotations.jl") 
+
+    include("core/types.jl")
+
     include("extras/calc_basis_vectors.jl")
-    include("core/functions_on_instance.jl")
-    include("optimization/core_dependencies.jl")    
-    include("optimization/dependencies.jl")
-    include("optimization/functions_for_dependencies.jl")
+    include("extras/rotations.jl")
+    include("extras/wrappers.jl")
+
+    include("core/kinematics/steering.jl")
+    include("core/kinematics/suspension.jl")
+    include("core/on_instance.jl")
+    include("core/error_handling.jl")
+
+    include("optimization/dependencies/core_dependencies.jl")
+    include("optimization/dependencies/functions_for_dependencies.jl")
+    include("optimization/dependencies/dependencies.jl")
     include("optimization/objective.jl")
+    include("optimization/driver.jl")
+
+
+
     include("utils/insights.jl")
-    include("optimization/optim.jl")
-    include("utils/insights.jl")    
     include("utils/io.jl")
-    include("gui/GUIcore.jl")
-    include("gui/helper.jl")
-    include("gui/layout.jl")
-    include("gui/calculation.jl")
-    include("gui/events.jl")
-    include("gui/save.jl")
-    include("gui/GUI.jl")
+    #include("utils/plots.jl")
+
 end
