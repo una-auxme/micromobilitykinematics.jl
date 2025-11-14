@@ -1,4 +1,9 @@
 
+function set_axis_visible!(ax, v::Bool)
+    ax.blockscene.visible[] = v   # Achsdeko
+    ax.scene.visible[]      = v   # Plots (lines!, scatter!, …)
+end
+
 """
     update_layout_visibility!(interaction_lyt::InteractionLyt; 
                                 geom = false, 
@@ -70,14 +75,17 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
 
 
     # Toggle plot visibility
-    section_plot.ax_geom.blockscene.visible[] = geom 
-    section_plot.ax_radii.blockscene.visible[] = radii
-    section_plot.ax_ratio.blockscene.visible[] = ratio
-    section_plot.ax_ratio_surface.blockscene.visible[] = ratio_surf
-    section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = θ_vs_δ
-    section_plot.ax_deviation.blockscene.visible[] = deviation
-    section_plot.ax_deviation_surface.blockscene.visible[] = deviation_surf
-    section_plot.ax_compr_vs_δ.blockscene.visible[] = compr_vs_δ
+      # 2D / 3D Axes
+    set_axis_visible!(section_plot.ax_geom,              geom)
+    set_axis_visible!(section_plot.ax_radii,             radii)
+    set_axis_visible!(section_plot.ax_ratio,             ratio)
+    set_axis_visible!(section_plot.ax_ratio_surface,     ratio_surf)
+    set_axis_visible!(section_plot.ax_θ_vs_δ_surface,    θ_vs_δ)
+    set_axis_visible!(section_plot.ax_deviation,         deviation)
+    set_axis_visible!(section_plot.ax_deviation_surface, deviation_surf)
+    set_axis_visible!(section_plot.ax_compr_vs_δ,        compr_vs_δ)
+
+
 
     # Toggle angle slider visibility
     section_angle.sg_θ.sliders[1].blockscene.visible[] = sg_θx

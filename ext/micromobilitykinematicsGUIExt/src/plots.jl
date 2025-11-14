@@ -213,7 +213,9 @@ function radii_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
                             ylabel = "radius in [mm]", 
                             title = "Radii for (θx, θy, θz) = (0,0,0)",
                             yticks = 0:5000:40000) 
-    section_plot.ax_radii.blockscene.visible[] = false
+    
+    set_axis_visible!(section_plot.ax_radii, false)
+
     # Limits
     GLMakie.xlims!(section_plot.ax_radii, 0, 35)
     GLMakie.ylims!(section_plot.ax_radii, 0, 20000)
@@ -231,7 +233,6 @@ function radii_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     xs = [θz for θz in 0.0:1.0:θz_max] 
 
     GLMakie.lines!(section_plot.ax_radii, xs, section_plot.obs_radii_θz)
-
 end
 
 
@@ -285,8 +286,7 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
                                             xticks = 0:5:40,
                                             yticks = 30:5:100)
 
-    section_plot.ax_ratio.blockscene.visible[] = false
-
+    set_axis_visible!(section_plot.ax_ratio, false)
 
     # Limits
     GLMakie.xlims!(section_plot.ax_ratio, 0, 40)
@@ -384,7 +384,8 @@ function ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspen
                                                     title = "Ackermannratio surface",) #
     #section_plot.ax_ratio_surface.aspect = :data
     section_plot.ax_ratio_surface.aspect = (1, 1, 1)
-    section_plot.ax_ratio_surface.blockscene.visible[] = false
+
+    set_axis_visible!(section_plot.ax_ratio_surface, false)
     
 
     # Limits
@@ -429,8 +430,7 @@ function deviation_plot!(fig,section_plot, θ_max, chassis, steering, suspension
                                             xticks = 0:5:40,
                                             yticks = -500:100:500)
 
-    section_plot.ax_deviation.blockscene.visible[] = false
-
+    set_axis_visible!(section_plot.ax_deviation,    false)
 
     # Limits
     GLMakie.xlims!(section_plot.ax_deviation, 0, 40)
@@ -502,7 +502,8 @@ function deviation_surface_plot!(fig,section_plot, θ_max, chassis, steering, su
                                                     title = "Ackermann deviation surface",) #
     #section_plot.ax_deviation_surface.aspect = :data
     section_plot.ax_deviation_surface.aspect = (1, 1, 1)
-    section_plot.ax_deviation_surface.blockscene.visible[] = false
+    
+    set_axis_visible!(section_plot.ax_deviation_surface, false)
     
 
     # Limits
@@ -715,8 +716,9 @@ function θ_vs_δ_plot!(fig, section_plot, θ_max, steering, suspension)
                                             title = "Steering vs. wheel angles",) #
     #section_plot.ax_ratio_surface.aspect = :data
     section_plot.ax_θ_vs_δ_surface.aspect = (1, 1, 1)
-    section_plot.ax_θ_vs_δ_surface.blockscene.visible[] = false
     
+    
+    set_axis_visible!(section_plot.ax_θ_vs_δ_surface,    false)
 
     # Limits
     GLMakie.xlims!(section_plot.ax_θ_vs_δ_surface, 0, 15)
@@ -762,8 +764,8 @@ function compr_vs_δ_plot!(fig, section_plot, steering, suspension)
                                             title = "compression vs. wheel angles",) #
     #section_plot.ax_ratio_surface.aspect = :data
     section_plot.ax_compr_vs_δ.aspect = (1, 1, 1)
-    section_plot.ax_compr_vs_δ.blockscene.visible[] = false
     
+    set_axis_visible!(section_plot.ax_compr_vs_δ,    false)
 
     # Limits
     GLMakie.xlims!(section_plot.ax_compr_vs_δ, 0, 100)

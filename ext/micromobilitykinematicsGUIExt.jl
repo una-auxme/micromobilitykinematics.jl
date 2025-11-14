@@ -7,6 +7,7 @@ using micromobilitykinematics: Suspension, Damper, UpperWishbone, WheelMount, Su
 using micromobilitykinematics: Chassis, Measurements
 
 import micromobilitykinematics: lounch_gui
+import micromobilitykinematics: capture_error!
 
 const MMK = micromobilitykinematics  # optional Alias 
 
@@ -22,7 +23,7 @@ include("micromobilitykinematicsGUIExt/src/io.jl")
 include("micromobilitykinematicsGUIExt/src/GUI.jl")
 
 """
-    GUI_steering(θ_max, 
+    lounch_gui(θ_max, 
                   chassis::Chassis, 
                   steering::Steering,
                   suspension::Suspension)

@@ -41,15 +41,15 @@ ackermann_deviation_over_range
 ```
 
 
-### Plots
-The plotting functions allow users to visualize data and results related to kinematic and optimization studies. With plot_optda_series, users can generate time-series visualizations of performance metrics. Meanwhile, plot_optda_gird_δ and plot_optda_gird_obj provide intuitive grid-based plots for steering angle relationships and optimization objectives, respectively. These tools facilitate deeper insights and a more intuitive understanding of complex data
-
+### GUI
+This package provides an extension that depends on GLMakie.
+Because of this dependency, the interactive GUI will only work if GLMakie is installed beforehand.
+Once GLMakie is available in the environment, the graphical user interface can be activated through the following function:
 ```@docs
-plot_optda_series
-plot_optda_gird_δ
-plot_optda_gird_obj
-
+lounch_gui
 ```
+
+
 
 ### Export
 The export function exportXML enables users to efficiently save and share their configurations in an XML format. This functionality is particularly useful for integrating results into other software workflows or for long-term archiving, ensuring compatibility and traceability across platforms and projects.

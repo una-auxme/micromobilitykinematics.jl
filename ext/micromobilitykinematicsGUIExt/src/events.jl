@@ -802,7 +802,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
         if sel == "radii"
 
             update_layout_visibility!(interaction_lyt; 
-                                        radii = true, 
+                                        radii = true,
                                         sg_θx = true, 
                                         sg_θy = true,
                                         comprL = true, 
@@ -861,7 +861,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
         if sel == "ackermann deviation"
 
             update_layout_visibility!(interaction_lyt; 
-                                        deviation = true, 
+                                        deviation = true,
                                         sg_θx = true, 
                                         sg_θy = true,
                                         comprL = true, 
