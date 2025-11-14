@@ -22,13 +22,17 @@ x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length = r
 
 steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 ``` 
+
+
+
+
 ### Suspension
 
 The compression of the damper also exerts an influence on the steering geometry, as it alters the direct positioning of the essential joints. 
 
 ```julia
 # Initialisation of the suspension, with the following argument
-compression = 30 # neutral damper positioning
+compression = (30,30) # neutral damper positioning
 
 suspension = Suspension(compression)
 ```
@@ -52,20 +56,6 @@ suspensionkinematics!(suspension)
 steeringkinematics!(angleConfig, steering, suspension)
 
 ```
-
-Should it be required, the kinematic chain of the steering geometry can be displayed here in a three-dimensional vector plot, thus facilitating the acquisition of a preliminary visual impression.
-
-```julia
-
-plot_steering(steering)
-
-```
-
-![3D-Vector Plot of the kinematic chain of the steering geometry](https://github.com/una-auxme/micromobilitykinematics.jl/blob/main/docs/src/assets/plot_steeringkinematiks.png?raw=true?)
-
-
-
-
 ## 3. Updating the steering geometry positioning
 Updating of steering geometry positioning by change in steering angle
 
