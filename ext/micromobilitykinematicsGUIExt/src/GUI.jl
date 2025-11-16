@@ -27,6 +27,11 @@ This acts as the main entry point for initializing the interactive GUI system fo
 Nothing. Sets up UI and reactive event systems via side effects.
 """
 function GUI_steering(args...)
+
+  args[3].init_steering.θx = args[3].θx
+  args[3].init_steering.θy = args[3].θy
+  args[3].init_steering.θz = args[3].θz
+
   interaction_lyt = interactionlyt(args...)
   event_slider_θ(interaction_lyt, args...)
   event_menu_plot_settings(interaction_lyt, args...)                  

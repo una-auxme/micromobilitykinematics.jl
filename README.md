@@ -9,7 +9,6 @@
 
 
 ## ✨ What is micromobilitykinematics.jl?
-
 `micromobilitykinematics.jl` provides a comprehensive toolkit for analysing, simulating, and 
 optimising the **steering** and **suspension** kinematics of micromobility vehicles.  
 It is designed to support concept development, geometric evaluation, research, and CAD-integrated workflows.
@@ -115,7 +114,7 @@ error across a defined angle range.
 
 ```julia
     using micromobilitykinematics
-    
+
     lower = (50.0, 50.0, 70.0, 195.0)
     upper = (100.0, 100.0, 200.0, 260.0)
     maxθ  = (15.0, 1.0, 35.0)

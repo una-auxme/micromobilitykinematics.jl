@@ -111,12 +111,22 @@ end
 
 
 mutable struct InitSteeringParam
+
+    ######## depends on the kinematics
+    θx::Any                  # Angle of rotation of the rotation component around the x-axis
+    θy::Any                  # Angle of rotation of the rotation component around the x-axis
+    θz::Any                  # Angle of rotation of the rotation component around the z-axis
+
     θx_radius::Any
     θz_radius::Any
     track_lever_length::Any
     tie_rod_length::Any
     function InitSteeringParam(θx_radius, θz_radius, track_lever_length, tie_rod_length)
         inst = new()
+
+        inst.θx = nothing
+        inst.θy = nothing
+        inst.θz = nothing
 
         inst.θx_radius = θx_radius
         inst.θz_radius = θz_radius

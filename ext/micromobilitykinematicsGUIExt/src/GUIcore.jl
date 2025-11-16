@@ -449,6 +449,10 @@ mutable struct InteractionLyt <: AbstractInteractionLyt
     section_info::Union{InfoSection,Nothing}
     section_error::Union{ErrorSection, Nothing}
 
+    ######| reset flag 
+
+    reset_flag::Bool
+
     function InteractionLyt()
         inst = new()
 
@@ -460,6 +464,8 @@ mutable struct InteractionLyt <: AbstractInteractionLyt
         inst.section_damper = nothing 
         inst.section_plot_settings = nothing 
         inst.section_info = nothing 
+
+        inst.reset_flag = false
         
         return inst
     end

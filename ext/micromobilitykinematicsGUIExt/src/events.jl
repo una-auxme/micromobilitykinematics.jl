@@ -48,6 +48,9 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
 
 
     on(section_angle.sg_θ.sliders[1].value) do val
+        # ---  Temporarily suppress events  ---
+        interaction_lyt.reset_flag && return  # <-- Flag-Check
+
          @safe_ui steering suspension interaction_lyt begin
             θx = val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -167,6 +170,8 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
 
 
     on(section_angle.sg_θ.sliders[2].value) do val
+        # ---  Temporarily suppress events  ---
+        interaction_lyt.reset_flag && return  # <-- Flag-Check
          @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = val
@@ -295,6 +300,8 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
     section_error =  interaction_lyt.section_error
     
     on(section_angle.sg_θ.sliders[3].value) do val
+        # ---  Temporarily suppress events  ---
+        interaction_lyt.reset_flag && return  # <-- Flag-Check
          @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -460,6 +467,8 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
     section_error =  interaction_lyt.section_error
 
     on(section_damper.sg_compr.sliders[1].value) do val
+        # ---  Temporarily suppress events  ---
+        interaction_lyt.reset_flag && return  # <-- Flag-Check
          @safe_ui steering suspension interaction_lyt begin
 
             θx = section_angle.sg_θ.sliders[1].value.val
@@ -609,6 +618,8 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
     section_error =  interaction_lyt.section_error
 
     on(section_damper.sg_compr.sliders[2].value) do val
+        # ---  Temporarily suppress events  ---
+        interaction_lyt.reset_flag && return  # <-- Flag-Check
          @safe_ui steering suspension interaction_lyt begin
 
             θx = section_angle.sg_θ.sliders[1].value.val
@@ -1285,16 +1296,21 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
 
 
     on(section_plot_settings.btn_reset.clicks) do n
-        θx, θy, θz = θ = (0, 1, 0)
+
+        interaction_lyt.reset_flag = true
+
+        θx = steering.init_steering.θx
+        θy = steering.init_steering.θy
+        θz = steering.init_steering.θz
 
 
         suspension.damper[1].compression = 30.0
         suspension.damper[2].compression = 30.0
 
 
-        set_close_to!(section_angle.sg_θ.sliders[1], 0.0)
-        set_close_to!(section_angle.sg_θ.sliders[2], 0.0)
-        set_close_to!(section_angle.sg_θ.sliders[3], 0.0)
+        set_close_to!(section_angle.sg_θ.sliders[1], θx)
+        set_close_to!(section_angle.sg_θ.sliders[2], θy)
+        set_close_to!(section_angle.sg_θ.sliders[3], θz)
 
         set_close_to!(section_damper.sg_compr.sliders[1], 30.0)
         set_close_to!(section_damper.sg_compr.sliders[2], 30.0)
@@ -1302,7 +1318,10 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
         set_close_to!(section_param.sg_param.sliders[1], steering.init_steering.θx_radius)
         set_close_to!(section_param.sg_param.sliders[2], steering.init_steering.θz_radius)
         set_close_to!(section_param.sg_param.sliders[3], steering.init_steering.track_lever_length)
+        interaction_lyt.reset_flag = false
         set_close_to!(section_param.sg_param.sliders[4], steering.init_steering.tie_rod_length)
+
+
 
 
         steering.rotational_component.x_rotational_radius = steering.init_steering.θx_radius

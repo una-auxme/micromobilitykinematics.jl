@@ -423,27 +423,22 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
 
     geom_plot!(fig,section_plot,steering, suspension)
 
-
     #############| Radii Plot
 
     radii_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
-
 
     ##############| ackermannratio Plot
     ratio_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
 
     ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 
-
     ##############| θ_vs_δ Plot
     θ_vs_δ_plot!(fig, section_plot, θ_max, steering, suspension) 
-
 
     ##############| ackermann devitation Plot
     deviation_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
 
     deviation_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
-
 
     compr_vs_δ_plot!(fig, section_plot, steering, suspension)
 
