@@ -72,7 +72,7 @@ Furthermore, XML parameter lists can be exported for each component, which conta
 One potential application is the updating of a computer-aided design (CAD) model of the steering geometry at various positions.
 ```julia 
 # exports xml list to path = @__DIR__ (default)
-exportXML(steering)
-exportXML(suspension)
+exportXML(steering, path=@__DIR__)
+exportXML(suspension, path=@__DIR__)
 
 ```

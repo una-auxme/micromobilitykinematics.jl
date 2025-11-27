@@ -83,8 +83,8 @@ This example shows the minimal workflow to initialise a steering geometry, evalu
     update!((0.0, 0.0, 25.0), steering, suspension)
 
 
-    exportXML(steering)
-    exportXML(suspension)
+    exportXML(steering; path=@__DIR__)
+    exportXML(suspension; path=@__DIR__)
 ```
 > **Note:**  
 > `suspensionkinematics!` should be called **before** `steeringkinematics!`,  
@@ -157,7 +157,7 @@ Use this workflow when exploring new steering concepts or evaluating the influen
 
     update!((0.0, 1.0, 0.0), steering, suspension)
 
-    lounch_gui((15.0, 5.0, 35.0), chassis, steering, suspension)
+    lounch_gui((15.0, 5.0, 35.0), chassis, steering, suspension; path=@__DIR__)
 
 ```
 > **Note:**  

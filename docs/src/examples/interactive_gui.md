@@ -82,7 +82,7 @@ Before launching the GUI, these must be computed and updated:
 
     θ_max = (15.0, 5.0, 35.0)
 
-    lounch_gui(θ_max, chassis, steering, suspension)
+    lounch_gui(θ_max, chassis, steering, suspension; path=@__DIR__)
 ```
 
 After starting, a new window opens containing interactive 3D visualisation, plots, and parameter summaries.
