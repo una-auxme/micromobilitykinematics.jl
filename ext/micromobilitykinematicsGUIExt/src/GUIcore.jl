@@ -8,6 +8,7 @@ abstract type AbstractPlotSettingsSection <: AbstractInteractionLyt end
 abstract type AbstractDamperSection <: AbstractInteractionLyt end
 abstract type AbstractInfoSection <: AbstractInteractionLyt end
 abstract type AbstractErrorSection <: AbstractInteractionLyt end
+abstract type AbstractXMLExportSection <: AbstractInteractionLyt end
 
 
 
@@ -301,6 +302,7 @@ mutable struct PlotSettingsSection <: AbstractPlotSettingsSection
     btn_reset::Union{Button, Nothing}
     btn_save::Union{Button, Nothing}
     btn_save_all::Union{Button, Nothing}
+    btn_export::Union{Button, Nothing}
 
     function PlotSettingsSection()
         inst = new()
@@ -314,6 +316,7 @@ mutable struct PlotSettingsSection <: AbstractPlotSettingsSection
         inst.btn_reset = nothing
         inst.btn_save = nothing
         inst.btn_save_all = nothing
+        inst.btn_export = nothing
 
         return inst
     end
@@ -408,14 +411,15 @@ mutable struct ErrorSection <: AbstractErrorSection
         inst.suplyt = nothing
         inst.lyt = nothing
         inst.title = nothing
+
+        inst.tb_error_id = nothing
+        inst.tb_error_type = nothing
+        inst.tb_error_msg = nothing
+
         return inst
     end
 
 end
-
-
-
-
 
 """
     InteractionLyt <: AbstractInteractionLyt
@@ -449,6 +453,11 @@ mutable struct InteractionLyt <: AbstractInteractionLyt
     section_info::Union{InfoSection,Nothing}
     section_error::Union{ErrorSection, Nothing}
 
+
+    ######| DIR Path
+
+    path::Any
+
     ######| reset flag 
 
     reset_flag::Bool
@@ -464,6 +473,9 @@ mutable struct InteractionLyt <: AbstractInteractionLyt
         inst.section_damper = nothing 
         inst.section_plot_settings = nothing 
         inst.section_info = nothing 
+        inst.section_error = nothing
+
+        inst.path = nothing
 
         inst.reset_flag = false
         

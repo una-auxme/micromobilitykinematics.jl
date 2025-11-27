@@ -28,9 +28,12 @@ It also sets relative column widths to evenly distribute the interface.
 # Returns
 - `InteractionLyt`: A structured container with references to all major UI sections and the main figure.
 """
-function interactionlyt(θ_max, chassis, steering, suspension)
+function interactionlyt(θ_max, chassis, steering, suspension; path = @__DIR__)
 
     interaction_lyt = InteractionLyt()
+    
+    #####|  DIR Path
+    interaction_lyt.path = path
 
     # Figure
     interaction_lyt.fig = GLMakie.Figure(size = (1450, 1200))
@@ -42,6 +45,7 @@ function interactionlyt(θ_max, chassis, steering, suspension)
     interaction_lyt.section_plot_settings = layout_section_plot_settings(interaction_lyt.fig,(4,1)) 
     interaction_lyt.section_info = layout_section_info(interaction_lyt.fig,(4,3))
     interaction_lyt.section_error =  layout_section_error(interaction_lyt.fig,(4,2))
+
 
     colsize!(interaction_lyt.fig.layout, 1, Relative(0.3))  # Spalte 1 = 30%
     colsize!(interaction_lyt.fig.layout, 2, Relative(0.3))  # Spalte 2 = 30%
@@ -202,7 +206,7 @@ function layout_section_plot_settings(fig,slot)
 
     fig[row, col] = section_plot_settings.lyt  # Sub-Layout einfügen
 
-    section_plot_settings.title = Label(section_plot_settings.lyt[1,1], "Plot settings", fontsize = 15)
+    section_plot_settings.title = Label(section_plot_settings.lyt[1,1], "Applications", fontsize = 15)
 
     # 
     
@@ -224,6 +228,7 @@ function layout_section_plot_settings(fig,slot)
     section_plot_settings.btn_reset = Button(section_plot_settings.suplyt[2, 1], label = "Reset",width = 300)
     section_plot_settings.btn_save = Button(section_plot_settings.suplyt[3, 1], label = "Save current plot",width = 300)
     section_plot_settings.btn_save_all = Button(section_plot_settings.suplyt[4, 1], label = "Save all plots",width = 300)
+    section_plot_settings.btn_export = Button(section_plot_settings.suplyt[5, 1], label = "XML-Export",width = 300)
 
     rowgap!(section_plot_settings.lyt, 1, 0)
 
@@ -375,10 +380,6 @@ function layout_section_error(fig,slot)
     return section_error
 
 end
-
-
-
-
 
 
 

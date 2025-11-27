@@ -964,6 +964,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
 
     θx_max, θy_max, θz_max = θ_max          
 
+    path = interaction_lyt.path
+
     fig = interaction_lyt.fig
     section_plot =  interaction_lyt.section_plot
     section_angle =  interaction_lyt.section_angle
@@ -992,7 +994,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_geo.elevation[] = section_plot.ax_geom.elevation[]
             #fig_geo.geo_ax.zoom[]      = section_plot.ax_geom.zoom[]  # optional
 
-            GLMakie.save("geometry(θx,θy,θz)=($θx,$θy,$θz).png",fig_geo; px_per_unit = 20)
+            path = joinpath(path, "geometry(θx,θy,θz)=($θx,$θy,$θz).png")
+            GLMakie.save(path,fig_geo; px_per_unit = 20)
             GLMakie.display(fig)
 
         end
@@ -1008,7 +1011,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             #ax_geo.elevation[] = section_plot.ax_geom.elevation[]
             #fig_geo.geo_ax.zoom[]      = section_plot.ax_geom.zoom[]  # optional
 
-            GLMakie.save("radii(θx,θy,θz)=($θx,$θy,$θz).png",fig_radii; px_per_unit = 20)
+            path = joinpath(path, "radii(θx,θy,θz)=($θx,$θy,$θz).png")
+            GLMakie.save(path,fig_radii; px_per_unit = 20)
             GLMakie.display(fig)
 
         end
@@ -1022,8 +1026,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             #ax_ratio.azimuth[]   = section_plot.ax_ratio.azimuth[]
             #ax_ratio.elevation[] = section_plot.ax_ratio.elevation[]
 
-
-            GLMakie.save("ackermannratio(θx,θy,θz)=($θx,$θy,θz).png",fig_ratio)
+            path = joinpath(path, "ackermannratio(θx,θy,θz)=($θx,$θy,θz).png")
+            GLMakie.save(path,fig_ratio)
             GLMakie.display(fig)
         end
 
@@ -1036,7 +1040,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_ratio_surface.azimuth[]   = section_plot.ax_ratio_surface.azimuth[]
             ax_ratio_surface.elevation[] = section_plot.ax_ratio_surface.elevation[]
 
-            GLMakie.save("ackermannratio_surface_plot.png",fig_ratio_surface)
+            path = joinpath(path, "ackermannratio_surface_plot.png")
+            GLMakie.save(path,fig_ratio_surface)
             GLMakie.display(fig)
         end
 
@@ -1050,7 +1055,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_θ_vs_δ_surface.azimuth[]   = section_plot.ax_θ_vs_δ_surface.azimuth[]
             ax_θ_vs_δ_surface.elevation[] = section_plot.ax_θ_vs_δ_surface.elevation[]
 
-            GLMakie.save("steering_vs_wheel_angles.png",fig_θ_vs_δ_surface)
+            path = joinpath(path, "steering_vs_wheel_angles.png")
+            GLMakie.save(path,fig_θ_vs_δ_surface)
             GLMakie.display(fig)
         end
 
@@ -1063,7 +1069,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             #ax_deviation.azimuth[]   = section_plot.ax_deviation.azimuth[]
             #ax_deviation.elevation[] = section_plot.ax_deviation.elevation[]
 
-            GLMakie.save("ackermann_deviation.png",fig_deviation)
+            path = joinpath(path, "ackermann_deviation.png")
+            GLMakie.save(path, fig_deviation)
             GLMakie.display(fig)
         end
 
@@ -1076,7 +1083,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_deviation_surface.azimuth[]   = section_plot.ax_deviation_surface.azimuth[]
             ax_deviation_surface.elevation[] = section_plot.ax_deviation_surface.elevation[]
 
-            GLMakie.save("ackermann_deviation_surface.png",fig_deviation_surface)
+            path = joinpath(path, "ackermann_deviation_surface.png")
+            GLMakie.save(path,fig_deviation_surface)
             GLMakie.display(fig)
         end
 
@@ -1089,12 +1097,10 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_compr_vs_δ.azimuth[]   = section_plot.ax_compr_vs_δ.azimuth[]
             ax_compr_vs_δ.elevation[] = section_plot.ax_compr_vs_δ.elevation[]
 
-            GLMakie.save("compression_vs_wheel_angles.png",fig_deviation_surface)
+            path = joinpath(path, "compression_vs_wheel_angles.png")
+            GLMakie.save(path,fig_compr_vs_δ)
             GLMakie.display(fig)
         end
-
-
-
     end
 end
 
@@ -1140,6 +1146,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
     θx_max, θy_max, θz_max = θ_max          
 
+    path = interaction_lyt.path
+
     fig = interaction_lyt.fig
     section_plot =  interaction_lyt.section_plot
     section_angle =  interaction_lyt.section_angle
@@ -1166,7 +1174,9 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_geo.azimuth[]   = section_plot.ax_geom.azimuth[]
         ax_geo.elevation[] = section_plot.ax_geom.elevation[]
 
-        GLMakie.save("geometry(θx,θy,θz)=($θx,$θy,$θz).png",fig_geo; px_per_unit = 20)
+        path = joinpath(path, "geometry(θx,θy,θz)=($θx,$θy,$θz).png")
+        GLMakie.save(path,fig_geo; px_per_unit = 20)
+
 
 
 
@@ -1175,8 +1185,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         ax_geo = first(values(fig_radii.content))
 
-        GLMakie.save("radii(θx,θy,θz)=($θx,$θy,$θz).png",fig_radii; px_per_unit = 20)
-
+        path = joinpath(path, "radii(θx,θy,θz)=($θx,$θy,$θz).png")
+        GLMakie.save(path,fig_radii; px_per_unit = 20)
 
 
         ###
@@ -1184,8 +1194,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         ax_ratio = first(values(fig_ratio.content))
 
-        GLMakie.save("ackermannratio(θx,θy,θz)=($θx,$θy,θz).png",fig_ratio)
-
+        path = joinpath(path, "ackermannratio(θx,θy,θz)=($θx,$θy,θz).png")
+        GLMakie.save(path,fig_ratio)
 
 
         ###
@@ -1197,7 +1207,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_ratio_surface.azimuth[]   = section_plot.ax_ratio_surface.azimuth[]
         ax_ratio_surface.elevation[] = section_plot.ax_ratio_surface.elevation[]
 
-        GLMakie.save("ackermannratio_surface_plot.png",fig_ratio_surface)
+        path = joinpath(path, "ackermannratio_surface_plot.png")
+        GLMakie.save(path,fig_ratio_surface)
 
 
         ###
@@ -1208,8 +1219,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_θ_vs_δ_surface.azimuth[]   = section_plot.ax_θ_vs_δ_surface.azimuth[]
         ax_θ_vs_δ_surface.elevation[] = section_plot.ax_θ_vs_δ_surface.elevation[]
 
-        GLMakie.save("steering_vs_wheel_angles.png",fig_θ_vs_δ_surface)
-
+        path = joinpath(path, "steering_vs_wheel_angles.png")
+        GLMakie.save(path,fig_θ_vs_δ_surface)
 
 
         ###
@@ -1217,7 +1228,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         ax_deviation = first(values(fig_deviation.content))
 
-        GLMakie.save("ackermann_deviation.png",fig_deviation)
+        path = joinpath(path, "ackermann_deviation.png")
+        GLMakie.save(path, fig_deviation)
 
 
         ###
@@ -1228,8 +1240,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_deviation_surface.azimuth[]   = section_plot.ax_deviation_surface.azimuth[]
         ax_deviation_surface.elevation[] = section_plot.ax_deviation_surface.elevation[]
 
-        GLMakie.save("ackermann_deviation_surface.png",fig_deviation_surface)
-
+        path = joinpath(path, "ackermann_deviation_surface.png")
+        GLMakie.save(path,fig_deviation_surface)
 
 
         ###
@@ -1240,8 +1252,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_compr_vs_δ.azimuth[]   = section_plot.ax_compr_vs_δ.azimuth[]
         ax_compr_vs_δ.elevation[] = section_plot.ax_compr_vs_δ.elevation[]
 
-        GLMakie.save("compression_vs_wheel_angles.png",fig_deviation_surface)
-
+        path = joinpath(path, "compression_vs_wheel_angles.png")
+        GLMakie.save(path,fig_compr_vs_δ)
     end
 
     GLMakie.display(fig)
@@ -1416,6 +1428,38 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
 end
 
 
+function event_XML_Export(interaction_lyt::InteractionLyt,
+                            θ_max, 
+                            chassis::Chassis,
+                            steering::Steering,
+                            suspension::Suspension)
+
+    θx_max, θy_max, θz_max = θ_max          
+
+    fig = interaction_lyt.fig
+    path = interaction_lyt.path
+    section_plot =  interaction_lyt.section_plot
+    section_angle =  interaction_lyt.section_angle
+    section_param =  interaction_lyt.section_param
+    section_damper =  interaction_lyt.section_damper
+    section_plot_settings = interaction_lyt.section_plot_settings
+    section_info =  interaction_lyt.section_info
+    section_error =  interaction_lyt.section_error
+
+
+    on(section_plot_settings.btn_export.clicks) do n
+
+        exportXML(steering, path = path)
+        exportXML(suspension, path = path)
+
+    end
+end
+
+
+
+
+
+
 function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
                                             θ_max, 
                                             chassis::Chassis, 
@@ -1435,6 +1479,8 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
 
 
     on(section_param.sg_param.sliders[1].value) do val
+        # ---  Temporarily suppress events  ---
+        interaction_lyt.reset_flag && return  # <-- Flag-Check
          @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -1547,6 +1593,8 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
 
 
     on(section_param.sg_param.sliders[2].value) do val
+        # ---  Temporarily suppress events  ---
+        interaction_lyt.reset_flag && return  # <-- Flag-Check
          @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -1660,6 +1708,8 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
 
 
     on(section_param.sg_param.sliders[4].value) do val
+        # ---  Temporarily suppress events  ---
+        interaction_lyt.reset_flag && return  # <-- Flag-Check
          @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
@@ -1775,6 +1825,8 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
 
 
     on(section_param.sg_param.sliders[3].value) do val
+        # ---  Temporarily suppress events  ---
+        interaction_lyt.reset_flag && return  # <-- Flag-Check
         @safe_ui steering suspension interaction_lyt begin
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val

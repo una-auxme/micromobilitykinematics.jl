@@ -26,13 +26,13 @@ This acts as the main entry point for initializing the interactive GUI system fo
 # Returns
 Nothing. Sets up UI and reactive event systems via side effects.
 """
-function GUI_steering(args...)
+function GUI_steering(args...; path = @__DIR__)
 
   args[3].init_steering.θx = args[3].θx
   args[3].init_steering.θy = args[3].θy
   args[3].init_steering.θz = args[3].θz
 
-  interaction_lyt = interactionlyt(args...)
+  interaction_lyt = interactionlyt(args...; path = path)
   event_slider_θ(interaction_lyt, args...)
   event_menu_plot_settings(interaction_lyt, args...)                  
   event_btn_save(interaction_lyt, args...)
@@ -44,6 +44,7 @@ function GUI_steering(args...)
   event_slider_param_θz_radius(interaction_lyt, args...)
   event_slider_param_tierod(interaction_lyt, args...)
   event_slider_param_tracklever(interaction_lyt, args...)
+  event_XML_Export(interaction_lyt,args...)
 end
 
 

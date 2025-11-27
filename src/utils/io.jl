@@ -40,7 +40,16 @@ function exportXML(inst::Union{Steering, Suspension}; path=@__DIR__ )
         file_name = "parameter_list_of_vehicle"
     end 
 
-    save_file(doc,"$(file_name).xml")
+    #save_file(doc,"$(file_name).xml")
+
+    # Ordner anlegen (falls nötig)
+    mkpath(path)
+
+    # Vollständigen Pfad bauen
+    file_path = joinpath(path, file_name * ".xml")
+
+    # Jetzt wirklich dorthin speichern
+    save_file(doc, file_path)
 end
 
 

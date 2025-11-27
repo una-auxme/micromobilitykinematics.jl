@@ -37,6 +37,9 @@ Initializes the interactive steering GUI and registers all associated event hand
   - `steering::Steering`: The steering system
   - `suspension::Suspension`: The suspension system
 
+# Keywords
+-`path`: String to DIC 
+
 # Description
 This function sets up the complete steering user interface by:
 - Creating the layout (`interactionlyt`)
@@ -50,7 +53,8 @@ This acts as the main entry point for initializing the interactive GUI system fo
 # Returns
 Nothing. Sets up UI and reactive event systems via side effects.
 """
-function lounch_gui(args...)
-    GUI_steering(args...)
+function lounch_gui(args...; path = @__DIR__)
+    GUI_steering(args...; path = path)
 end
+
 end 
