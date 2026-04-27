@@ -5,7 +5,9 @@ module micromobilitykinematics
     using DataFrames
     using JLD2
     using Base.Threads
-    using Plots;gr()
+    # Plotting helpers are optional and are not loaded by the core module.
+    # Loading Plots here initializes GR during package import, which can fail in
+    # non-graphical or partially configured environments.
     #using PlotlyJS
     using LightXML
     #using GeoSpatialRelations

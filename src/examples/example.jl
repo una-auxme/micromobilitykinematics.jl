@@ -1,37 +1,53 @@
+using micromobilitykinematics
+using micromobilitykinematics: Chassis, Steering, Suspension, getValue, lounch_gui
 
-lower_bourder = (50.0, 50.0, 70.0, 195.0)  
-upper_bourder = (100.0, 100.0, 200.0, 260.0)
-max_angleConfig = (15.0, 1.0, 35.0)
+max_angle_config = (15.0, 1.0, 35.0)
 
-x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length = random_search(upper_bourder, lower_bourder, max_angleConfig)
+default_parameters = (
+    57.4050864963812,
+    100.0000009999905,
+    109.196240211308,
+    229.7228503290388,
+)
 
-opt = optim_over_range(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length, max_angleConfig)
+if "--optimize" in ARGS
+    lower_border = (50.0, 50.0, 70.0, 195.0)
+    upper_border = (100.0, 100.0, 200.0, 260.0)
 
-opt.input
-opt.steering
-opt.θ
-opt.objective
-opt.status
+    println("Searching feasible start parameters...")
+    start_parameters = random_search(upper_border, lower_border, max_angle_config)
+    println("Start parameters: ", start_parameters)
 
+    println("Optimizing steering geometry...")
+    opt = optim_over_range(start_parameters..., max_angle_config)
 
-x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length = getValue(opt.steering)
+    println("Input parameters: ", opt.input)
+    println("Optimized parameters: ", getValue(opt.steering))
+    println("Optimized angles: ", opt.θ)
+    println("Objective: ", opt.objective)
+    println("Status: ", opt.status)
 
-st = Steering(57.4050864963812, 100.0000009999905, 109.196240211308, 229.7228503290388)
+    steering = opt.steering
+else
+    println("Using known feasible parameters.")
+    println("Run with --optimize to perform random search and optimization.")
+    steering = Steering(default_parameters...)
+end
 
-st = opt.steering
-
-suspension = Suspension((30,30))
-# steering setting
-angleConfig = (0.0,1.0,0.0)
-suspensionkinematics!(suspension)
-
+suspension = Suspension((30.0, 30.0))
 chassis = Chassis()
 
-update!(angleConfig, st, suspension)
+angle_config = (0.0, 1.0, 0.0)
+update!(angle_config, steering, suspension)
 
+println("Updated steering state at angle ", angle_config)
+println("Inner wheel angle: ", steering.δi)
+println("Outer wheel angle: ", steering.δo)
 
-θ_max = (15.0,5.0,35.0)
-GUI_steering(θ_max, chassis , st, suspension)
+if "--gui" in ARGS
+    # Loading GLMakie activates the package extension that implements lounch_gui.
+    using GLMakie
 
-
-
+    gui_angle_limits = (15.0, 5.0, 35.0)
+    lounch_gui(gui_angle_limits, chassis, steering, suspension; path = @__DIR__)
+end
