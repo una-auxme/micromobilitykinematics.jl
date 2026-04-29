@@ -100,7 +100,7 @@ function layout_section_angles(fig, slot, θ_max, steering)
 
     fig[row,col] = angle_section.lyt
 
-    angle_section.title = Label(angle_section.lyt[1,1], "Rotation angle configuration", fontsize = 15)
+    angle_section.title = Label(angle_section.lyt[1,1], "Rotation Angle Configuration", fontsize = 15)
 
 
     angle_section.sg_θ = SliderGrid( angle_section.lyt[2, 1],
@@ -158,7 +158,7 @@ function layout_section_param(fig,slot, steering)
 
     fig[row,col] = section_param.lyt
 
-    section_param.title = Label(section_param.lyt[1,1], "Components configuration", fontsize = 15)
+    section_param.title = Label(section_param.lyt[1,1], "Component Configuration", fontsize = 15)
 
     section_param.sg_param = SliderGrid(section_param.lyt[2, 1],
                                         (label = "θx radius", range = 50:1:100, format = "{:.1f}mm", startvalue = θx_radius),
@@ -206,7 +206,7 @@ function layout_section_plot_settings(fig,slot)
 
     fig[row, col] = section_plot_settings.lyt  # Sub-Layout einfügen
 
-    section_plot_settings.title = Label(section_plot_settings.lyt[1,1], "Applications", fontsize = 15)
+    section_plot_settings.title = Label(section_plot_settings.lyt[1,1], "Plot Settings", fontsize = 15)
 
     # 
     
@@ -215,15 +215,15 @@ function layout_section_plot_settings(fig,slot)
 
     
     section_plot_settings.menu = Menu(section_plot_settings.suplyt[1, 1], 
-                                        options = ["geometry", 
-                                                    "radii", 
-                                                    "ackermannratio", 
-                                                    "ackermannratio surface plot", 
-                                                    "steering vs wheel angles", 
-                                                    "ackermann deviation", 
-                                                    "ackermann deviation surface",
-                                                    "compression vs wheel angles"], 
-                                        default = "geometry", 
+                                        options = ["Geometry", 
+                                                    "Radii", 
+                                                    "Ackermann ratio", 
+                                                    "Ackermann ratio surface plot", 
+                                                    "Steering vs. wheel angles", 
+                                                    "Ackermann deviation", 
+                                                    "Ackermann deviation surface",
+                                                    "Compression vs. wheel angles"], 
+                                        default = "Geometry", 
                                         width = 300)
     section_plot_settings.btn_reset = Button(section_plot_settings.suplyt[2, 1], label = "Reset",width = 300)
     section_plot_settings.btn_save = Button(section_plot_settings.suplyt[3, 1], label = "Save current plot",width = 300)
@@ -273,12 +273,12 @@ function layout_section_damper(fig,slot)
 
     fig[row,col] = section_damper.lyt
 
-    section_damper.title = Label(section_damper.lyt[1,1], "Dumper settings", fontsize = 15)
+    section_damper.title = Label(section_damper.lyt[1,1], "Damper Settings", fontsize = 15)
 
 
     section_damper.sg_compr = SliderGrid(section_damper.lyt[2, 1],
-                                (label = "compression left", range = 0:1:100, format = "{:.1f}%", startvalue = 30),
-                                (label = "compression right", range = 0:1:100, format = "{:.1f}%", startvalue = 30),
+                                (label = "left compression", range = 0:1:100, format = "{:.1f}%", startvalue = 30),
+                                (label = "right compression", range = 0:1:100, format = "{:.1f}%", startvalue = 30),
                                 width = 350,
                                 tellheight = false)
 
@@ -332,12 +332,12 @@ function layout_section_info(fig,slot)
     section_info.suplyt = GridLayout(tellheight = false)
     section_info.lyt[2,1] = section_info.suplyt
 
-    section_info.tb_obj = Textbox(section_info.suplyt[1, 1:2], placeholder = "objective: ",width = 300)
-    section_info.tb_ratio = Textbox(section_info.suplyt[2, 1:2], placeholder = "ackermannratio: ",width = 300)
+    section_info.tb_obj = Textbox(section_info.suplyt[1, 1:2], placeholder = "Objective: ",width = 300)
+    section_info.tb_ratio = Textbox(section_info.suplyt[2, 1:2], placeholder = "Ackermann ratio: ",width = 300)
     section_info.tb_δi = Textbox(section_info.suplyt[3, 1], placeholder = "δi: ",width = 150)
     section_info.tb_δo = Textbox(section_info.suplyt[3, 2], placeholder = "δo: ",width = 150)
-    section_info.tb_rad = Textbox(section_info.suplyt[4, 1], placeholder = "radius: ",width = 150)
-    section_info.tb_min_rad = Textbox(section_info.suplyt[4, 2], placeholder = "min. radius: ",width = 150)
+    section_info.tb_rad = Textbox(section_info.suplyt[4, 1], placeholder = "Radius: ",width = 150)
+    section_info.tb_min_rad = Textbox(section_info.suplyt[4, 2], placeholder = "Min. radius: ",width = 150)
     
 
 
@@ -360,7 +360,7 @@ function layout_section_error(fig,slot)
 
     fig[row, col] = section_error.lyt  # Sub-Layout einfügen
 
-    section_error.title = Label(section_error.lyt[1,1], "Error Infomation", fontsize = 15)
+    section_error.title = Label(section_error.lyt[1,1], "Error Information", fontsize = 15)
 
     # Füge mehrere Buttons in das verschachtelte Layout ein:
 
@@ -369,7 +369,7 @@ function layout_section_error(fig,slot)
 
     section_error.tb_error_id = Textbox(section_error.suplyt[1, 1], placeholder = "Error ID: ", width = 300)
     section_error.tb_error_type = Textbox(section_error.suplyt[2, 1], placeholder = "Error Type: ", width = 300)
-    section_error.tb_error_msg = Label(section_error.suplyt[3, 1], text = "Error Msg.: ", width = 350, tellheight = true, tellwidth = false, word_wrap = true)
+    section_error.tb_error_msg = Label(section_error.suplyt[3, 1], text = "Error Message: ", width = 350, tellheight = true, tellwidth = false, word_wrap = true)
 
 
     #rowsize!(fig.layout, row,  Fixed(3))      # Zeile 5 kollabiert

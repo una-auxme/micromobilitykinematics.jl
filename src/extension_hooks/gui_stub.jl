@@ -1,5 +1,5 @@
 """
-    lounch_gui(θ_max, 
+    launch_gui(θ_max, 
                   chassis::Chassis, 
                   steering::Steering,
                   suspension::Suspension)
@@ -29,4 +29,6 @@ This acts as the main entry point for initializing the interactive GUI system fo
 # Returns
 Nothing. Sets up UI and reactive event systems via side effects.
 """
-function lounch_gui end
+function launch_gui end
+
+const lounch_gui = launch_gui

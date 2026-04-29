@@ -164,7 +164,7 @@ Use this workflow when exploring new steering concepts or evaluating the influen
 
     update!((0.0, 1.0, 0.0), steering, suspension)
 
-    lounch_gui((15.0, 5.0, 35.0), chassis, steering, suspension)
+    launch_gui((15.0, 5.0, 35.0), chassis, steering, suspension)
 
 ```
 > **Note:**  

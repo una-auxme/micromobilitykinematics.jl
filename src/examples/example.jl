@@ -1,5 +1,5 @@
 using micromobilitykinematics
-using micromobilitykinematics: Chassis, Steering, Suspension, getValue, lounch_gui
+using micromobilitykinematics: Chassis, Steering, Suspension, getValue
 
 max_angle_config = (15.0, 1.0, 35.0)
 
@@ -44,10 +44,10 @@ println("Updated steering state at angle ", angle_config)
 println("Inner wheel angle: ", steering.δi)
 println("Outer wheel angle: ", steering.δo)
 
-if "--gui" in ARGS
-    # Loading GLMakie activates the package extension that implements lounch_gui.
+#if "--gui" in ARGS
+    # Loading GLMakie activates the package extension that implements launch_gui.
     using GLMakie
 
     gui_angle_limits = (15.0, 5.0, 35.0)
-    lounch_gui(gui_angle_limits, chassis, steering, suspension; path = @__DIR__)
-end
+    micromobilitykinematics.launch_gui(gui_angle_limits, chassis, steering, suspension; path = @__DIR__)
+#end

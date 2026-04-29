@@ -46,7 +46,7 @@ This package provides an extension that depends on GLMakie.
 Because of this dependency, the interactive GUI will only work if GLMakie is installed beforehand.
 Once GLMakie is available in the environment, the graphical user interface can be activated through the following function:
 ```@docs
-lounch_gui
+launch_gui
 ```
 
 

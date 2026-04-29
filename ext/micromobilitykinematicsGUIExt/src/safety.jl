@@ -25,7 +25,7 @@ macro safe_ui(steering, suspension, lyt, ex)
             $(esc(lyt)).section_error.tb_error_type.boxcolor = :white
             $(esc(lyt)).section_error.tb_error_type.textcolor = :black
 
-            $(esc(lyt)).section_error.tb_error_msg.text = "Error Msg.: " 
+            $(esc(lyt)).section_error.tb_error_msg.text = "Error Message: " 
             #$(esc(lyt)).section_error.tb_error_msg.backgroundcolor = :white
             #$(esc(lyt)).section_error.tb_error_msg.color = :black
 
@@ -42,7 +42,7 @@ macro safe_ui(steering, suspension, lyt, ex)
                 $(esc(lyt)).section_error.tb_error_type.boxcolor = :lightsalmon
                 $(esc(lyt)).section_error.tb_error_type.textcolor = (:black, 1) 
 
-                $(esc(lyt)).section_error.tb_error_msg.text = "Error Msg.: $($(esc(steering)).err_info.description)" 
+                $(esc(lyt)).section_error.tb_error_msg.text = "Error Message: $($(esc(steering)).err_info.description)" 
                 #$(esc(lyt)).section_error.tb_error_msg.backgroundcolor = :lightsalmon
                 #$(esc(lyt)).section_error.tb_error_msg.color = (:black, 1) 
 
@@ -63,7 +63,7 @@ macro safe_ui(steering, suspension, lyt, ex)
                 $(esc(lyt)).section_error.tb_error_type.boxcolor = :lightsalmon
                 $(esc(lyt)).section_error.tb_error_type.textcolor = (:black, 1) 
 
-                $(esc(lyt)).section_error.tb_error_msg.text = "Error Msg.: $($(esc(suspension)).err_info.description)" 
+                $(esc(lyt)).section_error.tb_error_msg.text = "Error Message: $($(esc(suspension)).err_info.description)" 
                 #$(esc(lyt)).section_error.tb_error_msg.backgroundcolor = :lightsalmon
                 #$(esc(lyt)).section_error.tb_error_msg.color = (:black, 1) 
 

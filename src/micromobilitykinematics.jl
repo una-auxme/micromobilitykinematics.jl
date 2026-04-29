@@ -34,7 +34,7 @@ module micromobilitykinematics
 
     export plot_optda_series, plot_optda_gird_δ, plot_optda_gird_obj
 
-    export lounch_gui
+    export launch_gui, lounch_gui
 
 
 

@@ -6,7 +6,7 @@ using micromobilitykinematics: Steering, RotationalComponent, TieRod, TrackLever
 using micromobilitykinematics: Suspension, Damper, UpperWishbone, WheelMount, Suspension
 using micromobilitykinematics: Chassis, Measurements
 
-import micromobilitykinematics: lounch_gui
+import micromobilitykinematics: launch_gui
 import micromobilitykinematics: capture_error!
 
 const MMK = micromobilitykinematics  # optional Alias 
@@ -23,7 +23,7 @@ include("micromobilitykinematicsGUIExt/src/io.jl")
 include("micromobilitykinematicsGUIExt/src/GUI.jl")
 
 """
-    lounch_gui(θ_max, 
+    launch_gui(θ_max, 
                   chassis::Chassis, 
                   steering::Steering,
                   suspension::Suspension)
@@ -53,7 +53,7 @@ This acts as the main entry point for initializing the interactive GUI system fo
 # Returns
 Nothing. Sets up UI and reactive event systems via side effects.
 """
-function lounch_gui(args...; path = @__DIR__)
+function launch_gui(args...; path = @__DIR__)
     GUI_steering(args...; path = path)
 end
 

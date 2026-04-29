@@ -237,8 +237,8 @@ function ackermannratio_θz_plot(θx,θy,θz_max,chassis, steering, suspension)
 
     ax_ratio = GLMakie.Axis(fig[1:2, 1:3], 
                             xlabel = "θz in [°]", 
-                            ylabel = "ackermannratio [%]", 
-                            title = "Ratio for (θx, θy, θz) = (0,0,0)", 
+                            ylabel = "Ackermann ratio [%]", 
+                            title = "Ackermann ratio for (θx, θy, θz) = (0,0,0)", 
                             xticks = 0:5:40,
                             yticks = 50:5:100)
 
@@ -266,7 +266,7 @@ function ackermannratio_θz_plot(θx,θy,θz_max,chassis, steering, suspension)
 
     text_max = GLMakie.text!(ax_ratio, 
                                 Point(35, 55),#Point(xs[end-15], observer_max[]),
-                                text = "Min → $(round(max, digits=2))%",
+                                text = "Max → $(round(max, digits=2))%",
                                 align = (:left, :bottom),
                                 color = :red)  
 
@@ -287,7 +287,7 @@ function ratio_surface_plot(θy, θ_max, chassis, steering, suspension)
                                         ylabel = "θz in [°]",
                                         zlabel = "ratio in [%]",
                                         zticks = 50:10:100, 
-                                        title = "Ackermannratio surface",) #
+                                        title = "Ackermann ratio surface",) #
     #section_plot.ax_ratio_surface.aspect = :data
     #ax_ratio_surface.aspect = (1, 1, 1)
     #ax_ratio_surface.blockscene.visible[] = false
@@ -322,8 +322,8 @@ function deviation_plot(θx,θy,θz_max,chassis, steering, suspension)
 
     ax_deviation = GLMakie.Axis(fig[1:2, 1:3], 
                                     xlabel = "θz in [°]", 
-                                    ylabel = "ackermann_deviation [mm]", 
-                                    title = "Ratio for (θx, θy, θz) = (0,0,0)", 
+                                    ylabel = "Ackermann deviation [mm]", 
+                                    title = "Ackermann deviation for (θx, θy, θz) = (0,0,0)", 
                                     xticks = 0:5:40,
                                     yticks = -500:100:500)
 
@@ -467,11 +467,11 @@ function compr_vs_δ_plot(θx, θy, θz, steering, suspension)
     ############| Ackermannratio Scene
 
     ax_compr_vs_δ = GLMakie.Axis3(fig[1:2, 1:3],
-                                    xlabel = "compression left in [%]", 
-                                    ylabel = "compression right in [%]",
+                                    xlabel = "left compression in [%]", 
+                                    ylabel = "right compression in [%]",
                                     zlabel = "δi in [°]",
                                     zticks = 0:5:70, 
-                                    title = "compression vs. wheel angles",) #
+                                    title = "Compression vs. wheel angles",) #
     #section_plot.ax_ratio_surface.aspect = :data
     #section_plot.ax_compr_vs_δi.aspect = (1, 1, 1)
     #section_plot.ax_compr_vs_δi.blockscene.visible[] = false
