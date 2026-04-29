@@ -1,6 +1,5 @@
-import Pkg; Pkg.develop(path=joinpath(@__DIR__,"../../micromobilitykinematics.jl"))
+import Pkg; Pkg.develop(path=joinpath(@__DIR__, ".."))
 using Documenter, micromobilitykinematics
-using Documenter
 using Documenter: GitHubActions
 
 

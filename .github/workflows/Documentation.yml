@@ -27,11 +27,11 @@ jobs:
       - name: "Set up Julia"
         uses: julia-actions/setup-julia@v3
         with:
-          version: '1.9'
+          version: '1.11'
           arch: x64
 
       - name: "Install dependencies"
-        run: julia --project=docs/ -e 'using Pkg; using Pkg;Pkg.develop(PackageSpec(path=pwd()));  Pkg.rm("micromobilitykinematics");  Pkg.develop(PackageSpec(url="https://github.com/adribrune/micromobilitykinematics.jl.git")); Pkg.instantiate()'
+        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
         
       - name: "Build and deploy"
         env:
