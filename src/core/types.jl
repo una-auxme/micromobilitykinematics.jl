@@ -253,6 +253,11 @@ abstract type AbstractLowerWishbone <: AbstractWishbone end
 abstract type AbstractUpperWishbone <: AbstractWishbone end
 abstract type AbstractWheelMount <: AbstractSuspension end
 
+function _component_vector(value)
+    value === nothing && return nothing
+    return Any[x for x in value]
+end
+
 
 mutable struct Damper <: AbstractDamper
 
@@ -268,19 +273,32 @@ mutable struct Damper <: AbstractDamper
     lower_fixture::Union{Vector{Any}, Nothing}                          # Damper lower fixture point 
     lower_fixture_neutral::Union{Vector{Any}, Nothing} 
 
-    function Damper(compression::T) where {T <: Any }
+    function Damper(compression::T) where {T <: Any}
+        Damper(; compression = compression)
+    end
+
+    function Damper(;
+        id = nothing,
+        nominal_length = 210.0,
+        travel = 55.0,
+        compression = 30.0,
+        length_neutral_compression = 30.0,
+        upper_fixture = [37.0, 30.0, 160.0],
+        lower_fixture = nothing,
+        lower_fixture_neutral = nothing,
+    )
         inst = new()
 
-        inst.id = nothing 
+        inst.id = id
 
-        inst.nominal_length = 210.0
-        inst.travel = 55.0
+        inst.nominal_length = nominal_length
+        inst.travel = travel
         inst.compression = compression
         inst.length = inst.nominal_length - (inst.compression / 100) * inst.travel
-        inst.length_neutral = inst.nominal_length - (30.0 / 100) * inst.travel
-        inst.upper_fixture = [37.0;30.0; 160.0]
-        inst.lower_fixture = nothing
-        inst.lower_fixture_neutral = nothing
+        inst.length_neutral = inst.nominal_length - (length_neutral_compression / 100) * inst.travel
+        inst.upper_fixture = _component_vector(upper_fixture)
+        inst.lower_fixture = _component_vector(lower_fixture)
+        inst.lower_fixture_neutral = _component_vector(lower_fixture_neutral)
         return inst
     end
 end
@@ -308,24 +326,41 @@ mutable struct LowerWishbone <: AbstractLowerWishbone
     lower_fixture::Union{Vector{Any}, Nothing}                              # Damper lower fixture point 
     #rotation_axis_TO_sphere_joint::Union{Vector{Float64}, Nothing}         # directuion vector to  Spherejoint from the LowerWishboneBearingRear x-Achse
 
-    function LowerWishbone()
+    function LowerWishbone(;
+        id = nothing,
+        bearing_rear = [0.0, 0.0, 0.0],
+        bearing_distance_x = 74.0,
+        bearing_front = nothing,
+        rotation_axis = nothing,
+        distance_to_joint_y = 140.0,
+        distance_rotation_axis_to_lower_damper_fixture = 85.0,
+        distance_to_joint_x = 37.0,
+        sphere_joint_neutral = nothing,
+        lower_fixture_neutral = nothing,
+        sphere_joint = nothing,
+        lower_fixture = nothing,
+    )
         inst = new()
 
-        inst.id = nothing
+        inst.id = id
 
-        inst.bearing_rear = [0.0;0.0;0.0]
-        inst.bearing_distance_x = 74.00
-        inst.bearing_front = [inst.bearing_distance_x;0.0;0.0]
-        inst.rotation_axis = (inst.bearing_front - inst.bearing_rear) / norm(inst.bearing_front - inst.bearing_rear)
-        inst.distance_to_joint_y = 140.0  
-        inst.distance_rotation_axis_to_lower_damper_fixture = 85.0   
-        inst.distance_to_joint_x =  37.00 
+        inst.bearing_rear = _component_vector(bearing_rear)
+        inst.bearing_distance_x = bearing_distance_x
+        inst.bearing_front = _component_vector(
+            bearing_front === nothing ? inst.bearing_rear + [bearing_distance_x, 0.0, 0.0] : bearing_front,
+        )
+        inst.rotation_axis = _component_vector(
+            rotation_axis === nothing ? (inst.bearing_front - inst.bearing_rear) / norm(inst.bearing_front - inst.bearing_rear) : rotation_axis,
+        )
+        inst.distance_to_joint_y = distance_to_joint_y
+        inst.distance_rotation_axis_to_lower_damper_fixture = distance_rotation_axis_to_lower_damper_fixture
+        inst.distance_to_joint_x = distance_to_joint_x
 
-        inst.sphere_joint_neutral = nothing
-        inst.lower_fixture_neutral = nothing
+        inst.sphere_joint_neutral = _component_vector(sphere_joint_neutral)
+        inst.lower_fixture_neutral = _component_vector(lower_fixture_neutral)
 
-        inst.sphere_joint = nothing
-        inst.lower_fixture = nothing
+        inst.sphere_joint = _component_vector(sphere_joint)
+        inst.lower_fixture = _component_vector(lower_fixture)
 
         return inst
     end
@@ -352,24 +387,41 @@ mutable struct UpperWishbone <: AbstractUpperWishbone
     sphere_joint::Union{Vector{Any}, Nothing}                               # Sphere Joint at the end of the lower Wishbone (connection to wheel mount)
     sphere_joint_neutral::Union{Vector{Any}, Nothing}   
 
-    function UpperWishbone()
+    function UpperWishbone(;
+        id = nothing,
+        bearing_rear = [0.0, 0.0, 139.0],
+        bearing_distance_x = 74.0,
+        bearing_front = nothing,
+        rotation_axis = nothing,
+        distance_to_joint_y = 140.0,
+        distance_to_joint_x = 37.0,
+        tiltx = 0.0,
+        tilty = nothing,
+        tiltZ = nothing,
+        sphere_joint = nothing,
+        sphere_joint_neutral = nothing,
+    )
         inst = new()
 
-        inst.id = nothing 
+        inst.id = id
 
-        inst.bearing_rear = [0.0; 0.0; 139.00] 
-        inst.bearing_distance_x = 74.00
-        inst.bearing_front = [inst.bearing_distance_x;0.0;139.00]
-        inst.rotation_axis = (inst.bearing_front - inst.bearing_rear) / norm(inst.bearing_front - inst.bearing_rear)
-        inst.distance_to_joint_y = 140.0  
-        inst.distance_to_joint_x =  37.00 
+        inst.bearing_rear = _component_vector(bearing_rear)
+        inst.bearing_distance_x = bearing_distance_x
+        inst.bearing_front = _component_vector(
+            bearing_front === nothing ? inst.bearing_rear + [bearing_distance_x, 0.0, 0.0] : bearing_front,
+        )
+        inst.rotation_axis = _component_vector(
+            rotation_axis === nothing ? (inst.bearing_front - inst.bearing_rear) / norm(inst.bearing_front - inst.bearing_rear) : rotation_axis,
+        )
+        inst.distance_to_joint_y = distance_to_joint_y
+        inst.distance_to_joint_x = distance_to_joint_x
         
-        inst.tiltx = 0.0
-        inst.tilty = 90-acosd(abs(dot([0;1;0],inst.rotation_axis)))
-        inst.tiltZ = -90+acosd(abs(dot([0;0;1],inst.rotation_axis)))
+        inst.tiltx = tiltx
+        inst.tilty = tilty === nothing ? 90 - acosd(abs(dot([0, 1, 0], inst.rotation_axis))) : tilty
+        inst.tiltZ = tiltZ === nothing ? -90 + acosd(abs(dot([0, 0, 1], inst.rotation_axis))) : tiltZ
 
-        inst.sphere_joint = nothing
-        inst.sphere_joint_neutral = nothing
+        inst.sphere_joint = _component_vector(sphere_joint)
+        inst.sphere_joint_neutral = _component_vector(sphere_joint_neutral)
         return inst
     end
 end
@@ -383,15 +435,23 @@ mutable struct WheelMount <: AbstractWheelMount
     offset_z::Any
     to_angle::Any
 
-    function WheelMount()
+    function WheelMount(;
+        length = 139.0,
+        camper_angle = 0.0,
+        camber_angle = camper_angle,
+        offset_x = 0.0,
+        offset_y = 50.0,
+        offset_z = length / 2,
+        to_angle = 0.0,
+    )
         inst = new()
 
-        inst.length = 139.00
-        inst.camper_angle = 0.0
-        inst.offset_x = 0.0
-        inst.offset_y = 50.0
-        inst.offset_z = inst.length / 2
-        inst.to_angle = 0.0
+        inst.length = length
+        inst.camper_angle = camber_angle
+        inst.offset_x = offset_x
+        inst.offset_y = offset_y
+        inst.offset_z = offset_z
+        inst.to_angle = to_angle
 
         return inst
     end
@@ -409,16 +469,30 @@ mutable struct Suspension <: AbstractSuspension
     
     kinematics!::Function
 
+    function Suspension(compression::Number)
+        Suspension((compression, compression))
+    end
+
     function Suspension(compressions::Tuple)
+        Suspension(; compressions = compressions)
+    end
+
+    function Suspension(;
+        compressions = (30.0, 30.0),
+        lowerwishbone = (LowerWishbone(), LowerWishbone()),
+        upperwishbone = (UpperWishbone(), UpperWishbone()),
+        damper = nothing,
+        wheelmount = WheelMount(),
+    )
         inst = new()
 
-        inst.lowerwishbone = (LowerWishbone(),LowerWishbone())      # (left, right)
+        inst.lowerwishbone = lowerwishbone      # (left, right)
 
-        inst.upperwishbone = (UpperWishbone(), UpperWishbone())     # (left, right)
+        inst.upperwishbone = upperwishbone     # (left, right)
 
-        inst.damper = (Damper(compressions[1]), Damper(compressions[2]))                          # (left, right)
+        inst.damper = damper === nothing ? (Damper(compressions[1]), Damper(compressions[2])) : damper                          # (left, right)
 
-        inst.wheelmount = WheelMount()
+        inst.wheelmount = wheelmount
 
         inst.err_info = ErrorInfo()
 

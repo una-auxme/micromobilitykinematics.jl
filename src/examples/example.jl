@@ -1,53 +1,128 @@
 using micromobilitykinematics
-using micromobilitykinematics: Chassis, Steering, Suspension, getValue
+using GLMakie
+
+## Steering geometry
 
 max_angle_config = (15.0, 1.0, 35.0)
 
-default_parameters = (
+steering = Steering(
     57.4050864963812,
     100.0000009999905,
     109.196240211308,
     229.7228503290388,
 )
 
-if "--optimize" in ARGS
-    lower_border = (50.0, 50.0, 70.0, 195.0)
-    upper_border = (100.0, 100.0, 200.0, 260.0)
+## Suspension geometry
 
-    println("Searching feasible start parameters...")
-    start_parameters = random_search(upper_border, lower_border, max_angle_config)
-    println("Start parameters: ", start_parameters)
+lower_wishbones = (
+    LowerWishbone(
+        id = :Left,
+        bearing_rear = [0.0, 0.0, 0.0],
+        bearing_distance_x = 74.0,
+        bearing_front = [74.0, 0.0, 0.0],
+        rotation_axis = [1.0, 0.0, 0.0],
+        distance_to_joint_y = 140.0,
+        distance_rotation_axis_to_lower_damper_fixture = 85.0,
+        distance_to_joint_x = 37.0,
+    ),
+    LowerWishbone(
+        id = :Right,
+        bearing_rear = [0.0, 0.0, 0.0],
+        bearing_distance_x = 74.0,
+        bearing_front = [74.0, 0.0, 0.0],
+        rotation_axis = [1.0, 0.0, 0.0],
+        distance_to_joint_y = 140.0,
+        distance_rotation_axis_to_lower_damper_fixture = 85.0,
+        distance_to_joint_x = 37.0,
+    ),
+)
 
-    println("Optimizing steering geometry...")
-    opt = optim_over_range(start_parameters..., max_angle_config)
+upper_wishbones = (
+    UpperWishbone(
+        id = :Left,
+        bearing_rear = [0.0, 0.0, 139.0],
+        bearing_distance_x = 74.0,
+        bearing_front = [74.0, 0.0, 139.0],
+        rotation_axis = [1.0, 0.0, 0.0],
+        distance_to_joint_y = 140.0,
+        distance_to_joint_x = 37.0,
+        tiltx = 0.0,
+        tilty = 0.0,
+        tiltZ = 0.0,
+    ),
+    UpperWishbone(
+        id = :Right,
+        bearing_rear = [0.0, 0.0, 139.0],
+        bearing_distance_x = 74.0,
+        bearing_front = [74.0, 0.0, 139.0],
+        rotation_axis = [1.0, 0.0, 0.0],
+        distance_to_joint_y = 140.0,
+        distance_to_joint_x = 37.0,
+        tiltx = 0.0,
+        tilty = 0.0,
+        tiltZ = 0.0,
+    ),
+)
 
-    println("Input parameters: ", opt.input)
-    println("Optimized parameters: ", getValue(opt.steering))
-    println("Optimized angles: ", opt.θ)
-    println("Objective: ", opt.objective)
-    println("Status: ", opt.status)
+dampers = (
+    Damper(
+        id = :Left,
+        nominal_length = 210.0,
+        travel = 55.0,
+        compression = 30.0,
+        length_neutral_compression = 30.0,
+        upper_fixture = [37.0, 30.0, 160.0],
+    ),
+    Damper(
+        id = :Right,
+        nominal_length = 210.0,
+        travel = 55.0,
+        compression = 30.0,
+        length_neutral_compression = 30.0,
+        upper_fixture = [37.0, 30.0, 160.0],
+    ),
+)
 
-    steering = opt.steering
-else
-    println("Using known feasible parameters.")
-    println("Run with --optimize to perform random search and optimization.")
-    steering = Steering(default_parameters...)
-end
+wheelmount = WheelMount(
+    length = 139.0,
+    camber_angle = 0.0,
+    offset_x = 0.0,
+    offset_y = 50.0,
+    offset_z = 139.0 / 2,
+    to_angle = 0.0,
+)
 
-suspension = Suspension((30.0, 30.0))
+suspension = Suspension(
+    compressions = (30.0, 30.0),
+    lowerwishbone = lower_wishbones,
+    upperwishbone = upper_wishbones,
+    damper = dampers,
+    wheelmount = wheelmount,
+)
+
 chassis = Chassis()
 
+## Evaluate kinematics
+
 angle_config = (0.0, 1.0, 0.0)
-update!(angle_config, steering, suspension)
 
-println("Updated steering state at angle ", angle_config)
-println("Inner wheel angle: ", steering.δi)
-println("Outer wheel angle: ", steering.δo)
+micromobilitykinematics.update!(angle_config, steering, suspension)
 
-#if "--gui" in ARGS
-    # Loading GLMakie activates the package extension that implements launch_gui.
-    using GLMakie
+steering.δi
+steering.δo
 
-    gui_angle_limits = (15.0, 5.0, 35.0)
-    micromobilitykinematics.launch_gui(gui_angle_limits, chassis, steering, suspension; path = @__DIR__)
-#end
+## Optional optimization
+
+lower_border = (50.0, 50.0, 70.0, 195.0)
+upper_border = (100.0, 100.0, 200.0, 260.0)
+
+# start_parameters = random_search(upper_border, lower_border, max_angle_config)
+# opt = optim_over_range(start_parameters..., max_angle_config)
+# steering = opt.steering
+# micromobilitykinematics.update!(angle_config, steering, suspension)
+
+## Interactive GUI
+
+gui_angle_limits = (15.0, 5.0, 35.0)
+
+launch_gui(gui_angle_limits, chassis, steering, suspension; path = @__DIR__)

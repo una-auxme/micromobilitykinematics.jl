@@ -21,6 +21,10 @@ module micromobilitykinematics
     using NLopt
 
 
+    export Steering, RotationalComponent, TieRod, TrackLever
+    export Suspension, Damper, LowerWishbone, UpperWishbone, WheelMount
+    export Chassis, Measurements, Vehicle, getValue
+
     export steeringkinematics!, steeringkinematics, steeringkinematicsNEUTRAL!, steeringkinematicsMOVED!
     export suspensionkinematics!, suspensionkinematicsNEUTRAL!, suspensionkinematicsMOVED!
     export update!
