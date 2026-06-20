@@ -85,9 +85,7 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
                 section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-                steering_copy = deepcopy(steering)
-                suspension_copy = deepcopy(suspension)
-                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+                update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
             end
 
             # Calculation
@@ -216,9 +214,7 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
                 section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-                steering_copy = deepcopy(steering)
-                suspension_copy = deepcopy(suspension)
-                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+                update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
             end
 
 
@@ -341,9 +337,7 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
                 section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-                steering_copy = deepcopy(steering)
-                suspension_copy = deepcopy(suspension)
-                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+                update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
             end
 
 
@@ -914,10 +908,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             θy = section_angle.sg_θ.sliders[2].value.val
             θz = section_angle.sg_θ.sliders[3].value.val
 
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-
-            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx, θy, θz) ,steering_copy, suspension_copy)
+            update_compr_vs_delta_surface!(section_plot, (θx, θy, θz), steering, suspension)
         end
 
     end
@@ -964,7 +955,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
 
     θx_max, θy_max, θz_max = θ_max          
 
-    path = interaction_lyt.path
+    base_path = interaction_lyt.path
 
     fig = interaction_lyt.fig
     section_plot =  interaction_lyt.section_plot
@@ -976,6 +967,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
     section_error =  interaction_lyt.section_error
 
     on(section_plot_settings.btn_save.clicks) do n
+        mkpath(base_path)
 
         θx = section_angle.sg_θ.sliders[1].value.val
         θy = section_angle.sg_θ.sliders[2].value.val
@@ -994,8 +986,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_geo.elevation[] = section_plot.ax_geom.elevation[]
             #fig_geo.geo_ax.zoom[]      = section_plot.ax_geom.zoom[]  # optional
 
-            path = joinpath(path, "geometry(θx,θy,θz)=($θx,$θy,$θz).png")
-            GLMakie.save(path,fig_geo; px_per_unit = 20)
+            file_path = joinpath(base_path, "geometry(θx,θy,θz)=($θx,$θy,$θz).png")
+            GLMakie.save(file_path,fig_geo; px_per_unit = 20)
             GLMakie.display(fig)
 
         end
@@ -1011,8 +1003,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             #ax_geo.elevation[] = section_plot.ax_geom.elevation[]
             #fig_geo.geo_ax.zoom[]      = section_plot.ax_geom.zoom[]  # optional
 
-            path = joinpath(path, "radii(θx,θy,θz)=($θx,$θy,$θz).png")
-            GLMakie.save(path,fig_radii; px_per_unit = 20)
+            file_path = joinpath(base_path, "radii(θx,θy,θz)=($θx,$θy,$θz).png")
+            GLMakie.save(file_path,fig_radii; px_per_unit = 20)
             GLMakie.display(fig)
 
         end
@@ -1026,8 +1018,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             #ax_ratio.azimuth[]   = section_plot.ax_ratio.azimuth[]
             #ax_ratio.elevation[] = section_plot.ax_ratio.elevation[]
 
-            path = joinpath(path, "ackermannratio(θx,θy,θz)=($θx,$θy,θz).png")
-            GLMakie.save(path,fig_ratio)
+            file_path = joinpath(base_path, "ackermannratio(θx,θy,θz)=($θx,$θy,θz).png")
+            GLMakie.save(file_path,fig_ratio)
             GLMakie.display(fig)
         end
 
@@ -1040,8 +1032,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_ratio_surface.azimuth[]   = section_plot.ax_ratio_surface.azimuth[]
             ax_ratio_surface.elevation[] = section_plot.ax_ratio_surface.elevation[]
 
-            path = joinpath(path, "ackermannratio_surface_plot.png")
-            GLMakie.save(path,fig_ratio_surface)
+            file_path = joinpath(base_path, "ackermannratio_surface_plot.png")
+            GLMakie.save(file_path,fig_ratio_surface)
             GLMakie.display(fig)
         end
 
@@ -1055,8 +1047,8 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_θ_vs_δ_surface.azimuth[]   = section_plot.ax_θ_vs_δ_surface.azimuth[]
             ax_θ_vs_δ_surface.elevation[] = section_plot.ax_θ_vs_δ_surface.elevation[]
 
-            path = joinpath(path, "steering_vs_wheel_angles.png")
-            GLMakie.save(path,fig_θ_vs_δ_surface)
+            file_path = joinpath(base_path, "steering_vs_wheel_angles.png")
+            GLMakie.save(file_path,fig_θ_vs_δ_surface)
             GLMakie.display(fig)
         end
 
@@ -1069,36 +1061,40 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             #ax_deviation.azimuth[]   = section_plot.ax_deviation.azimuth[]
             #ax_deviation.elevation[] = section_plot.ax_deviation.elevation[]
 
-            path = joinpath(path, "ackermann_deviation.png")
-            GLMakie.save(path, fig_deviation)
+            file_path = joinpath(base_path, "ackermann_deviation.png")
+            GLMakie.save(file_path, fig_deviation)
             GLMakie.display(fig)
         end
 
         if section_plot_settings.menu.selection.val == "Ackermann deviation surface"
             fig_deviation_surface = deviation_surface_plot(θy, θ_max, chassis, steering, suspension)
 
-            ax_deviation_surface = first(values(fig_deviation_surface.content))
+            for content in values(fig_deviation_surface.content)
+                if content isa Axis3
+                    content.azimuth[] = section_plot.ax_deviation_surface.azimuth[]
+                    content.elevation[] = section_plot.ax_deviation_surface.elevation[]
+                    break
+                end
+            end
 
-            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
-            ax_deviation_surface.azimuth[]   = section_plot.ax_deviation_surface.azimuth[]
-            ax_deviation_surface.elevation[] = section_plot.ax_deviation_surface.elevation[]
-
-            path = joinpath(path, "ackermann_deviation_surface.png")
-            GLMakie.save(path,fig_deviation_surface)
+            file_path = joinpath(base_path, "ackermann_deviation_surface.png")
+            GLMakie.save(file_path,fig_deviation_surface)
             GLMakie.display(fig)
         end
 
         if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
             fig_compr_vs_δ = compr_vs_δ_plot(θx, θy, θz, steering, suspension)
 
-            ax_compr_vs_δ = first(values(fig_compr_vs_δ.content))
+            for content in values(fig_compr_vs_δ.content)
+                if content isa Axis3
+                    content.azimuth[] = section_plot.ax_compr_vs_δ.azimuth[]
+                    content.elevation[] = section_plot.ax_compr_vs_δ.elevation[]
+                    break
+                end
+            end
 
-            # Variante A: nur Az/El (einfach & ausreichend in vielen Fällen)
-            ax_compr_vs_δ.azimuth[]   = section_plot.ax_compr_vs_δ.azimuth[]
-            ax_compr_vs_δ.elevation[] = section_plot.ax_compr_vs_δ.elevation[]
-
-            path = joinpath(path, "compression_vs_wheel_angles.png")
-            GLMakie.save(path,fig_compr_vs_δ)
+            file_path = joinpath(base_path, "compression_vs_wheel_angles.png")
+            GLMakie.save(file_path,fig_compr_vs_δ)
             GLMakie.display(fig)
         end
     end
@@ -1146,7 +1142,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
     θx_max, θy_max, θz_max = θ_max          
 
-    path = interaction_lyt.path
+    base_path = interaction_lyt.path
 
     fig = interaction_lyt.fig
     section_plot =  interaction_lyt.section_plot
@@ -1159,6 +1155,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
 
     on(section_plot_settings.btn_save_all.clicks) do n
+        mkpath(base_path)
 
         θx = section_angle.sg_θ.sliders[1].value.val
         θy = section_angle.sg_θ.sliders[2].value.val
@@ -1174,8 +1171,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_geo.azimuth[]   = section_plot.ax_geom.azimuth[]
         ax_geo.elevation[] = section_plot.ax_geom.elevation[]
 
-        path = joinpath(path, "geometry(θx,θy,θz)=($θx,$θy,$θz).png")
-        GLMakie.save(path,fig_geo; px_per_unit = 20)
+        file_path = joinpath(base_path, "geometry(θx,θy,θz)=($θx,$θy,$θz).png")
+        GLMakie.save(file_path,fig_geo; px_per_unit = 20)
 
 
 
@@ -1185,8 +1182,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         ax_geo = first(values(fig_radii.content))
 
-        path = joinpath(path, "radii(θx,θy,θz)=($θx,$θy,$θz).png")
-        GLMakie.save(path,fig_radii; px_per_unit = 20)
+        file_path = joinpath(base_path, "radii(θx,θy,θz)=($θx,$θy,$θz).png")
+        GLMakie.save(file_path,fig_radii; px_per_unit = 20)
 
 
         ###
@@ -1194,8 +1191,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         ax_ratio = first(values(fig_ratio.content))
 
-        path = joinpath(path, "ackermannratio(θx,θy,θz)=($θx,$θy,θz).png")
-        GLMakie.save(path,fig_ratio)
+        file_path = joinpath(base_path, "ackermannratio(θx,θy,θz)=($θx,$θy,θz).png")
+        GLMakie.save(file_path,fig_ratio)
 
 
         ###
@@ -1207,8 +1204,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_ratio_surface.azimuth[]   = section_plot.ax_ratio_surface.azimuth[]
         ax_ratio_surface.elevation[] = section_plot.ax_ratio_surface.elevation[]
 
-        path = joinpath(path, "ackermannratio_surface_plot.png")
-        GLMakie.save(path,fig_ratio_surface)
+        file_path = joinpath(base_path, "ackermannratio_surface_plot.png")
+        GLMakie.save(file_path,fig_ratio_surface)
 
 
         ###
@@ -1219,8 +1216,8 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_θ_vs_δ_surface.azimuth[]   = section_plot.ax_θ_vs_δ_surface.azimuth[]
         ax_θ_vs_δ_surface.elevation[] = section_plot.ax_θ_vs_δ_surface.elevation[]
 
-        path = joinpath(path, "steering_vs_wheel_angles.png")
-        GLMakie.save(path,fig_θ_vs_δ_surface)
+        file_path = joinpath(base_path, "steering_vs_wheel_angles.png")
+        GLMakie.save(file_path,fig_θ_vs_δ_surface)
 
 
         ###
@@ -1228,32 +1225,38 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         ax_deviation = first(values(fig_deviation.content))
 
-        path = joinpath(path, "ackermann_deviation.png")
-        GLMakie.save(path, fig_deviation)
+        file_path = joinpath(base_path, "ackermann_deviation.png")
+        GLMakie.save(file_path, fig_deviation)
 
 
         ###
         fig_deviation_surface = deviation_surface_plot(θy, θ_max, chassis, steering, suspension)
 
-        ax_deviation_surface = first(values(fig_deviation_surface.content))
+        for content in values(fig_deviation_surface.content)
+            if content isa Axis3
+                content.azimuth[] = section_plot.ax_deviation_surface.azimuth[]
+                content.elevation[] = section_plot.ax_deviation_surface.elevation[]
+                break
+            end
+        end
 
-        ax_deviation_surface.azimuth[]   = section_plot.ax_deviation_surface.azimuth[]
-        ax_deviation_surface.elevation[] = section_plot.ax_deviation_surface.elevation[]
-
-        path = joinpath(path, "ackermann_deviation_surface.png")
-        GLMakie.save(path,fig_deviation_surface)
+        file_path = joinpath(base_path, "ackermann_deviation_surface.png")
+        GLMakie.save(file_path,fig_deviation_surface)
 
 
         ###
         fig_compr_vs_δ = compr_vs_δ_plot(θx, θy, θz, steering, suspension)
 
-        ax_compr_vs_δ = first(values(fig_compr_vs_δ.content))
+        for content in values(fig_compr_vs_δ.content)
+            if content isa Axis3
+                content.azimuth[] = section_plot.ax_compr_vs_δ.azimuth[]
+                content.elevation[] = section_plot.ax_compr_vs_δ.elevation[]
+                break
+            end
+        end
 
-        ax_compr_vs_δ.azimuth[]   = section_plot.ax_compr_vs_δ.azimuth[]
-        ax_compr_vs_δ.elevation[] = section_plot.ax_compr_vs_δ.elevation[]
-
-        path = joinpath(path, "compression_vs_wheel_angles.png")
-        GLMakie.save(path,fig_compr_vs_δ)
+        file_path = joinpath(base_path, "compression_vs_wheel_angles.png")
+        GLMakie.save(file_path,fig_compr_vs_δ)
     end
 
     GLMakie.display(fig)
@@ -1387,9 +1390,7 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
 
         if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
             section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-            steering_copy = deepcopy(steering)
-            suspension_copy = deepcopy(suspension)
-            section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+            update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
         end
 
         # Calculation
@@ -1533,9 +1534,7 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
                 section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-                steering_copy = deepcopy(steering)
-                suspension_copy = deepcopy(suspension)
-                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+                update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
             end
 
 
@@ -1649,9 +1648,7 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
                 section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-                steering_copy = deepcopy(steering)
-                suspension_copy = deepcopy(suspension)
-                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+                update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
             end
 
 
@@ -1765,9 +1762,7 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
                 section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-                steering_copy = deepcopy(steering)
-                suspension_copy = deepcopy(suspension)
-                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+                update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
             end
 
 
@@ -1882,9 +1877,7 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
                 section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
-                steering_copy = deepcopy(steering)
-                suspension_copy = deepcopy(suspension)
-                section_plot.obs_compr_vs_δi[], section_plot.obs_compr_vs_δo[]  = compr_vs_δ((θx,θy,θz),steering_copy, suspension_copy)
+                update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
             end
 
 

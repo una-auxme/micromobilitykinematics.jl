@@ -177,7 +177,7 @@ function radii_plot(θx,θy,θz_max,chassis, steering, suspension)
                             yticks = 0:5000:40000) 
     #ax_radii.blockscene.visible[] = false
     # Limits
-    GLMakie.xlims!(ax_radii, 0, 35)
+    GLMakie.xlims!(ax_radii, 0, θz_max)
     GLMakie.ylims!(ax_radii, 0, 20000)
 
     #GLMakie.autolimits!(ax_radii)
@@ -243,7 +243,7 @@ function ackermannratio_θz_plot(θx,θy,θz_max,chassis, steering, suspension)
                             yticks = 50:5:100)
 
     # Limits
-    GLMakie.xlims!(ax_ratio, 0, 40)
+    GLMakie.xlims!(ax_ratio, 0, θz_max)
     GLMakie.ylims!(ax_ratio, 50, 105)
 
 
@@ -294,8 +294,8 @@ function ratio_surface_plot(θy, θ_max, chassis, steering, suspension)
     
 
     # Limits
-    GLMakie.xlims!(ax_ratio_surface, 0, 15)
-    GLMakie.ylims!(ax_ratio_surface, 0, 30)
+    GLMakie.xlims!(ax_ratio_surface, 0, θx_max)
+    GLMakie.ylims!(ax_ratio_surface, 0, θz_max)
     GLMakie.zlims!(ax_ratio_surface, 50, 105)
 
     ############| Ackermannratio Data
@@ -331,7 +331,7 @@ function deviation_plot(θx,θy,θz_max,chassis, steering, suspension)
 
 
     # Limits
-    GLMakie.xlims!(ax_deviation, 0, 40)
+    GLMakie.xlims!(ax_deviation, 0, θz_max)
     GLMakie.ylims!(ax_deviation, -500,500 )
 
     ############| Ackermannratio Data
@@ -386,8 +386,8 @@ function deviation_surface_plot(θy, θ_max, chassis, steering, suspension)
     
 
     # Limits
-    GLMakie.xlims!(ax_deviation_surface, 0, 20)
-    GLMakie.ylims!(ax_deviation_surface, 0, 40)
+    GLMakie.xlims!(ax_deviation_surface, 0, θx_max)
+    GLMakie.ylims!(ax_deviation_surface, 0, θz_max)
     GLMakie.zlims!(ax_deviation_surface, -500, 500)
 
     ############| Ackermannratio Data
@@ -414,7 +414,7 @@ function deviation_surface_plot(θy, θ_max, chassis, steering, suspension)
                         x_grid,
                         y_grid,
                         z_grid,
-                        color = :red,
+                        colormap = :reds,
                         transparency = true,
                         alpha = 0.3)
     
@@ -441,8 +441,8 @@ function θ_vs_δ_plot(θy, θ_max, steering, suspension)
     
 
     # Limits
-    GLMakie.xlims!(ax_θ_vs_δ_surface, 0, 15)
-    GLMakie.ylims!(ax_θ_vs_δ_surface, 0, 30)
+    GLMakie.xlims!(ax_θ_vs_δ_surface, 0, θx_max)
+    GLMakie.ylims!(ax_θ_vs_δ_surface, 0, θz_max)
     GLMakie.zlims!(ax_θ_vs_δ_surface, 0, 105)
 
     ############| Ackermannratio Data
@@ -480,17 +480,23 @@ function compr_vs_δ_plot(θx, θy, θz, steering, suspension)
     # Limits
     GLMakie.xlims!(ax_compr_vs_δ, 0, 100)
     GLMakie.ylims!(ax_compr_vs_δ, 0, 100)
-    GLMakie.zlims!(ax_compr_vs_δ, 0, 70)
 
     ############| compression vs δi Data
 
     compr_vs_δi, compr_vs_δo= compr_vs_δ((θx, θy, θz), steering, suspension)
+    compression_range = range(0.0, 100.0; length = size(compr_vs_δi, 1))
+    set_compr_vs_delta_zlims!(ax_compr_vs_δ, compr_vs_δi)
 
 
     ############| Ackermannratio Ploting  
 
-    GLMakie.surface!(ax_compr_vs_δ , 1.0:1.0:100, 1.0:1.0:100, compr_vs_δi; colormap = :darkterrain)
-    GLMakie.surface!(ax_compr_vs_δ , 1.0:1.0:100, 1.0:1.0:100, compr_vs_δo; colormap = :darkterrain)
+    GLMakie.surface!(
+        ax_compr_vs_δ,
+        compression_range,
+        compression_range,
+        compr_vs_δi;
+        colormap = :darkterrain,
+    )
 
     return fig
     

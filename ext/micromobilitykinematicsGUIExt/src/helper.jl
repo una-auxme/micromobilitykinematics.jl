@@ -99,7 +99,102 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
 
 end
 
+function surface_zlimits(data; lower_floor = 0.0, min_span = 1.0, padding = 0.08)
+    values = Float64[]
 
+    for value in data
+        if value isa Real && isfinite(value)
+            push!(values, Float64(value))
+        end
+    end
+
+    isempty(values) && return (lower_floor, lower_floor + min_span)
+
+    zmin, zmax = extrema(values)
+
+    if zmin == zmax
+        half_span = max(min_span / 2, abs(zmin) * padding)
+        zmin -= half_span
+        zmax += half_span
+    else
+        pad = max((zmax - zmin) * padding, min_span * 0.05)
+        zmin -= pad
+        zmax += pad
+    end
+
+    zmin = max(lower_floor, zmin)
+    zmax = max(zmax, zmin + eps(Float64))
+
+    return (zmin, zmax)
+end
+
+function clean_tick_label(value, digits)
+    rounded = round(abs(value) < eps(Float64) ? 0.0 : value; digits = digits)
+    label = string(rounded)
+
+    while occursin(".", label) && endswith(label, "0")
+        label = label[1:end-1]
+    end
+
+    if endswith(label, ".")
+        label = label[1:end-1]
+    end
+
+    return label == "-0" ? "0" : label
+end
+
+function nice_tick_step(span; target_count = 6)
+    span <= 0 && return 1.0
+
+    raw_step = span / max(target_count - 1, 1)
+    magnitude = 10.0 ^ floor(log10(raw_step))
+    fraction = raw_step / magnitude
+
+    nice_fraction =
+        fraction <= 1.0  ? 1.0 :
+        fraction <= 2.0  ? 2.0 :
+        fraction <= 2.5  ? 2.5 :
+        fraction <= 5.0  ? 5.0 :
+                            10.0
+
+    return nice_fraction * magnitude
+end
+
+function nice_axis_ticks(zmin, zmax; target_count = 6)
+    step = nice_tick_step(zmax - zmin; target_count = target_count)
+    start_tick = floor(zmin / step) * step
+    stop_tick = ceil(zmax / step) * step
+
+    zmin >= 0 && start_tick < 0 && (start_tick = 0.0)
+
+    tick_count = max(1, Int(round((stop_tick - start_tick) / step)))
+    digits = max(0, Int(ceil(-log10(step))) + 1)
+    ticks = [round(start_tick + i * step; digits = digits + 2) for i in 0:tick_count]
+    labels = [clean_tick_label(tick, digits) for tick in ticks]
+
+    return ticks, labels
+end
+
+function set_compr_vs_delta_zlims!(ax, delta_i_surface)
+    zmin, zmax = surface_zlimits(delta_i_surface)
+    ticks, labels = nice_axis_ticks(zmin, zmax)
+
+    GLMakie.zlims!(ax, first(ticks), last(ticks))
+    ax.zticks = (ticks, labels)
+    nothing
+end
+
+function update_compr_vs_delta_surface!(section_plot, θ, steering, suspension)
+    steering_copy = deepcopy(steering)
+    suspension_copy = deepcopy(suspension)
+    delta_i, delta_o = compr_vs_δ(θ, steering_copy, suspension_copy)
+
+    section_plot.obs_compr_vs_δi[] = delta_i
+    section_plot.obs_compr_vs_δo[] = delta_o
+    set_compr_vs_delta_zlims!(section_plot.ax_compr_vs_δ, delta_i)
+
+    nothing
+end
 
 
 

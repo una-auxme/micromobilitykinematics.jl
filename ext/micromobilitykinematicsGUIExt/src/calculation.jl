@@ -355,16 +355,19 @@ function ackermann_deviation_surface(chassis::Chassis,
 
     for θ in θ_matrix
         θx, θy, θz = θ
-        MMK.update!(θ, steering, suspension)
-
         θx_i = Int(round(θx))
         θz_i = Int(round(θz))
 
-        if steering.δo == 0.0
+        try
+            MMK.update!(θ, steering, suspension)
+
+            if steering.δo == 0.0
+                deviation[θx_i+1,θz_i+1] = NaN
+            else
+                deviation[θx_i+1,θz_i+1] = ackermann_deviation(θ,chassis, steering, suspension)
+            end
+        catch
             deviation[θx_i+1,θz_i+1] = NaN
-        else
-    
-        deviation[θx_i+1,θz_i+1] = ackermann_deviation(θ,chassis, steering, suspension)
         end
     end 
     return deviation
@@ -476,32 +479,24 @@ function compr_vs_δ(θ::Tuple{T,T,T},
                         suspension::Suspension;
                         step_size = 1 ) where {T <: Any}
 
+    compression_values = collect(0.0:step_size:100.0)
+    last(compression_values) == 100.0 || push!(compression_values, 100.0)
+    δi = fill(NaN, length(compression_values), length(compression_values))
+    δo = fill(NaN, length(compression_values), length(compression_values))
 
-    compr_matrix = [(l, r) for l in 1.0:step_size:100, r in 1.0:step_size:100]
-    δi = [ 0.0 for l in 1:step_size:100, r in 1:step_size:100]
-    δo = [ 0.0 for l in 1:step_size:100, r in 1:step_size:100]
-
-    for compr in compr_matrix
-        l_compr, r_compr = compr
-
-
+    for (l_index, l_compr) in enumerate(compression_values), (r_index, r_compr) in enumerate(compression_values)
         suspension.damper[1].compression = l_compr
         suspension.damper[2].compression = r_compr
-        l_compr_i = Int(round(l_compr))
-        r_compr_i = Int(round(r_compr))
 
         try
             MMK.update!(θ, steering, suspension)
 
-            δi[l_compr_i,r_compr_i] = steering.δi
-            δo[l_compr_i,r_compr_i] = steering.δo
+            δi[l_index,r_index] = steering.δi
+            δo[l_index,r_index] = steering.δo
         catch err
-            #println(l_compr, r_compr)
-            δi[l_compr_i,r_compr_i] = NaN
-            δo[l_compr_i,r_compr_i] = NaN
+            δi[l_index,r_index] = NaN
+            δo[l_index,r_index] = NaN
         end
-        
-       
     end 
     
     return δi, δo
