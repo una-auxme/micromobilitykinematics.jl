@@ -501,3 +501,39 @@ function compr_vs_δ(θ::Tuple{T,T,T},
     
     return δi, δo
 end
+
+function left_wheel_delta_vs_compression_θz(θx::T,
+                                            θy::T,
+                                            θz_max::T,
+                                            steering::Steering,
+                                            suspension::Suspension;
+                                            fixed_right_compression = suspension.damper[2].compression,
+                                            step_size = 1) where {T <: Any}
+
+    compression_values = collect(0.0:step_size:100.0)
+    last(compression_values) == 100.0 || push!(compression_values, 100.0)
+
+    θz_values = collect(0.0:step_size:θz_max)
+    last(θz_values) == θz_max || push!(θz_values, θz_max)
+
+    delta_left = fill(NaN, length(compression_values), length(θz_values))
+
+    for (compression_index, left_compression) in enumerate(compression_values), (θz_index, θz) in enumerate(θz_values)
+        suspension.damper[1].compression = left_compression
+        suspension.damper[2].compression = fixed_right_compression
+
+        try
+            MMK.update!((θx, θy, 0.0), steering, suspension)
+            baseline_left_angle = steering.δo
+
+            MMK.update!((θx, θy, θz), steering, suspension)
+            current_left_angle = steering.δo
+
+            delta_left[compression_index, θz_index] = current_left_angle - baseline_left_angle
+        catch
+            delta_left[compression_index, θz_index] = NaN
+        end
+    end
+
+    return delta_left
+end

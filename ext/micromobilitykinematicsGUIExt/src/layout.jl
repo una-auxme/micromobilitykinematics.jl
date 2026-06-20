@@ -222,7 +222,8 @@ function layout_section_plot_settings(fig,slot)
                                                     "Steering vs. wheel angles", 
                                                     "Ackermann deviation", 
                                                     "Ackermann deviation surface",
-                                                    "Compression vs. wheel angles"], 
+                                                    "Compression vs. wheel angles",
+                                                    "Left wheel Δδ vs. compression"], 
                                         default = "Geometry", 
                                         width = 300)
     section_plot_settings.btn_reset = Button(section_plot_settings.suplyt[2, 1], label = "Reset",width = 300)
@@ -442,6 +443,8 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
     deviation_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 
     compr_vs_δ_plot!(fig, section_plot, steering, suspension)
+
+    left_wheel_delta_plot!(fig, section_plot, θ_max, steering, suspension)
 
     return section_plot
 end 

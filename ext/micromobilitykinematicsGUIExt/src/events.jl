@@ -84,8 +84,12 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
-                section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_compr_vs_δ.title = compr_vs_delta_title(θx, θy, θz)
                 update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+                update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
             # Calculation
@@ -213,8 +217,12 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
-                section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_compr_vs_δ.title = compr_vs_delta_title(θx, θy, θz)
                 update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+                update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
 
@@ -336,8 +344,12 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
-                section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_compr_vs_δ.title = compr_vs_delta_title(θx, θy, θz)
                 update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+                update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
 
@@ -677,6 +689,10 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
                 section_plot.obs_ratio_surface[] = ackermann_deviation_surface(chassis_copy, steering_copy, suspension_copy, (θx_max,θy,θz_max))
             end
 
+            if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+                update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
 
             # Calculation
             update_geometry!((θx,θy,θz),section_plot,steering, suspension)
@@ -911,6 +927,20 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             update_compr_vs_delta_surface!(section_plot, (θx, θy, θz), steering, suspension)
         end
 
+        if sel == "Left wheel Δδ vs. compression"
+
+            update_layout_visibility!(interaction_lyt;
+                                        left_wheel_delta = true,
+                                        sg_θx = true,
+                                        sg_θy = true,
+                                        comprR = true)
+
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+
+            update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
+        end
+
     end
 end
 
@@ -1097,6 +1127,22 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             GLMakie.save(file_path,fig_compr_vs_δ)
             GLMakie.display(fig)
         end
+
+        if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+            fig_left_wheel_delta = left_wheel_delta_plot(θx, θy, θz_max, steering, suspension)
+
+            for content in values(fig_left_wheel_delta.content)
+                if content isa Axis3
+                    content.azimuth[] = section_plot.ax_left_wheel_delta.azimuth[]
+                    content.elevation[] = section_plot.ax_left_wheel_delta.elevation[]
+                    break
+                end
+            end
+
+            file_path = joinpath(base_path, "left_wheel_delta_vs_compression.png")
+            GLMakie.save(file_path,fig_left_wheel_delta)
+            GLMakie.display(fig)
+        end
     end
 end
 
@@ -1257,6 +1303,20 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         file_path = joinpath(base_path, "compression_vs_wheel_angles.png")
         GLMakie.save(file_path,fig_compr_vs_δ)
+
+        ###
+        fig_left_wheel_delta = left_wheel_delta_plot(θx, θy, θz_max, steering, suspension)
+
+        for content in values(fig_left_wheel_delta.content)
+            if content isa Axis3
+                content.azimuth[] = section_plot.ax_left_wheel_delta.azimuth[]
+                content.elevation[] = section_plot.ax_left_wheel_delta.elevation[]
+                break
+            end
+        end
+
+        file_path = joinpath(base_path, "left_wheel_delta_vs_compression.png")
+        GLMakie.save(file_path,fig_left_wheel_delta)
     end
 
     GLMakie.display(fig)
@@ -1389,8 +1449,12 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
-            section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_compr_vs_δ.title = compr_vs_delta_title(θx, θy, θz)
             update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
+        end
+
+        if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+            update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
         end
 
         # Calculation
@@ -1533,8 +1597,12 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
-                section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_compr_vs_δ.title = compr_vs_delta_title(θx, θy, θz)
                 update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+                update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
 
@@ -1647,8 +1715,12 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
-                section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_compr_vs_δ.title = compr_vs_delta_title(θx, θy, θz)
                 update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+                update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
 
@@ -1761,8 +1833,12 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
-                section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_compr_vs_δ.title = compr_vs_delta_title(θx, θy, θz)
                 update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+                update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
 
@@ -1876,8 +1952,12 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Compression vs. wheel angles"
-                section_plot.ax_compr_vs_δ.title = "Compression vs. wheel angles for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_compr_vs_δ.title = compr_vs_delta_title(θx, θy, θz)
                 update_compr_vs_delta_surface!(section_plot, (θx,θy,θz), steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
+                update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
 

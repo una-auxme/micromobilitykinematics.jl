@@ -759,9 +759,9 @@ function compr_vs_δ_plot!(fig, section_plot, steering, suspension)
     section_plot.ax_compr_vs_δ = GLMakie.Axis3(fig[row, col],
                                             xlabel = "left compression in [%]", 
                                             ylabel = "right compression in [%]",
-                                            zlabel = "δi in [°]",
+                                            zlabel = "wheel angle δ in [°]",
                                             zticks = 0:5:70, 
-                                            title = "Compression vs. wheel angles",) #
+                                            title = compr_vs_delta_title(),) #
     #section_plot.ax_ratio_surface.aspect = :data
     section_plot.ax_compr_vs_δ.aspect = (1, 1, 1)
     
@@ -775,7 +775,7 @@ function compr_vs_δ_plot!(fig, section_plot, steering, suspension)
 
     compr_vs_δi, compr_vs_δo = compr_vs_δ((θx, θy, θz), steering, suspension)
     compression_range = range(0.0, 100.0; length = size(compr_vs_δi, 1))
-    set_compr_vs_delta_zlims!(section_plot.ax_compr_vs_δ, compr_vs_δi)
+    set_compr_vs_delta_zlims!(section_plot.ax_compr_vs_δ, compr_vs_δi, compr_vs_δo)
 
 
     ############| Ackermannratio Observervar 
@@ -789,7 +789,71 @@ function compr_vs_δ_plot!(fig, section_plot, steering, suspension)
         compression_range,
         compression_range,
         section_plot.obs_compr_vs_δi;
-        colormap = :darkterrain,
+        color = fill(1.0, size(compr_vs_δi)),
+        colormap = [:royalblue, :royalblue],
+        colorrange = (0.0, 1.0),
+        transparency = true,
+        alpha = 0.78,
+    )
+
+    GLMakie.surface!(
+        section_plot.ax_compr_vs_δ,
+        compression_range,
+        compression_range,
+        section_plot.obs_compr_vs_δo;
+        color = fill(1.0, size(compr_vs_δo)),
+        colormap = [:darkorange, :darkorange],
+        colorrange = (0.0, 1.0),
+        transparency = true,
+        alpha = 0.70,
     )
     
+end
+
+function left_wheel_delta_plot!(fig, section_plot, θ_max, steering, suspension)
+    θx_max, θy_max, θz_max = θ_max
+
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+    θx = steering.θx
+    θy = steering.θy
+    right_compression = suspension.damper[2].compression
+
+    section_plot.ax_left_wheel_delta = GLMakie.Axis3(fig[row, col],
+                                            xlabel = "left compression in [%]",
+                                            ylabel = "θz in [°]",
+                                            zlabel = "left wheel Δδ in [°]",
+                                            title = left_wheel_delta_title(θx, θy, right_compression, θz_max),)
+    section_plot.ax_left_wheel_delta.aspect = (1, 1, 1)
+
+    set_axis_visible!(section_plot.ax_left_wheel_delta, false)
+
+    GLMakie.xlims!(section_plot.ax_left_wheel_delta, 0, 100)
+    GLMakie.ylims!(section_plot.ax_left_wheel_delta, 0, θz_max)
+
+    delta_left = left_wheel_delta_vs_compression_θz(
+        θx,
+        θy,
+        θz_max,
+        steering,
+        suspension;
+        fixed_right_compression = right_compression,
+    )
+    compression_range = range(0.0, 100.0; length = size(delta_left, 1))
+    θz_range = range(0.0, θz_max; length = size(delta_left, 2))
+
+    section_plot.obs_left_wheel_delta = Observable(delta_left)
+    set_left_wheel_delta_zlims!(section_plot.ax_left_wheel_delta, delta_left)
+
+    GLMakie.surface!(
+        section_plot.ax_left_wheel_delta,
+        compression_range,
+        θz_range,
+        section_plot.obs_left_wheel_delta;
+        colormap = :viridis,
+    )
+
+    nothing
 end

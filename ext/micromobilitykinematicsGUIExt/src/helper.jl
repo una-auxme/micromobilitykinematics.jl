@@ -4,6 +4,10 @@ function set_axis_visible!(ax, v::Bool)
     ax.scene.visible[]      = v   # Plots (lines!, scatter!, …)
 end
 
+compr_vs_delta_title() = "Compression vs. wheel angles (δi = blue, δo = orange)"
+compr_vs_delta_title(θx, θy, θz) = "$(compr_vs_delta_title()) for (θx, θy, θz) = ($θx,$θy,$θz)"
+left_wheel_delta_title(θx, θy, right_compression, θz_max) = "Left wheel Δδ vs. compression and θz (θx, θy, right compression, θz max) = ($θx,$θy,$right_compression,$θz_max)"
+
 """
     update_layout_visibility!(interaction_lyt::InteractionLyt; 
                                 geom = false, 
@@ -14,6 +18,7 @@ end
                                 deviation = false, 
                                 deviation_surf = false, 
                                 compr_vs_δ = false, 
+                                left_wheel_delta = false,
                                 sg_θx = false, 
                                 sg_θy = false, 
                                 sg_θz = false, 
@@ -57,6 +62,7 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
                                         deviation = false, 
                                         deviation_surf = false, 
                                         compr_vs_δ = false, 
+                                        left_wheel_delta = false,
                                         sg_θx = false, 
                                         sg_θy = false, 
                                         sg_θz = false, 
@@ -84,6 +90,7 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
     set_axis_visible!(section_plot.ax_deviation,         deviation)
     set_axis_visible!(section_plot.ax_deviation_surface, deviation_surf)
     set_axis_visible!(section_plot.ax_compr_vs_δ,        compr_vs_δ)
+    set_axis_visible!(section_plot.ax_left_wheel_delta,   left_wheel_delta)
 
 
 
@@ -99,12 +106,14 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
 
 end
 
-function surface_zlimits(data; lower_floor = 0.0, min_span = 1.0, padding = 0.08)
+function surface_zlimits(data_surfaces...; lower_floor = 0.0, min_span = 1.0, padding = 0.08)
     values = Float64[]
 
-    for value in data
-        if value isa Real && isfinite(value)
-            push!(values, Float64(value))
+    for data in data_surfaces
+        for value in data
+            if value isa Real && isfinite(value)
+                push!(values, Float64(value))
+            end
         end
     end
 
@@ -175,8 +184,17 @@ function nice_axis_ticks(zmin, zmax; target_count = 6)
     return ticks, labels
 end
 
-function set_compr_vs_delta_zlims!(ax, delta_i_surface)
-    zmin, zmax = surface_zlimits(delta_i_surface)
+function set_compr_vs_delta_zlims!(ax, delta_surfaces...)
+    zmin, zmax = surface_zlimits(delta_surfaces...)
+    ticks, labels = nice_axis_ticks(zmin, zmax)
+
+    GLMakie.zlims!(ax, first(ticks), last(ticks))
+    ax.zticks = (ticks, labels)
+    nothing
+end
+
+function set_left_wheel_delta_zlims!(ax, delta_surface)
+    zmin, zmax = surface_zlimits(delta_surface; lower_floor = -Inf)
     ticks, labels = nice_axis_ticks(zmin, zmax)
 
     GLMakie.zlims!(ax, first(ticks), last(ticks))
@@ -191,11 +209,29 @@ function update_compr_vs_delta_surface!(section_plot, θ, steering, suspension)
 
     section_plot.obs_compr_vs_δi[] = delta_i
     section_plot.obs_compr_vs_δo[] = delta_o
-    set_compr_vs_delta_zlims!(section_plot.ax_compr_vs_δ, delta_i)
+    set_compr_vs_delta_zlims!(section_plot.ax_compr_vs_δ, delta_i, delta_o)
 
     nothing
 end
 
+function update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
+    steering_copy = deepcopy(steering)
+    suspension_copy = deepcopy(suspension)
+    right_compression = suspension.damper[2].compression
 
+    delta_left = left_wheel_delta_vs_compression_θz(
+        θx,
+        θy,
+        θz_max,
+        steering_copy,
+        suspension_copy;
+        fixed_right_compression = right_compression,
+    )
 
+    section_plot.obs_left_wheel_delta[] = delta_left
+    set_left_wheel_delta_zlims!(section_plot.ax_left_wheel_delta, delta_left)
+    section_plot.ax_left_wheel_delta.title = left_wheel_delta_title(θx, θy, right_compression, θz_max)
+
+    nothing
+end
 
