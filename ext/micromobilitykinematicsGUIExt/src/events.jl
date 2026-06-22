@@ -64,15 +64,19 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Radii"
                 section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann ratio"
-                section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
                 ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
                 section_plot.obs_ratio_θz[] = ratio_θz
                 section_plot.obs_ratio_min[] = minimum(ratio_θz)
                 section_plot.obs_ratio_max[] = maximum(ratio_θz)
+            end
+
+            if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+                update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann deviation"
@@ -190,20 +194,23 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Radii"
                 section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann ratio"
-                section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
                 ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
                 section_plot.obs_ratio_θz[] = ratio_θz
                 section_plot.obs_ratio_min[] = minimum(ratio_θz)
                 section_plot.obs_ratio_max[] = maximum(ratio_θz)
             end
 
+            if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+                update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
+            end
+
             if section_plot_settings.menu.selection.val == "Steering vs. wheel angles"
-                section_plot.ax_θ_vs_δ_surface.title = "Steering vs. wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
-                section_plot.ax_θ_vs_δ_surface.title = "Steering vs. wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+                section_plot.ax_θ_vs_δ_surface.title = theta_vs_delta_title(θx_max, θy, θz_max)
                 section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
                 section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
             end
@@ -318,19 +325,23 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Radii"
                 section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann ratio"
-                section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
                 ratio_θz = ackermannratio_θz(θx, θy, θz_max, chassis, steering, suspension)
                 section_plot.obs_ratio_θz[] = ratio_θz
                 section_plot.obs_ratio_min[] = minimum(ratio_θz)
                 section_plot.obs_ratio_max[] = maximum(ratio_θz)
             end
 
+            if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+                update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
+            end
+
             if section_plot_settings.menu.selection.val == "Steering vs. wheel angles"
-                section_plot.ax_θ_vs_δ_surface.title = "Steering vs. wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+                section_plot.ax_θ_vs_δ_surface.title = theta_vs_delta_title(θx_max, θy, θz_max)
                 section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
                 section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
             end
@@ -497,19 +508,23 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Radii"
                 section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann ratio"
-                section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
                 ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
                 section_plot.obs_ratio_θz[] = ratio_θz
                 section_plot.obs_ratio_min[] = minimum(ratio_θz)
                 section_plot.obs_ratio_max[] = maximum(ratio_θz)
             end
 
+            if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+                update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
+            end
+
             if section_plot_settings.menu.selection.val == "Ackermann ratio surface plot"
-                section_plot.ax_ratio_surface.title = "Ackermann ratio surface plot"
+                section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title()
                 chassis_copy = deepcopy(chassis)
                 steering_copy = deepcopy(steering)
                 suspension_copy = deepcopy(suspension)
@@ -518,7 +533,7 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Steering vs. wheel angles"
-                section_plot.ax_θ_vs_δ_surface.title = "Steering vs. wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+                section_plot.ax_θ_vs_δ_surface.title = theta_vs_delta_title(θx_max, θy, θz_max)
                 section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
                 section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
             end
@@ -647,19 +662,23 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Radii"
                 section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann ratio"
-                section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
                 ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
                 section_plot.obs_ratio_θz[] = ratio_θz
                 section_plot.obs_ratio_min[] = minimum(ratio_θz)
                 section_plot.obs_ratio_max[] = maximum(ratio_θz)
             end
 
+            if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+                update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
+            end
+
             if section_plot_settings.menu.selection.val == "Ackermann ratio surface plot"
-                section_plot.ax_ratio_surface.title = "Ackermann ratio surface plot"
+                section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title()
                 chassis_copy = deepcopy(chassis)
                 steering_copy = deepcopy(steering)
                 suspension_copy = deepcopy(suspension)
@@ -668,7 +687,7 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Steering vs. wheel angles"
-                section_plot.ax_θ_vs_δ_surface.title = "Steering vs. wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+                section_plot.ax_θ_vs_δ_surface.title = theta_vs_delta_title(θx_max, θy, θz_max)
                 section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
                 section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
             end
@@ -832,7 +851,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
 
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
         end
 
 
@@ -847,8 +866,24 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
 
             θx = section_angle.sg_θ.sliders[1].value.val
             θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
 
-            section_plot.obs_ratio_θz[] = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
+            update_ratio_θz_plot!(section_plot, θx, θy, θz, θz_max, chassis, steering, suspension)
+        end
+
+        if sel == "Ackermann ratio θx sweep"
+
+            update_layout_visibility!(interaction_lyt; 
+                                        ratio_θx = true, 
+                                        sg_θy = true,
+                                        sg_θz = true,
+                                        comprL = true, 
+                                        comprR = true)
+
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
+
+            update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
         end
 
         if sel == "Ackermann ratio surface plot"
@@ -861,7 +896,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
 
             θy = section_angle.sg_θ.sliders[2].value.val
 
-            section_plot.obs_ratio_surface[] = ackermannratio_surface(chassis, steering, suspension, (θx_max,θy,θz_max))
+            update_ratio_surface_plot!(section_plot, θy, θ_max, chassis, steering, suspension)
         end
 
         if sel == "Steering vs. wheel angles"
@@ -874,7 +909,7 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
 
             θy = section_angle.sg_θ.sliders[2].value.val
 
-            section_plot.ax_θ_vs_δ_surface.title = "Steering vs. wheel angles for (θx, θy, θz) = ($θx_max,$θy,$θz_max)"
+            section_plot.ax_θ_vs_δ_surface.title = theta_vs_delta_title(θx_max, θy, θz_max)
             section_plot.obs_θ_vs_δi_surface[] = ax_θ_vs_δi(steering, suspension, (θx_max, θy, θz_max))
             section_plot.obs_θ_vs_δo_surface[] = ax_θ_vs_δo(steering, suspension, (θx_max, θy, θz_max))
         end
@@ -942,6 +977,26 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
         end
 
     end
+end
+
+
+function event_ackermann_ratio_signed(interaction_lyt::InteractionLyt,
+                                        θ_max, 
+                                        chassis::Chassis, 
+                                        steering::Steering,
+                                        suspension::Suspension)
+
+    section_plot_settings = interaction_lyt.section_plot_settings
+
+    on(section_plot_settings.cb_signed_ratio.checked) do signed
+        set_ackermann_ratio_signed!(signed)
+
+        @safe_ui steering suspension interaction_lyt begin
+            update_current_ackermann_ratio_views!(interaction_lyt, θ_max, chassis, steering, suspension)
+        end
+    end
+
+    nothing
 end
 
 
@@ -1050,6 +1105,14 @@ function event_btn_save(interaction_lyt::InteractionLyt,
 
             file_path = joinpath(base_path, "ackermannratio(θx,θy,θz)=($θx,$θy,θz).png")
             GLMakie.save(file_path,fig_ratio)
+            GLMakie.display(fig)
+        end
+
+        if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+            fig_ratio_θx = ackermannratio_θx_plot(θx_max, θy, θz, chassis, steering, suspension)
+
+            file_path = joinpath(base_path, "ackermannratio_theta_x_sweep.png")
+            GLMakie.save(file_path, fig_ratio_θx)
             GLMakie.display(fig)
         end
 
@@ -1242,6 +1305,13 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
 
         ###
+        fig_ratio_θx = ackermannratio_θx_plot(θx_max, θy, θz, chassis, steering, suspension)
+
+        file_path = joinpath(base_path, "ackermannratio_theta_x_sweep.png")
+        GLMakie.save(file_path, fig_ratio_θx)
+
+
+        ###
         fig_ratio_surface = ratio_surface_plot(θy, θ_max, chassis, steering, suspension)
 
         ax_ratio_surface = first(values(fig_ratio_surface.content))
@@ -1412,19 +1482,23 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
 
         if section_plot_settings.menu.selection.val == "Radii"
             section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+            section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
         end
 
         if section_plot_settings.menu.selection.val == "Ackermann ratio"
-            section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
             ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
             section_plot.obs_ratio_θz[] = ratio_θz
             section_plot.obs_ratio_min[] = minimum(ratio_θz)
             section_plot.obs_ratio_max[] = maximum(ratio_θz)
         end
 
+        if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+            update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
+        end
+
         if section_plot_settings.menu.selection.val == "Ackermann ratio surface plot"
-            section_plot.ax_ratio_surface.title = "Ackermann ratio surface plot"
+            section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title()
             chassis_copy = deepcopy(chassis)
             steering_copy = deepcopy(steering)
             suspension_copy = deepcopy(suspension)
@@ -1560,19 +1634,23 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Radii"
                 section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann ratio"
-                section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
                 ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
                 section_plot.obs_ratio_θz[] = ratio_θz
                 section_plot.obs_ratio_min[] = minimum(ratio_θz)
                 section_plot.obs_ratio_max[] = maximum(ratio_θz)
             end
 
+            if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+                update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
+            end
+
             if section_plot_settings.menu.selection.val == "Ackermann ratio surface plot"
-                section_plot.ax_ratio_surface.title = "Ackermann ratio surface plot"
+                section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title()
                 chassis_copy = deepcopy(chassis)
                 steering_copy = deepcopy(steering)
                 suspension_copy = deepcopy(suspension)
@@ -1678,19 +1756,23 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Radii"
                 section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann ratio"
-                section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
                 ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
                 section_plot.obs_ratio_θz[] = ratio_θz
                 section_plot.obs_ratio_min[] = minimum(ratio_θz)
                 section_plot.obs_ratio_max[] = maximum(ratio_θz)
             end
 
+            if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+                update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
+            end
+
             if section_plot_settings.menu.selection.val == "Ackermann ratio surface plot"
-                section_plot.ax_ratio_surface.title = "Ackermann ratio surface plot"
+                section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title()
                 chassis_copy = deepcopy(chassis)
                 steering_copy = deepcopy(steering)
                 suspension_copy = deepcopy(suspension)
@@ -1796,19 +1878,23 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Radii"
                 section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann ratio"
-                section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
                 ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
                 section_plot.obs_ratio_θz[] = ratio_θz
                 section_plot.obs_ratio_min[] = minimum(ratio_θz)
                 section_plot.obs_ratio_max[] = maximum(ratio_θz)
             end
 
+            if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+                update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
+            end
+
             if section_plot_settings.menu.selection.val == "Ackermann ratio surface plot"
-                section_plot.ax_ratio_surface.title = "Ackermann ratio surface plot"
+                section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title()
                 chassis_copy = deepcopy(chassis)
                 steering_copy = deepcopy(steering)
                 suspension_copy = deepcopy(suspension)
@@ -1914,19 +2000,23 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Radii"
                 section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
-                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+                section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
             if section_plot_settings.menu.selection.val == "Ackermann ratio"
-                section_plot.ax_ratio.title = "Ackermann ratio for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz)
                 ratio_θz = ackermannratio_θz(θx,θy,θz_max,chassis, steering, suspension)
                 section_plot.obs_ratio_θz[] = ratio_θz
                 section_plot.obs_ratio_min[] = minimum(ratio_θz)
                 section_plot.obs_ratio_max[] = maximum(ratio_θz)
             end
 
+            if section_plot_settings.menu.selection.val == "Ackermann ratio θx sweep"
+                update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension)
+            end
+
             if section_plot_settings.menu.selection.val == "Ackermann ratio surface plot"
-                section_plot.ax_ratio_surface.title = "Ackermann ratio surface plot"
+                section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title()
                 chassis_copy = deepcopy(chassis)
                 steering_copy = deepcopy(steering)
                 suspension_copy = deepcopy(suspension)

@@ -218,6 +218,7 @@ function layout_section_plot_settings(fig,slot)
                                         options = ["Geometry", 
                                                     "Radii", 
                                                     "Ackermann ratio", 
+                                                    "Ackermann ratio θx sweep",
                                                     "Ackermann ratio surface plot", 
                                                     "Steering vs. wheel angles", 
                                                     "Ackermann deviation", 
@@ -226,10 +227,17 @@ function layout_section_plot_settings(fig,slot)
                                                     "Left wheel Δδ vs. compression"], 
                                         default = "Geometry", 
                                         width = 300)
-    section_plot_settings.btn_reset = Button(section_plot_settings.suplyt[2, 1], label = "Reset",width = 300)
-    section_plot_settings.btn_save = Button(section_plot_settings.suplyt[3, 1], label = "Save current plot",width = 300)
-    section_plot_settings.btn_save_all = Button(section_plot_settings.suplyt[4, 1], label = "Save all plots",width = 300)
-    section_plot_settings.btn_export = Button(section_plot_settings.suplyt[5, 1], label = "XML-Export",width = 300)
+    section_plot_settings.signed_ratio_lyt = GridLayout(tellheight = false)
+    section_plot_settings.suplyt[2, 1] = section_plot_settings.signed_ratio_lyt
+    set_ackermann_ratio_signed!(false)
+    section_plot_settings.cb_signed_ratio = Checkbox(section_plot_settings.signed_ratio_lyt[1, 1], checked = false)
+    section_plot_settings.lbl_signed_ratio = Label(section_plot_settings.signed_ratio_lyt[1, 2], "Signed Ackermann ratio", halign = :left)
+    colsize!(section_plot_settings.signed_ratio_lyt, 1, Fixed(30))
+
+    section_plot_settings.btn_reset = Button(section_plot_settings.suplyt[3, 1], label = "Reset",width = 300)
+    section_plot_settings.btn_save = Button(section_plot_settings.suplyt[4, 1], label = "Save current plot",width = 300)
+    section_plot_settings.btn_save_all = Button(section_plot_settings.suplyt[5, 1], label = "Save all plots",width = 300)
+    section_plot_settings.btn_export = Button(section_plot_settings.suplyt[6, 1], label = "XML-Export",width = 300)
 
     rowgap!(section_plot_settings.lyt, 1, 0)
 
@@ -431,6 +439,7 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
 
     ##############| ackermannratio Plot
     ratio_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
+    ratio_θx_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
 
     ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 

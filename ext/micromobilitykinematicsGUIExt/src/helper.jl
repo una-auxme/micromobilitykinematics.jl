@@ -6,6 +6,12 @@ end
 
 compr_vs_delta_title() = "Compression vs. wheel angles (δi = blue, δo = orange)"
 compr_vs_delta_title(θx, θy, θz) = "$(compr_vs_delta_title()) for (θx, θy, θz) = ($θx,$θy,$θz)"
+theta_vs_delta_title() = "Steering vs. wheel angles (δi = blue, δo = orange)"
+theta_vs_delta_title(θx_max, θy, θz_max) = "$(theta_vs_delta_title()) for (θx max, θy, θz max) = ($θx_max,$θy,$θz_max)"
+ackermann_ratio_mode_label(; signed = ackermann_ratio_signed()) = signed ? "signed Ackermann ratio" : "Ackermann ratio"
+ackermann_ratio_title(θx, θy, θz; signed = ackermann_ratio_signed()) = "$(ackermann_ratio_mode_label(; signed = signed)) for (θx, θy, θz) = ($θx,$θy,$θz)"
+ackermann_ratio_θx_title(θy, θz; signed = ackermann_ratio_signed()) = "$(ackermann_ratio_mode_label(; signed = signed)) over θx for (θy, θz) = ($θy,$θz)"
+ackermann_ratio_surface_title(; signed = ackermann_ratio_signed()) = signed ? "Signed Ackermann ratio surface plot" : "Ackermann ratio surface plot"
 left_wheel_delta_title(θx, θy, right_compression, θz_max) = "Left wheel Δδ vs. compression and θz (θx, θy, right compression, θz max) = ($θx,$θy,$right_compression,$θz_max)"
 
 """
@@ -57,6 +63,7 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
                                         geom = false, 
                                         radii = false, 
                                         ratio = false, 
+                                        ratio_θx = false, 
                                         ratio_surf = false, 
                                         θ_vs_δ = false, 
                                         deviation = false, 
@@ -85,6 +92,7 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
     set_axis_visible!(section_plot.ax_geom,              geom)
     set_axis_visible!(section_plot.ax_radii,             radii)
     set_axis_visible!(section_plot.ax_ratio,             ratio)
+    set_axis_visible!(section_plot.ax_ratio_θx,          ratio_θx)
     set_axis_visible!(section_plot.ax_ratio_surface,     ratio_surf)
     set_axis_visible!(section_plot.ax_θ_vs_δ_surface,    θ_vs_δ)
     set_axis_visible!(section_plot.ax_deviation,         deviation)
@@ -184,6 +192,107 @@ function nice_axis_ticks(zmin, zmax; target_count = 6)
     return ticks, labels
 end
 
+function finite_plot_values(data)
+    values = Float64[]
+
+    for value in data
+        if value isa Real && isfinite(value)
+            push!(values, Float64(value))
+        end
+    end
+
+    return values
+end
+
+function finite_minimum(data)
+    values = finite_plot_values(data)
+    isempty(values) && return NaN
+    return minimum(values)
+end
+
+function finite_maximum(data)
+    values = finite_plot_values(data)
+    isempty(values) && return NaN
+    return maximum(values)
+end
+
+function signed_ratio_axis_ticks(data; lower_default = 30.0, upper_default = 105.0)
+    values = finite_plot_values(data)
+    isempty(values) && return (lower_default:5.0:upper_default, string.(lower_default:5.0:upper_default))
+
+    ymin, ymax = extrema([values; 100.0])
+    span = max(ymax - ymin, 10.0)
+    padding = max(0.08 * span, 2.0)
+    ymin = min(lower_default, ymin - padding)
+    ymax = max(upper_default, ymax + padding)
+
+    return nice_axis_ticks(ymin, ymax)
+end
+
+function set_ratio_ylims!(ax, data; signed = ackermann_ratio_signed(), lower_default = 30.0, upper_default = 105.0)
+    if signed
+        ticks, labels = signed_ratio_axis_ticks(data; lower_default = lower_default, upper_default = upper_default)
+        GLMakie.ylims!(ax, first(ticks), last(ticks))
+        ax.yticks = (ticks, labels)
+    else
+        GLMakie.ylims!(ax, lower_default, upper_default)
+        ax.yticks = lower_default:5.0:(upper_default - 5.0)
+    end
+
+    nothing
+end
+
+function set_ratio_zlims!(ax, data; signed = ackermann_ratio_signed(), lower_default = 50.0, upper_default = 105.0)
+    if signed
+        ticks, labels = signed_ratio_axis_ticks(data; lower_default = lower_default, upper_default = upper_default)
+        GLMakie.zlims!(ax, first(ticks), last(ticks))
+        ax.zticks = (ticks, labels)
+    else
+        GLMakie.zlims!(ax, lower_default, upper_default)
+        ax.zticks = lower_default:10.0:(upper_default - 5.0)
+    end
+
+    nothing
+end
+
+function ratio_surface_colorrange(data; signed = ackermann_ratio_signed(), lower_default = 50.0, upper_default = 105.0)
+    if signed
+        ticks, labels = signed_ratio_axis_ticks(data; lower_default = lower_default, upper_default = upper_default)
+        return (first(ticks), last(ticks))
+    end
+
+    values = finite_plot_values(data)
+    isempty(values) && return (lower_default, upper_default)
+
+    zmin, zmax = extrema(values)
+    zmin == zmax && return (zmin - 1.0, zmax + 1.0)
+
+    return (zmin, zmax)
+end
+
+function signed_ackermann_ratio_colormap(data)
+    zmin, zmax = ratio_surface_colorrange(data; signed = true)
+    cutoff = clamp((100.0 - zmin) / max(zmax - zmin, eps(Float64)), 0.0, 1.0)
+    hard_edge = 1e-6
+
+    if cutoff <= hard_edge
+        return cgrad([:darkorange, :firebrick])
+    end
+
+    if cutoff >= 1.0 - hard_edge
+        return cgrad([:royalblue, :deepskyblue])
+    end
+
+    return cgrad(
+        [:royalblue, :deepskyblue, :deepskyblue, :darkorange, :firebrick],
+        [0.0, cutoff - hard_edge, cutoff, cutoff + hard_edge, 1.0],
+    )
+end
+
+function ackermann_ratio_surface_colormap(data; signed = ackermann_ratio_signed())
+    signed ? signed_ackermann_ratio_colormap(data) : cgrad(:darkterrain)
+end
+
 function set_compr_vs_delta_zlims!(ax, delta_surfaces...)
     zmin, zmax = surface_zlimits(delta_surfaces...)
     ticks, labels = nice_axis_ticks(zmin, zmax)
@@ -235,3 +344,74 @@ function update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steer
     nothing
 end
 
+function update_ratio_θz_plot!(section_plot, θx, θy, θz, θz_max, chassis, steering, suspension; signed = ackermann_ratio_signed())
+    ratio_θz = ackermannratio_θz(θx, θy, θz_max, chassis, steering, suspension; signed = signed)
+
+    section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz; signed = signed)
+    section_plot.obs_ratio_θz[] = ratio_θz
+    section_plot.obs_ratio_min[] = finite_minimum(ratio_θz)
+    section_plot.obs_ratio_max[] = finite_maximum(ratio_θz)
+    set_ratio_ylims!(section_plot.ax_ratio, ratio_θz; signed = signed, lower_default = 30.0)
+
+    nothing
+end
+
+function update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension; signed = ackermann_ratio_signed())
+    chassis_copy = deepcopy(chassis)
+    steering_copy = deepcopy(steering)
+    suspension_copy = deepcopy(suspension)
+    ratio_θx = ackermannratio_θx(θx_max, θy, θz, chassis_copy, steering_copy, suspension_copy; signed = signed)
+
+    section_plot.ax_ratio_θx.title = ackermann_ratio_θx_title(θy, θz; signed = signed)
+    section_plot.obs_ratio_θx[] = ratio_θx
+    section_plot.obs_ratio_θx_min[] = finite_minimum(ratio_θx)
+    section_plot.obs_ratio_θx_max[] = finite_maximum(ratio_θx)
+    set_ratio_ylims!(section_plot.ax_ratio_θx, ratio_θx; signed = signed, lower_default = 30.0)
+
+    nothing
+end
+
+function update_ratio_surface_plot!(section_plot, θy, θ_max, chassis, steering, suspension; signed = ackermann_ratio_signed())
+    θx_max, θy_max, θz_max = θ_max
+    chassis_copy = deepcopy(chassis)
+    steering_copy = deepcopy(steering)
+    suspension_copy = deepcopy(suspension)
+    ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max); signed = signed)
+
+    section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title(; signed = signed)
+    section_plot.obs_ratio_surface[] = ratio_surface
+    set_ratio_zlims!(section_plot.ax_ratio_surface, ratio_surface; signed = signed)
+
+    nothing
+end
+
+function update_current_ackermann_ratio_views!(interaction_lyt, θ_max, chassis, steering, suspension)
+    θx_max, θy_max, θz_max = θ_max
+    section_plot = interaction_lyt.section_plot
+    section_angle = interaction_lyt.section_angle
+    section_plot_settings = interaction_lyt.section_plot_settings
+    section_info = interaction_lyt.section_info
+
+    θx = section_angle.sg_θ.sliders[1].value.val
+    θy = section_angle.sg_θ.sliders[2].value.val
+    θz = section_angle.sg_θ.sliders[3].value.val
+    signed = ackermann_ratio_signed()
+    selected_plot = section_plot_settings.menu.selection.val
+
+    if selected_plot == "Ackermann ratio"
+        update_ratio_θz_plot!(section_plot, θx, θy, θz, θz_max, chassis, steering, suspension; signed = signed)
+    end
+
+    if selected_plot == "Ackermann ratio θx sweep"
+        update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension; signed = signed)
+    end
+
+    if selected_plot == "Ackermann ratio surface plot"
+        update_ratio_surface_plot!(section_plot, θy, θ_max, chassis, steering, suspension; signed = signed)
+    end
+
+    ratio = ackermannratio((θx,θy,θz), chassis, steering, suspension; signed = signed)
+    section_info.tb_ratio.displayed_string = "Ackermann ratio: $(round(ratio, digits=2))%"
+
+    nothing
+end

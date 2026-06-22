@@ -210,20 +210,20 @@ function radii_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     ############| Radii θz Scene
     section_plot.ax_radii = GLMakie.Axis(fig[row, col], 
                             xlabel = "θz in [°]", 
-                            ylabel = "radius in [mm]", 
+                            ylabel = "radius in [m]", 
                             title = "Radii for (θx, θy, θz) = (0,0,0)",
-                            yticks = 0:5000:40000) 
+                            yticks = 0:5:40) 
     
     set_axis_visible!(section_plot.ax_radii, false)
 
     # Limits
     GLMakie.xlims!(section_plot.ax_radii, 0, θz_max)
-    GLMakie.ylims!(section_plot.ax_radii, 0, 20000)
+    GLMakie.ylims!(section_plot.ax_radii, 0, 20)
 
     #GLMakie.autolimits!(ax_radii)
 
     ############| Radii θz Data
-    radii_θz = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension)
+    radii_θz = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
 
     ############| Radii θz Observervar 
     section_plot.obs_radii_θz = Observable(radii_θz)
@@ -282,7 +282,7 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     section_plot.ax_ratio = GLMakie.Axis(fig[row, col], 
                                             xlabel = "θz in [°]", 
                                             ylabel = "Ackermann ratio [%]", 
-                                            title = "Ackermann ratio for (θx, θy, θz) = (0,0,0)", 
+                                            title = ackermann_ratio_title(θx, θy, θz), 
                                             xticks = 0:5:40,
                                             yticks = 30:5:100)
 
@@ -299,8 +299,9 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
     ############| Ackermannratio Observervar 
 
     section_plot.obs_ratio_θz = Observable(ratio)
-    section_plot.obs_ratio_min = Observable(minimum(ratio))
-    section_plot.obs_ratio_max = Observable(maximum(ratio))
+    section_plot.obs_ratio_min = Observable(finite_minimum(ratio))
+    section_plot.obs_ratio_max = Observable(finite_maximum(ratio))
+    set_ratio_ylims!(section_plot.ax_ratio, ratio)
 
 
 
@@ -332,6 +333,72 @@ function ratio_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
 
     lift(section_plot.obs_ratio_max) do val
         section_plot.txt_ratio_max.text = "Max → $(round(val, digits=2))%"
+    end
+
+    on(section_plot.obs_ratio_θz) do values
+        set_ratio_ylims!(section_plot.ax_ratio, values)
+    end
+
+end
+
+function ratio_θx_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
+
+    θx_max, θy_max, θz_max = θ_max
+
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+    θy = steering.θy
+    θz = steering.θz
+
+    section_plot.ax_ratio_θx = GLMakie.Axis(fig[row, col],
+                                            xlabel = "θx in [°]",
+                                            ylabel = "Ackermann ratio [%]",
+                                            title = ackermann_ratio_θx_title(θy, θz),
+                                            xticks = 0:5:θx_max,
+                                            yticks = 30:5:100)
+
+    set_axis_visible!(section_plot.ax_ratio_θx, false)
+
+    GLMakie.xlims!(section_plot.ax_ratio_θx, 0, θx_max)
+    GLMakie.ylims!(section_plot.ax_ratio_θx, 30, 105)
+
+    ratio = ackermannratio_θx(θx_max, θy, θz, chassis, steering, suspension)
+
+    section_plot.obs_ratio_θx = Observable(ratio)
+    section_plot.obs_ratio_θx_min = Observable(finite_minimum(ratio))
+    section_plot.obs_ratio_θx_max = Observable(finite_maximum(ratio))
+    set_ratio_ylims!(section_plot.ax_ratio_θx, ratio)
+
+    xs = [θx for θx in 0.0:1.0:θx_max]
+
+    GLMakie.lines!(section_plot.ax_ratio_θx, xs, section_plot.obs_ratio_θx)
+    GLMakie.hlines!(section_plot.ax_ratio_θx, section_plot.obs_ratio_θx_min, linestyle = :dash, color = :orange)
+    GLMakie.hlines!(section_plot.ax_ratio_θx, section_plot.obs_ratio_θx_max, linestyle = :dash, color = :red)
+
+    section_plot.txt_ratio_θx_min = GLMakie.text!(section_plot.ax_ratio_θx,
+                                                    Point(max(θx_max - 10, 0), 55),
+                                                    text = "Min → $(round(section_plot.obs_ratio_θx_min[], digits=2))%",
+                                                    align = (:left, :bottom),
+                                                    color = :orange)
+
+    section_plot.txt_ratio_θx_max = GLMakie.text!(section_plot.ax_ratio_θx,
+                                                    Point(max(θx_max - 5, 0), 55),
+                                                    text = "Max → $(round(section_plot.obs_ratio_θx_max[], digits=2))%",
+                                                    align = (:left, :bottom),
+                                                    color = :red)
+
+    lift(section_plot.obs_ratio_θx_min) do val
+        section_plot.txt_ratio_θx_min.text = "Min → $(round(val, digits=2))%"
+    end
+
+    lift(section_plot.obs_ratio_θx_max) do val
+        section_plot.txt_ratio_θx_max.text = "Max → $(round(val, digits=2))%"
+    end
+
+    on(section_plot.obs_ratio_θx) do values
+        set_ratio_ylims!(section_plot.ax_ratio_θx, values)
     end
 
 end
@@ -381,7 +448,7 @@ function ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspen
                                                     ylabel = "θz in [°]",
                                                     zlabel = "ratio in [%]",
                                                     zticks = 50:10:100, 
-                                                    title = "Ackermann ratio surface",) #
+                                                    title = ackermann_ratio_surface_title(),) #
     #section_plot.ax_ratio_surface.aspect = :data
     section_plot.ax_ratio_surface.aspect = (1, 1, 1)
 
@@ -400,10 +467,22 @@ function ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspen
 
     ############| Ackermannratio Observervar 
     section_plot.obs_ratio_surface = Observable(ratio_surface)
+    set_ratio_zlims!(section_plot.ax_ratio_surface, ratio_surface)
+    on(section_plot.obs_ratio_surface) do values
+        set_ratio_zlims!(section_plot.ax_ratio_surface, values)
+    end
 
     ############| Ackermannratio Ploting  
 
-    GLMakie.surface!(section_plot.ax_ratio_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, section_plot.obs_ratio_surface; colormap = :darkterrain)
+    GLMakie.surface!(
+        section_plot.ax_ratio_surface,
+        0.0:1.0:θx_max,
+        0.0:1.0:θz_max,
+        section_plot.obs_ratio_surface;
+        color = section_plot.obs_ratio_surface,
+        colormap = lift(data -> ackermann_ratio_surface_colormap(data), section_plot.obs_ratio_surface),
+        colorrange = lift(data -> ratio_surface_colorrange(data), section_plot.obs_ratio_surface),
+    )
     
 end
 
@@ -711,9 +790,9 @@ function θ_vs_δ_plot!(fig, section_plot, θ_max, steering, suspension)
     section_plot.ax_θ_vs_δ_surface = GLMakie.Axis3(fig[row, col],
                                             xlabel = "θx in [°]", 
                                             ylabel = "θz in [°]",
-                                            zlabel = "θ wheel in [°]",
+                                            zlabel = "wheel angle δ in [°]",
                                             zticks = 0:10:100, 
-                                            title = "Steering vs. wheel angles",) #
+                                            title = theta_vs_delta_title(θx_max, θy, θz_max),) #
     #section_plot.ax_ratio_surface.aspect = :data
     section_plot.ax_θ_vs_δ_surface.aspect = (1, 1, 1)
     
@@ -737,8 +816,28 @@ function θ_vs_δ_plot!(fig, section_plot, θ_max, steering, suspension)
 
     ############| Ackermannratio Ploting  
 
-    GLMakie.surface!(section_plot.ax_θ_vs_δ_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, section_plot.obs_θ_vs_δi_surface; colormap = :darkterrain)
-    GLMakie.surface!(section_plot.ax_θ_vs_δ_surface , 0.0:1.0:θx_max, 0.0:1.0:θz_max, section_plot.obs_θ_vs_δo_surface; colormap = :viridis)
+    GLMakie.surface!(
+        section_plot.ax_θ_vs_δ_surface,
+        0.0:1.0:θx_max,
+        0.0:1.0:θz_max,
+        section_plot.obs_θ_vs_δi_surface;
+        color = fill(1.0, size(θ_vs_δi_surface)),
+        colormap = [:royalblue, :royalblue],
+        colorrange = (0.0, 1.0),
+        transparency = true,
+        alpha = 0.78,
+    )
+    GLMakie.surface!(
+        section_plot.ax_θ_vs_δ_surface,
+        0.0:1.0:θx_max,
+        0.0:1.0:θz_max,
+        section_plot.obs_θ_vs_δo_surface;
+        color = fill(1.0, size(θ_vs_δo_surface)),
+        colormap = [:darkorange, :darkorange],
+        colorrange = (0.0, 1.0),
+        transparency = true,
+        alpha = 0.70,
+    )
     
 end
 

@@ -28,12 +28,14 @@ This function evaluates how closely the current steering geometry approximates i
 function ackermannratio(θ::Tuple{T,T,T}, 
                             chassis::Chassis, 
                             steering::Steering, 
-                            suspension::Suspension) where {T >: Any}
+                            suspension::Suspension;
+                            signed = ackermann_ratio_signed()) where {T >: Any}
     #wheel_offset                    # Distance Rotationspoint and Wheelcenter
     #offset = wheel_offset * sind(δo)
 
     measurment = Measurements(chassis, steering)
-    objective = abs(ackermann_deviation(θ, chassis, steering, suspension))
+    deviation = ackermann_deviation(θ, chassis, steering, suspension)
+    objective = signed ? deviation : abs(deviation)
 
     L = objective + measurment.wheel_base #+ offset
 
@@ -239,6 +241,7 @@ function ackermannratio_θz(θx::T,
                             chassis::Chassis, 
                             steering::Steering, 
                             suspension::Suspension; 
+                            signed = ackermann_ratio_signed(),
                             step_size = 1 ) where {T <: Any}
 
     θ_matrix = [i for i in 0:step_size:θz_max]
@@ -252,15 +255,46 @@ function ackermannratio_θz(θx::T,
 
 
         if steering.δo == 0.0
-            push!(ratio,ackermannratio((θx, θy, θz+1.0),chassis, steering, suspension))
+            push!(ratio,ackermannratio((θx, θy, θz+1.0),chassis, steering, suspension; signed = signed))
         else
-            push!(ratio,ackermannratio((θx, θy, θz),chassis, steering, suspension))
+            push!(ratio,ackermannratio((θx, θy, θz),chassis, steering, suspension; signed = signed))
         end
     end 
     return ratio
 
 end
 
+function ackermannratio_θx(θx_max::T, 
+                            θy::T, 
+                            θz::T, 
+                            chassis::Chassis, 
+                            steering::Steering, 
+                            suspension::Suspension; 
+                            signed = ackermann_ratio_signed(),
+                            step_size = 1 ) where {T <: Any}
+
+    θ_matrix = [i for i in 0:step_size:θx_max]
+    ratio = []
+
+    for θ in θ_matrix
+        θx = θ
+        MMK.update!((θx, θy, θz), steering, suspension)
+
+        if steering.δo == 0.0
+            push!(ratio, NaN)
+        else
+            push!(ratio, ackermannratio((θx, θy, θz), chassis, steering, suspension; signed = signed))
+        end
+    end
+
+    return ratio
+end
+
+
+const ACKERMANN_RATIO_SIGNED = Ref(false)
+
+ackermann_ratio_signed() = ACKERMANN_RATIO_SIGNED[]
+set_ackermann_ratio_signed!(value::Bool) = (ACKERMANN_RATIO_SIGNED[] = value)
 
 """
     ackermannratio_surface(chassis::Chassis, 
@@ -293,6 +327,7 @@ function ackermannratio_surface(chassis::Chassis,
                                     steering::Steering, 
                                     suspension::Suspension, 
                                     θ_max::Tuple{T,T,T};
+                                    signed = ackermann_ratio_signed(),
                                     step_size = 1 ) where {T <: Any}
 
     θx_max , θy, θz_max = θ_max
@@ -310,7 +345,7 @@ function ackermannratio_surface(chassis::Chassis,
             ratio[θx_i+1,θz_i+1] = NaN
         else
     
-        ratio[θx_i+1,θz_i+1] = ackermannratio(θ,chassis, steering, suspension)
+        ratio[θx_i+1,θz_i+1] = ackermannratio(θ,chassis, steering, suspension; signed = signed)
         end
     end 
     return ratio

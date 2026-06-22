@@ -47,6 +47,7 @@ mutable struct PlotSection  <: AbstractPlotSection
     ax_geom::Union{Axis3,Nothing}
     ax_radii::Union{Axis,Nothing}
     ax_ratio::Union{Axis,Nothing}
+    ax_ratio_θx::Union{Axis,Nothing}
     ax_ratio_surface::Union{Axis3,Nothing}
     ax_θ_vs_δ_surface::Union{Axis3,Nothing}
     ax_deviation::Union{Axis,Nothing}
@@ -56,6 +57,8 @@ mutable struct PlotSection  <: AbstractPlotSection
 
     txt_ratio_max::Union{Makie.Text,Nothing}
     txt_ratio_min::Union{Makie.Text,Nothing}
+    txt_ratio_θx_max::Union{Makie.Text,Nothing}
+    txt_ratio_θx_min::Union{Makie.Text,Nothing}
     txt_deviation_max::Union{Makie.Text,Nothing}
     txt_deviation_min::Union{Makie.Text,Nothing}
 
@@ -83,9 +86,12 @@ mutable struct PlotSection  <: AbstractPlotSection
     obs_radii_θz::Union{Observable,Nothing}
     
     obs_ratio_θz::Union{Observable,Nothing}
+    obs_ratio_θx::Union{Observable,Nothing}
     obs_ratio_surface::Union{Observable,Nothing}
     obs_ratio_max::Union{Observable,Nothing}
     obs_ratio_min::Union{Observable,Nothing}
+    obs_ratio_θx_max::Union{Observable,Nothing}
+    obs_ratio_θx_min::Union{Observable,Nothing}
 
     obs_θ_vs_δi_surface::Union{Observable,Nothing}
     obs_θ_vs_δo_surface::Union{Observable,Nothing}
@@ -108,6 +114,7 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.ax_geom = nothing
         inst.ax_radii = nothing
         inst.ax_ratio = nothing 
+        inst.ax_ratio_θx = nothing
         inst.ax_ratio_surface = nothing
         inst.ax_θ_vs_δ_surface = nothing
         inst.ax_deviation = nothing
@@ -117,6 +124,8 @@ mutable struct PlotSection  <: AbstractPlotSection
 
         inst.txt_ratio_max = nothing 
         inst.txt_ratio_min = nothing 
+        inst.txt_ratio_θx_max = nothing 
+        inst.txt_ratio_θx_min = nothing 
         inst.txt_deviation_max = nothing
         inst.txt_deviation_min = nothing
 
@@ -126,9 +135,12 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.obs_stationary = nothing
         inst.obs_radii_θz = nothing
         inst.obs_ratio_θz = nothing
+        inst.obs_ratio_θx = nothing
         inst.obs_ratio_surface = nothing
         inst.obs_ratio_max = nothing
         inst.obs_ratio_min = nothing
+        inst.obs_ratio_θx_max = nothing
+        inst.obs_ratio_θx_min = nothing
         inst.obs_θ_vs_δi_surface = nothing
         inst.obs_θ_vs_δo_surface = nothing
         inst.obs_deviation_θz = nothing
@@ -305,6 +317,9 @@ mutable struct PlotSettingsSection <: AbstractPlotSettingsSection
 
     suplyt::Union{GridLayout,Nothing}
     menu::Union{Menu, Nothing}
+    signed_ratio_lyt::Union{GridLayout,Nothing}
+    cb_signed_ratio::Union{Checkbox, Nothing}
+    lbl_signed_ratio::Union{Label, Nothing}
     btn_reset::Union{Button, Nothing}
     btn_save::Union{Button, Nothing}
     btn_save_all::Union{Button, Nothing}
@@ -319,6 +334,10 @@ mutable struct PlotSettingsSection <: AbstractPlotSettingsSection
         inst.title = nothing
 
         inst.suplyt = nothing
+        inst.menu = nothing
+        inst.signed_ratio_lyt = nothing
+        inst.cb_signed_ratio = nothing
+        inst.lbl_signed_ratio = nothing
         inst.btn_reset = nothing
         inst.btn_save = nothing
         inst.btn_save_all = nothing
