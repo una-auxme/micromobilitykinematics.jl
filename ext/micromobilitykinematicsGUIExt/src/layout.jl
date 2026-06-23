@@ -224,7 +224,12 @@ function layout_section_plot_settings(fig,slot)
                                                     "Ackermann deviation", 
                                                     "Ackermann deviation surface",
                                                     "Compression vs. wheel angles",
-                                                    "Left wheel Δδ vs. compression"], 
+                                                    "Left wheel Δδ vs. compression",
+                                                    "Wheel center path",
+                                                    "Wheel center surface",
+                                                    "Track width",
+                                                    "Damper motion ratio",
+                                                    "Roll kinematics"], 
                                         default = "Geometry", 
                                         width = 300)
     section_plot_settings.signed_ratio_lyt = GridLayout(tellheight = false)
@@ -454,6 +459,16 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
     compr_vs_δ_plot!(fig, section_plot, steering, suspension)
 
     left_wheel_delta_plot!(fig, section_plot, θ_max, steering, suspension)
+
+    wheel_center_path_plot!(fig, section_plot, steering, suspension)
+
+    wheel_center_surface_plot!(fig, section_plot, θ_max, steering, suspension)
+
+    track_width_plot!(fig, section_plot, steering, suspension)
+
+    motion_ratio_plot!(fig, section_plot, steering, suspension)
+
+    roll_kinematics_plot!(fig, section_plot, chassis, steering, suspension)
 
     return section_plot
 end 

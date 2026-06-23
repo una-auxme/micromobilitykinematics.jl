@@ -35,11 +35,14 @@ function ackermannratio(θ::Tuple{T,T,T},
 
     measurment = Measurements(chassis, steering)
     deviation = ackermann_deviation(θ, chassis, steering, suspension)
-    objective = signed ? deviation : abs(deviation)
 
+    objective = abs(deviation)
     L = objective + measurment.wheel_base #+ offset
+    ratio = (measurment.wheel_base/L)*100
 
-    return (measurment.wheel_base/L)*100
+    signed || return ratio
+
+    return deviation < 0.0 ? 200.0 - ratio : ratio
 
 end 
 
@@ -571,4 +574,281 @@ function left_wheel_delta_vs_compression_θz(θx::T,
     end
 
     return delta_left
+end
+
+function compression_sweep_values(; step_size = 1.0)
+    values = collect(0.0:step_size:100.0)
+    last(values) == 100.0 || push!(values, 100.0)
+    return values
+end
+
+function finite_norm(values)
+    return sqrt(sum(value -> Float64(value)^2, values))
+end
+
+function clean_error_info_copy(instance)
+    if !hasproperty(instance, :err_info)
+        return deepcopy(instance)
+    end
+
+    original_error_info = instance.err_info
+    fresh_error_info = original_error_info === nothing ? MMK.ErrorInfo() : typeof(original_error_info)()
+
+    try
+        instance.err_info = fresh_error_info
+        return deepcopy(instance)
+    finally
+        instance.err_info = original_error_info
+    end
+end
+
+function wheel_center_vehicle_position(steering::Steering, suspension::Suspension, side_index::Int)
+    lower_joint = Float64.(suspension.lowerwishbone[side_index].sphere_joint)
+    upper_joint = Float64.(suspension.upperwishbone[side_index].sphere_joint)
+    wheel_axis_z = upper_joint .- lower_joint
+    wheel_axis_z ./= finite_norm(wheel_axis_z)
+
+    base_vec_y, base_vec_x, base_vec_z = MMK.calc_basis_vectors(wheel_axis_z)
+    wheel_basis = [base_vec_x base_vec_y base_vec_z]
+    wheel_offset = [
+        suspension.wheelmount.offset_x,
+        suspension.wheelmount.offset_y,
+        suspension.wheelmount.offset_z,
+    ]
+
+    wheel_center_local = lower_joint .+ wheel_basis * wheel_offset
+    side_index == 2 && (wheel_center_local = wheel_center_local .* [1.0, -1.0, 1.0])
+
+    return Float64.(steering.wishbone_ucs_position[side_index]) .+ wheel_center_local
+end
+
+function lower_joint_vehicle_position(steering::Steering, suspension::Suspension, side_index::Int)
+    lower_joint = Float64.(suspension.lowerwishbone[side_index].sphere_joint)
+    side_index == 2 && (lower_joint = lower_joint .* [1.0, -1.0, 1.0])
+
+    return Float64.(steering.wishbone_ucs_position[side_index]) .+ lower_joint
+end
+
+function rotate_vector_around_axis(vector, axis, angle)
+    return vector .* cos(angle) .+
+           cross(axis, vector) .* sin(angle) .+
+           axis .* dot(axis, vector) .* (1.0 - cos(angle))
+end
+
+function wheel_axis_vehicle_direction(suspension::Suspension, side_index::Int)
+    lower_joint = Float64.(suspension.lowerwishbone[side_index].sphere_joint)
+    upper_joint = Float64.(suspension.upperwishbone[side_index].sphere_joint)
+    wheel_axis_z = upper_joint .- lower_joint
+    axis_length = finite_norm(wheel_axis_z)
+
+    axis_length <= eps(Float64) && return [NaN, NaN, NaN]
+
+    wheel_axis_z ./= axis_length
+    side_index == 2 && (wheel_axis_z = wheel_axis_z .* [1.0, -1.0, 1.0])
+
+    return wheel_axis_z
+end
+
+function wheel_camber_angle(suspension::Suspension, side_index::Int)
+    wheel_axis_z = wheel_axis_vehicle_direction(suspension, side_index)
+    any(isnan, wheel_axis_z) && return NaN
+
+    return atand(wheel_axis_z[2], wheel_axis_z[3])
+end
+
+function steered_wheel_center_vehicle_position(steering::Steering, suspension::Suspension, side_index::Int)
+    wheel_center = wheel_center_vehicle_position(steering, suspension, side_index)
+
+    if steering.circle_joints === nothing ||
+        steering.circle_joints_neutral === nothing ||
+        steering.track_lever_mounting_points_ucs === nothing
+        return wheel_center
+    end
+
+    axis = wheel_axis_vehicle_direction(suspension, side_index)
+    any(isnan, axis) && return wheel_center
+
+    track_lever_mount = Float64.(steering.track_lever_mounting_points_ucs[side_index])
+    neutral_track_lever = Float64.(steering.circle_joints_neutral[side_index]) .- track_lever_mount
+    moved_track_lever = Float64.(steering.circle_joints[side_index]) .- track_lever_mount
+
+    if finite_norm(neutral_track_lever) <= eps(Float64) || finite_norm(moved_track_lever) <= eps(Float64)
+        return wheel_center
+    end
+
+    steering_angle = atan(dot(axis, cross(neutral_track_lever, moved_track_lever)), dot(neutral_track_lever, moved_track_lever))
+    lower_joint = lower_joint_vehicle_position(steering, suspension, side_index)
+    wheel_center_offset = wheel_center .- lower_joint
+
+    return lower_joint .+ rotate_vector_around_axis(wheel_center_offset, axis, steering_angle)
+end
+
+function wheel_center_path(steering::Steering,
+                            suspension::Suspension;
+                            step_size = 1.0,
+                            symmetric = true)
+    compression_values = compression_sweep_values(; step_size = step_size)
+    left_path = Point3f[]
+    right_path = Point3f[]
+    suspension_copy = deepcopy(suspension)
+
+    for compression in compression_values
+        suspension_copy.damper[1].compression = compression
+        suspension_copy.damper[2].compression = symmetric ? compression : suspension.damper[2].compression
+
+        try
+            MMK.suspensionkinematics!(suspension_copy)
+            left_center = wheel_center_vehicle_position(steering, suspension_copy, 1)
+            right_center = wheel_center_vehicle_position(steering, suspension_copy, 2)
+            push!(left_path, Point3f(left_center...))
+            push!(right_path, Point3f(right_center...))
+        catch
+            push!(left_path, Point3f(NaN, NaN, NaN))
+            push!(right_path, Point3f(NaN, NaN, NaN))
+        end
+    end
+
+    return compression_values, left_path, right_path
+end
+
+function sweep_values(max_value; step_size = 1.0)
+    values = collect(0.0:step_size:max_value)
+    last(values) == max_value || push!(values, max_value)
+    return values
+end
+
+function signed_sweep_values(max_value; step_size = 1.0)
+    values = collect(-max_value:step_size:max_value)
+    append!(values, [-max_value, 0.0, max_value])
+    return sort(unique(values))
+end
+
+function wheel_center_surface_coordinate_matrices(points)
+    xs = [Float64(point[1]) for point in points]
+    ys = [Float64(point[2]) for point in points]
+    zs = [Float64(point[3]) for point in points]
+
+    return xs, ys, zs
+end
+
+function wheel_center_surface(θx,
+                                θy,
+                                θz_max,
+                                steering::Steering,
+                                suspension::Suspension;
+                                compression_step = 5.0,
+                                θz_step = 2.0)
+    compression_values = compression_sweep_values(; step_size = compression_step)
+    θz_values = signed_sweep_values(θz_max; step_size = θz_step)
+
+    left_points = fill(Point3f(NaN, NaN, NaN), length(compression_values), length(θz_values))
+    right_points = fill(Point3f(NaN, NaN, NaN), length(compression_values), length(θz_values))
+
+    for (compression_index, compression) in enumerate(compression_values), (θz_index, θz) in enumerate(θz_values)
+        steering_copy = clean_error_info_copy(steering)
+        suspension_copy = clean_error_info_copy(suspension)
+
+        suspension_copy.damper[1].compression = compression
+        suspension_copy.damper[2].compression = compression
+
+        try
+            MMK.update!((θx, θy, θz), steering_copy, suspension_copy)
+
+            left_center = steered_wheel_center_vehicle_position(steering_copy, suspension_copy, 1)
+            right_center = steered_wheel_center_vehicle_position(steering_copy, suspension_copy, 2)
+
+            left_points[compression_index, θz_index] = Point3f(left_center...)
+            right_points[compression_index, θz_index] = Point3f(right_center...)
+        catch
+            left_points[compression_index, θz_index] = Point3f(NaN, NaN, NaN)
+            right_points[compression_index, θz_index] = Point3f(NaN, NaN, NaN)
+        end
+    end
+
+    left_x, left_y, left_z = wheel_center_surface_coordinate_matrices(left_points)
+    right_x, right_y, right_z = wheel_center_surface_coordinate_matrices(right_points)
+
+    return compression_values, θz_values, left_x, left_y, left_z, right_x, right_y, right_z
+end
+
+function track_width_over_compression(steering::Steering,
+                                        suspension::Suspension;
+                                        step_size = 1.0)
+    compression_values, left_path, right_path = wheel_center_path(steering, suspension; step_size = step_size)
+    track_width = Float64[]
+
+    for (left_center, right_center) in zip(left_path, right_path)
+        if any(isnan, Tuple(left_center)) || any(isnan, Tuple(right_center))
+            push!(track_width, NaN)
+        else
+            push!(track_width, abs(Float64(left_center[2]) - Float64(right_center[2])))
+        end
+    end
+
+    return compression_values, track_width
+end
+
+function damper_motion_ratio(steering::Steering,
+                                suspension::Suspension;
+                                step_size = 1.0)
+    compression_values, left_path, _ = wheel_center_path(steering, suspension; step_size = step_size)
+    motion_ratio = fill(NaN, length(compression_values))
+
+    damper_travel = [compression / 100.0 * suspension.damper[1].travel for compression in compression_values]
+
+    for index in 2:length(compression_values)
+        wheel_travel = abs(Float64(left_path[index][3]) - Float64(left_path[index - 1][3]))
+        damper_step = abs(damper_travel[index] - damper_travel[index - 1])
+
+        motion_ratio[index] = wheel_travel <= eps(Float64) ? NaN : damper_step / wheel_travel
+    end
+
+    return compression_values, motion_ratio
+end
+
+function roll_kinematics(θ::Tuple{T,T,T},
+                            chassis::Chassis,
+                            steering::Steering,
+                            suspension::Suspension;
+                            signed = ackermann_ratio_signed(),
+                            step_size = 1.0) where {T <: Any}
+    roll_values = compression_sweep_values(; step_size = step_size)
+    left_camber = fill(NaN, length(roll_values))
+    right_camber = fill(NaN, length(roll_values))
+    left_wheel_angle = fill(NaN, length(roll_values))
+    right_wheel_angle = fill(NaN, length(roll_values))
+    track_width = fill(NaN, length(roll_values))
+    ackermann_ratio_values = fill(NaN, length(roll_values))
+
+    for (index, roll_state) in enumerate(roll_values)
+        steering_copy = clean_error_info_copy(steering)
+        suspension_copy = clean_error_info_copy(suspension)
+
+        suspension_copy.damper[1].compression = roll_state
+        suspension_copy.damper[2].compression = 100.0 - roll_state
+
+        try
+            MMK.update!(θ, steering_copy, suspension_copy)
+
+            left_camber[index] = wheel_camber_angle(suspension_copy, 1)
+            right_camber[index] = wheel_camber_angle(suspension_copy, 2)
+            left_wheel_angle[index] = steering_copy.δo
+            right_wheel_angle[index] = steering_copy.δi
+
+            left_center = wheel_center_vehicle_position(steering_copy, suspension_copy, 1)
+            right_center = wheel_center_vehicle_position(steering_copy, suspension_copy, 2)
+            track_width[index] = abs(Float64(left_center[2]) - Float64(right_center[2]))
+
+            ackermann_ratio_values[index] = steering_copy.δo == 0.0 ? NaN : ackermannratio(θ, chassis, steering_copy, suspension_copy; signed = signed)
+        catch
+            left_camber[index] = NaN
+            right_camber[index] = NaN
+            left_wheel_angle[index] = NaN
+            right_wheel_angle[index] = NaN
+            track_width[index] = NaN
+            ackermann_ratio_values[index] = NaN
+        end
+    end
+
+    return roll_values, left_camber, right_camber, left_wheel_angle, right_wheel_angle, track_width, ackermann_ratio_values
 end

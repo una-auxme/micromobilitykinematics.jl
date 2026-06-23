@@ -31,11 +31,14 @@ function ackermannratio(angleConfig::Tuple{T,T,T},chassis::Chassis, steering::St
 
     measurment = Measurements(chassis, steering)
     deviation = ackermann_deviation(angleConfig, chassis, steering, suspension)
-    objective = signed ? deviation : abs(deviation)
+    objective = abs(deviation)
 
     L = objective + measurment.wheel_base #+ offset
+    ratio = (measurment.wheel_base/L)*100
 
-    return (measurment.wheel_base/L)*100
+    signed || return ratio
+
+    return deviation < 0.0 ? 200.0 - ratio : ratio
 
 end
 

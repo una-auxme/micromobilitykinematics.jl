@@ -96,6 +96,14 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
                 update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
+            if section_plot_settings.menu.selection.val == "Wheel center surface"
+                update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Roll kinematics"
+                update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
+            end
+
             # Calculation
             update_geometry!((θx,θy,θz),section_plot,steering, suspension)
             obj = abs(ackermann_deviation((θx,θy,θz),chassis,steering,suspension))
@@ -232,6 +240,14 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
                 update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
+            if section_plot_settings.menu.selection.val == "Wheel center surface"
+                update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Roll kinematics"
+                update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
+            end
+
 
             # Calculation
             update_geometry!((θx,θy,θz),section_plot,steering, suspension)
@@ -361,6 +377,14 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
                 update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Wheel center surface"
+                update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Roll kinematics"
+                update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
             end
 
 
@@ -712,6 +736,14 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
                 update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
+            if section_plot_settings.menu.selection.val == "Wheel center surface"
+                update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Roll kinematics"
+                update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
+            end
+
 
             # Calculation
             update_geometry!((θx,θy,θz),section_plot,steering, suspension)
@@ -976,6 +1008,58 @@ function event_menu_plot_settings(interaction_lyt::InteractionLyt,
             update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
         end
 
+        if sel == "Wheel center path"
+
+            update_layout_visibility!(interaction_lyt;
+                                        wheel_center_path = true)
+
+            update_wheel_center_path_plot!(section_plot, steering, suspension)
+        end
+
+        if sel == "Wheel center surface"
+
+            update_layout_visibility!(interaction_lyt;
+                                        wheel_center_surface = true,
+                                        sg_θx = true,
+                                        sg_θy = true)
+
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+
+            update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+        end
+
+        if sel == "Track width"
+
+            update_layout_visibility!(interaction_lyt;
+                                        track_width = true)
+
+            update_track_width_plot!(section_plot, steering, suspension)
+        end
+
+        if sel == "Damper motion ratio"
+
+            update_layout_visibility!(interaction_lyt;
+                                        motion_ratio = true)
+
+            update_motion_ratio_plot!(section_plot, steering, suspension)
+        end
+
+        if sel == "Roll kinematics"
+
+            update_layout_visibility!(interaction_lyt;
+                                        roll_kinematics = true,
+                                        sg_θx = true,
+                                        sg_θy = true,
+                                        sg_θz = true)
+
+            θx = section_angle.sg_θ.sliders[1].value.val
+            θy = section_angle.sg_θ.sliders[2].value.val
+            θz = section_angle.sg_θ.sliders[3].value.val
+
+            update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
+        end
+
     end
 end
 
@@ -1206,6 +1290,62 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             GLMakie.save(file_path,fig_left_wheel_delta)
             GLMakie.display(fig)
         end
+
+        if section_plot_settings.menu.selection.val == "Wheel center path"
+            fig_wheel_center_path = wheel_center_path_plot(steering, suspension)
+
+            for content in values(fig_wheel_center_path.content)
+                if content isa Axis3
+                    content.azimuth[] = section_plot.ax_wheel_center_path.azimuth[]
+                    content.elevation[] = section_plot.ax_wheel_center_path.elevation[]
+                    break
+                end
+            end
+
+            file_path = joinpath(base_path, "wheel_center_path.png")
+            GLMakie.save(file_path, fig_wheel_center_path)
+            GLMakie.display(fig)
+        end
+
+        if section_plot_settings.menu.selection.val == "Wheel center surface"
+            fig_wheel_center_surface = wheel_center_surface_plot(θx, θy, θz_max, steering, suspension)
+
+            for content in values(fig_wheel_center_surface.content)
+                if content isa Axis3
+                    content.azimuth[] = section_plot.ax_wheel_center_surface.azimuth[]
+                    content.elevation[] = section_plot.ax_wheel_center_surface.elevation[]
+                    break
+                end
+            end
+
+            file_path = joinpath(base_path, "wheel_center_surface.png")
+            GLMakie.save(file_path, fig_wheel_center_surface)
+            GLMakie.display(fig)
+        end
+
+        if section_plot_settings.menu.selection.val == "Track width"
+            fig_track_width = track_width_plot(steering, suspension)
+
+            file_path = joinpath(base_path, "track_width.png")
+            GLMakie.save(file_path, fig_track_width)
+            GLMakie.display(fig)
+        end
+
+        if section_plot_settings.menu.selection.val == "Damper motion ratio"
+            fig_motion_ratio = motion_ratio_plot(steering, suspension)
+
+            file_path = joinpath(base_path, "damper_motion_ratio.png")
+            GLMakie.save(file_path, fig_motion_ratio)
+            GLMakie.display(fig)
+        end
+
+        if section_plot_settings.menu.selection.val == "Roll kinematics"
+            fig_roll_kinematics = roll_kinematics_plot((θx, θy, θz), chassis, steering, suspension)
+
+            file_path = joinpath(base_path, "roll_kinematics.png")
+            GLMakie.save(file_path, fig_roll_kinematics)
+            GLMakie.display(fig)
+        end
     end
 end
 
@@ -1387,6 +1527,56 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         file_path = joinpath(base_path, "left_wheel_delta_vs_compression.png")
         GLMakie.save(file_path,fig_left_wheel_delta)
+
+        ###
+        fig_wheel_center_path = wheel_center_path_plot(steering, suspension)
+
+        for content in values(fig_wheel_center_path.content)
+            if content isa Axis3
+                content.azimuth[] = section_plot.ax_wheel_center_path.azimuth[]
+                content.elevation[] = section_plot.ax_wheel_center_path.elevation[]
+                break
+            end
+        end
+
+        file_path = joinpath(base_path, "wheel_center_path.png")
+        GLMakie.save(file_path, fig_wheel_center_path)
+
+
+        ###
+        fig_wheel_center_surface = wheel_center_surface_plot(θx, θy, θz_max, steering, suspension)
+
+        for content in values(fig_wheel_center_surface.content)
+            if content isa Axis3
+                content.azimuth[] = section_plot.ax_wheel_center_surface.azimuth[]
+                content.elevation[] = section_plot.ax_wheel_center_surface.elevation[]
+                break
+            end
+        end
+
+        file_path = joinpath(base_path, "wheel_center_surface.png")
+        GLMakie.save(file_path, fig_wheel_center_surface)
+
+
+        ###
+        fig_track_width = track_width_plot(steering, suspension)
+
+        file_path = joinpath(base_path, "track_width.png")
+        GLMakie.save(file_path, fig_track_width)
+
+
+        ###
+        fig_motion_ratio = motion_ratio_plot(steering, suspension)
+
+        file_path = joinpath(base_path, "damper_motion_ratio.png")
+        GLMakie.save(file_path, fig_motion_ratio)
+
+
+        ###
+        fig_roll_kinematics = roll_kinematics_plot(θ, chassis, steering, suspension)
+
+        file_path = joinpath(base_path, "roll_kinematics.png")
+        GLMakie.save(file_path, fig_roll_kinematics)
     end
 
     GLMakie.display(fig)
@@ -1529,6 +1719,14 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
 
         if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
             update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
+        end
+
+        if section_plot_settings.menu.selection.val == "Wheel center surface"
+            update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+        end
+
+        if section_plot_settings.menu.selection.val == "Roll kinematics"
+            update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
         end
 
         # Calculation
@@ -1683,6 +1881,14 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
                 update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
+            if section_plot_settings.menu.selection.val == "Wheel center surface"
+                update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Roll kinematics"
+                update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
+            end
+
 
             # Calculation
             update_geometry!((θx,θy,θz),section_plot,steering, suspension)
@@ -1803,6 +2009,14 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
                 update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Wheel center surface"
+                update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Roll kinematics"
+                update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
             end
 
 
@@ -1927,6 +2141,14 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
                 update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
             end
 
+            if section_plot_settings.menu.selection.val == "Wheel center surface"
+                update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Roll kinematics"
+                update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
+            end
+
 
              # Calculation
             update_geometry!((θx,θy,θz),section_plot,steering, suspension)
@@ -2048,6 +2270,14 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
 
             if section_plot_settings.menu.selection.val == "Left wheel Δδ vs. compression"
                 update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Wheel center surface"
+                update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+            end
+
+            if section_plot_settings.menu.selection.val == "Roll kinematics"
+                update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension)
             end
 
 

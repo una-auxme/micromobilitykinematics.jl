@@ -956,3 +956,239 @@ function left_wheel_delta_plot!(fig, section_plot, θ_max, steering, suspension)
 
     nothing
 end
+
+function wheel_center_path_plot!(fig, section_plot, steering, suspension)
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+    section_plot.ax_wheel_center_path = GLMakie.Axis3(fig[row, col],
+                                            xlabel = "x in [mm]",
+                                            ylabel = "y in [mm]",
+                                            zlabel = "z in [mm]",
+                                            title = wheel_center_path_title(),)
+    section_plot.ax_wheel_center_path.aspect = (1, 1, 1)
+
+    set_axis_visible!(section_plot.ax_wheel_center_path, false)
+
+    compression_values, left_path, right_path = wheel_center_path(steering, suspension)
+
+    section_plot.obs_wheel_center_left = Observable(left_path)
+    section_plot.obs_wheel_center_right = Observable(right_path)
+    set_wheel_center_path_limits!(section_plot.ax_wheel_center_path, left_path, right_path)
+
+    GLMakie.lines!(section_plot.ax_wheel_center_path, section_plot.obs_wheel_center_left; color = :royalblue, linewidth = 3)
+    GLMakie.lines!(section_plot.ax_wheel_center_path, section_plot.obs_wheel_center_right; color = :darkorange, linewidth = 3)
+    GLMakie.scatter!(section_plot.ax_wheel_center_path, section_plot.obs_wheel_center_left; color = :royalblue, markersize = 6)
+    GLMakie.scatter!(section_plot.ax_wheel_center_path, section_plot.obs_wheel_center_right; color = :darkorange, markersize = 6)
+
+    on(section_plot.obs_wheel_center_left) do values
+        set_wheel_center_path_limits!(section_plot.ax_wheel_center_path, values, section_plot.obs_wheel_center_right[])
+    end
+
+    on(section_plot.obs_wheel_center_right) do values
+        set_wheel_center_path_limits!(section_plot.ax_wheel_center_path, section_plot.obs_wheel_center_left[], values)
+    end
+
+    nothing
+end
+
+function wheel_center_surface_plot!(fig, section_plot, θ_max, steering, suspension)
+    θx_max, θy_max, θz_max = θ_max
+
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+    θx = steering.θx
+    θy = steering.θy
+
+    section_plot.ax_wheel_center_surface = GLMakie.Axis3(fig[row, col],
+                                            xlabel = "x in [mm]",
+                                            ylabel = "y in [mm]",
+                                            zlabel = "z in [mm]",
+                                            title = wheel_center_surface_title(θx, θy, θz_max),)
+    section_plot.ax_wheel_center_surface.aspect = (1, 1, 1)
+
+    set_axis_visible!(section_plot.ax_wheel_center_surface, false)
+
+    (
+        compression_values,
+        θz_values,
+        left_x,
+        left_y,
+        left_z,
+        right_x,
+        right_y,
+        right_z,
+    ) = wheel_center_surface(θx, θy, θz_max, steering, suspension)
+
+    section_plot.obs_wheel_center_surface_left_x = Observable(left_x)
+    section_plot.obs_wheel_center_surface_left_y = Observable(left_y)
+    section_plot.obs_wheel_center_surface_left_z = Observable(left_z)
+    section_plot.obs_wheel_center_surface_right_x = Observable(right_x)
+    section_plot.obs_wheel_center_surface_right_y = Observable(right_y)
+    section_plot.obs_wheel_center_surface_right_z = Observable(right_z)
+
+    set_wheel_center_surface_limits!(
+        section_plot.ax_wheel_center_surface,
+        (left_x, left_y, left_z),
+        (right_x, right_y, right_z),
+    )
+
+    GLMakie.surface!(
+        section_plot.ax_wheel_center_surface,
+        section_plot.obs_wheel_center_surface_left_x,
+        section_plot.obs_wheel_center_surface_left_y,
+        section_plot.obs_wheel_center_surface_left_z;
+        color = fill(1.0, size(left_z)),
+        colormap = [:royalblue, :royalblue],
+        colorrange = (0.0, 1.0),
+        transparency = true,
+        alpha = 0.55,
+    )
+
+    GLMakie.surface!(
+        section_plot.ax_wheel_center_surface,
+        section_plot.obs_wheel_center_surface_right_x,
+        section_plot.obs_wheel_center_surface_right_y,
+        section_plot.obs_wheel_center_surface_right_z;
+        color = fill(1.0, size(right_z)),
+        colormap = [:darkorange, :darkorange],
+        colorrange = (0.0, 1.0),
+        transparency = true,
+        alpha = 0.50,
+    )
+
+    nothing
+end
+
+function track_width_plot!(fig, section_plot, steering, suspension)
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+    section_plot.ax_track_width = GLMakie.Axis(fig[row, col],
+                                            xlabel = "symmetric compression in [%]",
+                                            ylabel = "track width in [mm]",
+                                            title = track_width_title(),
+                                            xticks = 0:10:100)
+
+    set_axis_visible!(section_plot.ax_track_width, false)
+
+    compression_values, track_width = track_width_over_compression(steering, suspension)
+    section_plot.obs_track_width = Observable(track_width)
+    set_line_ylims!(section_plot.ax_track_width, track_width; lower_floor = 0.0, min_span = 1.0)
+    GLMakie.xlims!(section_plot.ax_track_width, 0, 100)
+
+    GLMakie.lines!(section_plot.ax_track_width, compression_values, section_plot.obs_track_width; color = :seagreen, linewidth = 3)
+
+    on(section_plot.obs_track_width) do values
+        set_line_ylims!(section_plot.ax_track_width, values; lower_floor = 0.0, min_span = 1.0)
+    end
+
+    nothing
+end
+
+function motion_ratio_plot!(fig, section_plot, steering, suspension)
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+    section_plot.ax_motion_ratio = GLMakie.Axis(fig[row, col],
+                                            xlabel = "symmetric compression in [%]",
+                                            ylabel = motion_ratio_ylabel(),
+                                            title = motion_ratio_title(),
+                                            xticks = 0:10:100)
+
+    set_axis_visible!(section_plot.ax_motion_ratio, false)
+
+    compression_values, motion_ratio = damper_motion_ratio(steering, suspension)
+    section_plot.obs_motion_ratio = Observable(motion_ratio)
+    set_line_ylims!(section_plot.ax_motion_ratio, motion_ratio; lower_floor = 0.0, min_span = 0.1)
+    GLMakie.xlims!(section_plot.ax_motion_ratio, 0, 100)
+
+    GLMakie.lines!(section_plot.ax_motion_ratio, compression_values, section_plot.obs_motion_ratio; color = :royalblue, linewidth = 3)
+
+    on(section_plot.obs_motion_ratio) do values
+        set_line_ylims!(section_plot.ax_motion_ratio, values; lower_floor = 0.0, min_span = 0.1)
+    end
+
+    nothing
+end
+
+function roll_kinematics_plot!(fig, section_plot, chassis, steering, suspension)
+    slot = section_plot.slot
+    row = slot[1]
+    col = slot[2]
+
+    roll_layout = GridLayout(tellheight = false)
+    fig[row, col] = roll_layout
+
+    roll_xlabel = "roll state: left compression / right rebound [%]"
+    section_plot.ax_roll_camber = GLMakie.Axis(roll_layout[1, 1],
+                                            xlabel = roll_xlabel,
+                                            ylabel = "camber [deg]",
+                                            title = roll_camber_title(),
+                                            xticks = 0:20:100)
+
+    section_plot.ax_roll_wheel_angle = GLMakie.Axis(roll_layout[1, 2],
+                                            xlabel = roll_xlabel,
+                                            ylabel = "wheel angle δ [deg]",
+                                            title = roll_wheel_angle_title(),
+                                            xticks = 0:20:100)
+
+    section_plot.ax_roll_track_width = GLMakie.Axis(roll_layout[2, 1],
+                                            xlabel = roll_xlabel,
+                                            ylabel = "track width [mm]",
+                                            title = roll_track_width_title(),
+                                            xticks = 0:20:100)
+
+    section_plot.ax_roll_ackermann_deviation = GLMakie.Axis(roll_layout[2, 2],
+                                            xlabel = roll_xlabel,
+                                            ylabel = "Ackermann ratio [%]",
+                                            title = roll_ackermann_ratio_title(),
+                                            xticks = 0:20:100)
+
+    set_axis_visible!(section_plot.ax_roll_camber, false)
+    set_axis_visible!(section_plot.ax_roll_wheel_angle, false)
+    set_axis_visible!(section_plot.ax_roll_track_width, false)
+    set_axis_visible!(section_plot.ax_roll_ackermann_deviation, false)
+
+    θ = (steering.θx, steering.θy, steering.θz)
+    (
+        roll_values,
+        left_camber,
+        right_camber,
+        left_wheel_angle,
+        right_wheel_angle,
+        track_width,
+        ackermann_ratio_values,
+    ) = roll_kinematics(θ, chassis, steering, suspension)
+
+    section_plot.obs_roll_left_camber = Observable(left_camber)
+    section_plot.obs_roll_right_camber = Observable(right_camber)
+    section_plot.obs_roll_left_wheel_angle = Observable(left_wheel_angle)
+    section_plot.obs_roll_right_wheel_angle = Observable(right_wheel_angle)
+    section_plot.obs_roll_track_width = Observable(track_width)
+    section_plot.obs_roll_ackermann_deviation = Observable(ackermann_ratio_values)
+
+    GLMakie.xlims!(section_plot.ax_roll_camber, 0, 100)
+    GLMakie.xlims!(section_plot.ax_roll_wheel_angle, 0, 100)
+    GLMakie.xlims!(section_plot.ax_roll_track_width, 0, 100)
+    GLMakie.xlims!(section_plot.ax_roll_ackermann_deviation, 0, 100)
+
+    set_line_ylims!(section_plot.ax_roll_camber, left_camber, right_camber; lower_floor = -Inf, min_span = 1.0)
+    set_line_ylims!(section_plot.ax_roll_wheel_angle, left_wheel_angle, right_wheel_angle; lower_floor = -Inf, min_span = 1.0)
+    set_line_ylims!(section_plot.ax_roll_track_width, track_width; lower_floor = 0.0, min_span = 1.0)
+    set_ratio_ylims!(section_plot.ax_roll_ackermann_deviation, ackermann_ratio_values; signed = ackermann_ratio_signed(), lower_default = 30.0)
+
+    GLMakie.lines!(section_plot.ax_roll_camber, roll_values, section_plot.obs_roll_left_camber; color = :royalblue, linewidth = 3)
+    GLMakie.lines!(section_plot.ax_roll_camber, roll_values, section_plot.obs_roll_right_camber; color = :darkorange, linewidth = 3)
+    GLMakie.lines!(section_plot.ax_roll_wheel_angle, roll_values, section_plot.obs_roll_left_wheel_angle; color = :royalblue, linewidth = 3)
+    GLMakie.lines!(section_plot.ax_roll_wheel_angle, roll_values, section_plot.obs_roll_right_wheel_angle; color = :darkorange, linewidth = 3)
+    GLMakie.lines!(section_plot.ax_roll_track_width, roll_values, section_plot.obs_roll_track_width; color = :seagreen, linewidth = 3)
+    GLMakie.lines!(section_plot.ax_roll_ackermann_deviation, roll_values, section_plot.obs_roll_ackermann_deviation; color = :firebrick, linewidth = 3)
+
+    nothing
+end

@@ -1,6 +1,7 @@
 module micromobilitykinematicsGUIExt
 
 using GLMakie
+using LinearAlgebra
 using micromobilitykinematics
 using micromobilitykinematics: Steering, RotationalComponent, TieRod, TrackLever
 using micromobilitykinematics: Suspension, Damper, UpperWishbone, WheelMount, Suspension

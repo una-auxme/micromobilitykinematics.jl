@@ -624,3 +624,171 @@ function left_wheel_delta_plot(θx, θy, θz_max, steering, suspension)
 
     return fig
 end
+
+function wheel_center_path_plot(steering, suspension)
+    fig = GLMakie.Figure(size = (900, 600))
+
+    ax_wheel_center_path = GLMakie.Axis3(fig[1:2, 1:3],
+                                    xlabel = "x in [mm]",
+                                    ylabel = "y in [mm]",
+                                    zlabel = "z in [mm]",
+                                    title = wheel_center_path_title(),)
+    ax_wheel_center_path.aspect = (1, 1, 1)
+
+    compression_values, left_path, right_path = wheel_center_path(steering, suspension)
+    set_wheel_center_path_limits!(ax_wheel_center_path, left_path, right_path)
+
+    GLMakie.lines!(ax_wheel_center_path, left_path; color = :royalblue, linewidth = 3)
+    GLMakie.lines!(ax_wheel_center_path, right_path; color = :darkorange, linewidth = 3)
+    GLMakie.scatter!(ax_wheel_center_path, left_path; color = :royalblue, markersize = 6)
+    GLMakie.scatter!(ax_wheel_center_path, right_path; color = :darkorange, markersize = 6)
+
+    return fig
+end
+
+function wheel_center_surface_plot(θx, θy, θz_max, steering, suspension)
+    fig = GLMakie.Figure(size = (900, 600))
+
+    ax_wheel_center_surface = GLMakie.Axis3(fig[1:2, 1:3],
+                                    xlabel = "x in [mm]",
+                                    ylabel = "y in [mm]",
+                                    zlabel = "z in [mm]",
+                                    title = wheel_center_surface_title(θx, θy, θz_max),)
+    ax_wheel_center_surface.aspect = (1, 1, 1)
+
+    (
+        compression_values,
+        θz_values,
+        left_x,
+        left_y,
+        left_z,
+        right_x,
+        right_y,
+        right_z,
+    ) = wheel_center_surface(θx, θy, θz_max, steering, suspension)
+
+    set_wheel_center_surface_limits!(
+        ax_wheel_center_surface,
+        (left_x, left_y, left_z),
+        (right_x, right_y, right_z),
+    )
+
+    GLMakie.surface!(
+        ax_wheel_center_surface,
+        left_x,
+        left_y,
+        left_z;
+        color = fill(1.0, size(left_z)),
+        colormap = [:royalblue, :royalblue],
+        colorrange = (0.0, 1.0),
+        transparency = true,
+        alpha = 0.55,
+    )
+
+    GLMakie.surface!(
+        ax_wheel_center_surface,
+        right_x,
+        right_y,
+        right_z;
+        color = fill(1.0, size(right_z)),
+        colormap = [:darkorange, :darkorange],
+        colorrange = (0.0, 1.0),
+        transparency = true,
+        alpha = 0.50,
+    )
+
+    return fig
+end
+
+function track_width_plot(steering, suspension)
+    fig = GLMakie.Figure(size = (900, 600))
+
+    ax_track_width = GLMakie.Axis(fig[1:2, 1:3],
+                                xlabel = "symmetric compression in [%]",
+                                ylabel = "track width in [mm]",
+                                title = track_width_title(),
+                                xticks = 0:10:100)
+
+    compression_values, track_width = track_width_over_compression(steering, suspension)
+    set_line_ylims!(ax_track_width, track_width; lower_floor = 0.0, min_span = 1.0)
+    GLMakie.xlims!(ax_track_width, 0, 100)
+
+    GLMakie.lines!(ax_track_width, compression_values, track_width; color = :seagreen, linewidth = 3)
+
+    return fig
+end
+
+function motion_ratio_plot(steering, suspension)
+    fig = GLMakie.Figure(size = (900, 600))
+
+    ax_motion_ratio = GLMakie.Axis(fig[1:2, 1:3],
+                                xlabel = "symmetric compression in [%]",
+                                ylabel = motion_ratio_ylabel(),
+                                title = motion_ratio_title(),
+                                xticks = 0:10:100)
+
+    compression_values, motion_ratio = damper_motion_ratio(steering, suspension)
+    set_line_ylims!(ax_motion_ratio, motion_ratio; lower_floor = 0.0, min_span = 0.1)
+    GLMakie.xlims!(ax_motion_ratio, 0, 100)
+
+    GLMakie.lines!(ax_motion_ratio, compression_values, motion_ratio; color = :royalblue, linewidth = 3)
+
+    return fig
+end
+
+function roll_kinematics_plot(θ, chassis, steering, suspension; signed = ackermann_ratio_signed())
+    fig = GLMakie.Figure(size = (1100, 750))
+    roll_layout = GridLayout()
+    fig[1, 1] = roll_layout
+
+    roll_xlabel = "roll state: left compression / right rebound [%]"
+    ax_roll_camber = GLMakie.Axis(roll_layout[1, 1],
+                                xlabel = roll_xlabel,
+                                ylabel = "camber [deg]",
+                                title = roll_camber_title(),
+                                xticks = 0:20:100)
+    ax_roll_wheel_angle = GLMakie.Axis(roll_layout[1, 2],
+                                xlabel = roll_xlabel,
+                                ylabel = "wheel angle δ [deg]",
+                                title = roll_wheel_angle_title(),
+                                xticks = 0:20:100)
+    ax_roll_track_width = GLMakie.Axis(roll_layout[2, 1],
+                                xlabel = roll_xlabel,
+                                ylabel = "track width [mm]",
+                                title = roll_track_width_title(),
+                                xticks = 0:20:100)
+    ax_roll_ackermann_deviation = GLMakie.Axis(roll_layout[2, 2],
+                                xlabel = roll_xlabel,
+                                ylabel = "Ackermann ratio [%]",
+                                title = roll_ackermann_ratio_title(; signed = signed),
+                                xticks = 0:20:100)
+
+    (
+        roll_values,
+        left_camber,
+        right_camber,
+        left_wheel_angle,
+        right_wheel_angle,
+        track_width,
+        ackermann_ratio_values,
+    ) = roll_kinematics(θ, chassis, steering, suspension; signed = signed)
+
+    GLMakie.xlims!(ax_roll_camber, 0, 100)
+    GLMakie.xlims!(ax_roll_wheel_angle, 0, 100)
+    GLMakie.xlims!(ax_roll_track_width, 0, 100)
+    GLMakie.xlims!(ax_roll_ackermann_deviation, 0, 100)
+
+    set_line_ylims!(ax_roll_camber, left_camber, right_camber; lower_floor = -Inf, min_span = 1.0)
+    set_line_ylims!(ax_roll_wheel_angle, left_wheel_angle, right_wheel_angle; lower_floor = -Inf, min_span = 1.0)
+    set_line_ylims!(ax_roll_track_width, track_width; lower_floor = 0.0, min_span = 1.0)
+    set_ratio_ylims!(ax_roll_ackermann_deviation, ackermann_ratio_values; signed = signed, lower_default = 30.0)
+
+    GLMakie.lines!(ax_roll_camber, roll_values, left_camber; color = :royalblue, linewidth = 3)
+    GLMakie.lines!(ax_roll_camber, roll_values, right_camber; color = :darkorange, linewidth = 3)
+    GLMakie.lines!(ax_roll_wheel_angle, roll_values, left_wheel_angle; color = :royalblue, linewidth = 3)
+    GLMakie.lines!(ax_roll_wheel_angle, roll_values, right_wheel_angle; color = :darkorange, linewidth = 3)
+    GLMakie.lines!(ax_roll_track_width, roll_values, track_width; color = :seagreen, linewidth = 3)
+    GLMakie.lines!(ax_roll_ackermann_deviation, roll_values, ackermann_ratio_values; color = :firebrick, linewidth = 3)
+
+    return fig
+end

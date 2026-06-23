@@ -13,6 +13,16 @@ ackermann_ratio_title(θx, θy, θz; signed = ackermann_ratio_signed()) = "$(ack
 ackermann_ratio_θx_title(θy, θz; signed = ackermann_ratio_signed()) = "$(ackermann_ratio_mode_label(; signed = signed)) over θx for (θy, θz) = ($θy,$θz)"
 ackermann_ratio_surface_title(; signed = ackermann_ratio_signed()) = signed ? "Signed Ackermann ratio surface plot" : "Ackermann ratio surface plot"
 left_wheel_delta_title(θx, θy, right_compression, θz_max) = "Left wheel Δδ vs. compression and θz (θx, θy, right compression, θz max) = ($θx,$θy,$right_compression,$θz_max)"
+wheel_center_path_title() = "Wheel center path over symmetric compression (left = blue, right = orange)"
+wheel_center_surface_title(θx, θy, θz_max) = "Wheel center surface over symmetric compression and signed θz (left = blue, right = orange, θx, θy, ±θz max) = ($θx,$θy,±$θz_max)"
+track_width_title() = "Track width over symmetric compression"
+motion_ratio_title() = "Damper travel / wheel center vertical travel over symmetric compression"
+motion_ratio_ylabel() = "Δdamper travel / Δwheel center z [mm/mm]"
+roll_kinematics_title(θx, θy, θz) = "Roll kinematics, left compression / right rebound for (θx, θy, θz) = ($θx,$θy,$θz)"
+roll_camber_title() = "Camber (left = blue, right = orange)"
+roll_wheel_angle_title() = "Wheel angle δ (left = blue, right = orange)"
+roll_track_width_title() = "Track width"
+roll_ackermann_ratio_title(; signed = ackermann_ratio_signed()) = "$(ackermann_ratio_mode_label(; signed = signed))"
 
 """
     update_layout_visibility!(interaction_lyt::InteractionLyt; 
@@ -70,6 +80,11 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
                                         deviation_surf = false, 
                                         compr_vs_δ = false, 
                                         left_wheel_delta = false,
+                                        wheel_center_path = false,
+                                        wheel_center_surface = false,
+                                        track_width = false,
+                                        motion_ratio = false,
+                                        roll_kinematics = false,
                                         sg_θx = false, 
                                         sg_θy = false, 
                                         sg_θz = false, 
@@ -99,6 +114,14 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
     set_axis_visible!(section_plot.ax_deviation_surface, deviation_surf)
     set_axis_visible!(section_plot.ax_compr_vs_δ,        compr_vs_δ)
     set_axis_visible!(section_plot.ax_left_wheel_delta,   left_wheel_delta)
+    set_axis_visible!(section_plot.ax_wheel_center_path,  wheel_center_path)
+    set_axis_visible!(section_plot.ax_wheel_center_surface, wheel_center_surface)
+    set_axis_visible!(section_plot.ax_track_width,        track_width)
+    set_axis_visible!(section_plot.ax_motion_ratio,       motion_ratio)
+    set_axis_visible!(section_plot.ax_roll_camber,        roll_kinematics)
+    set_axis_visible!(section_plot.ax_roll_wheel_angle,   roll_kinematics)
+    set_axis_visible!(section_plot.ax_roll_track_width,   roll_kinematics)
+    set_axis_visible!(section_plot.ax_roll_ackermann_deviation, roll_kinematics)
 
 
 
@@ -311,6 +334,74 @@ function set_left_wheel_delta_zlims!(ax, delta_surface)
     nothing
 end
 
+function set_line_ylims!(ax, data_series...; lower_floor = -Inf, min_span = 1.0)
+    zmin, zmax = surface_zlimits(data_series...; lower_floor = lower_floor, min_span = min_span)
+    ticks, labels = nice_axis_ticks(zmin, zmax)
+
+    GLMakie.ylims!(ax, first(ticks), last(ticks))
+    ax.yticks = (ticks, labels)
+    nothing
+end
+
+function set_wheel_center_path_limits!(ax, path_series...)
+    xs = Float64[]
+    ys = Float64[]
+    zs = Float64[]
+
+    for path in path_series
+        for point in path
+            point_tuple = Tuple(point)
+            if all(value -> value isa Real && isfinite(value), point_tuple)
+                push!(xs, Float64(point_tuple[1]))
+                push!(ys, Float64(point_tuple[2]))
+                push!(zs, Float64(point_tuple[3]))
+            end
+        end
+    end
+
+    isempty(xs) && return nothing
+
+    xlims = surface_zlimits(xs; lower_floor = -Inf, min_span = 1.0)
+    ylims = surface_zlimits(ys; lower_floor = -Inf, min_span = 1.0)
+    zlims = surface_zlimits(zs; lower_floor = -Inf, min_span = 1.0)
+
+    GLMakie.xlims!(ax, xlims...)
+    GLMakie.ylims!(ax, ylims...)
+    GLMakie.zlims!(ax, zlims...)
+    nothing
+end
+
+function set_wheel_center_surface_limits!(ax, coordinate_surfaces...)
+    xs = Float64[]
+    ys = Float64[]
+    zs = Float64[]
+
+    for (x_matrix, y_matrix, z_matrix) in coordinate_surfaces
+        for index in eachindex(x_matrix, y_matrix, z_matrix)
+            x = x_matrix[index]
+            y = y_matrix[index]
+            z = z_matrix[index]
+
+            if all(value -> value isa Real && isfinite(value), (x, y, z))
+                push!(xs, Float64(x))
+                push!(ys, Float64(y))
+                push!(zs, Float64(z))
+            end
+        end
+    end
+
+    isempty(xs) && return nothing
+
+    xlims = surface_zlimits(xs; lower_floor = -Inf, min_span = 1.0)
+    ylims = surface_zlimits(ys; lower_floor = -Inf, min_span = 1.0)
+    zlims = surface_zlimits(zs; lower_floor = -Inf, min_span = 1.0)
+
+    GLMakie.xlims!(ax, xlims...)
+    GLMakie.ylims!(ax, ylims...)
+    GLMakie.zlims!(ax, zlims...)
+    nothing
+end
+
 function update_compr_vs_delta_surface!(section_plot, θ, steering, suspension)
     steering_copy = deepcopy(steering)
     suspension_copy = deepcopy(suspension)
@@ -340,6 +431,98 @@ function update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steer
     section_plot.obs_left_wheel_delta[] = delta_left
     set_left_wheel_delta_zlims!(section_plot.ax_left_wheel_delta, delta_left)
     section_plot.ax_left_wheel_delta.title = left_wheel_delta_title(θx, θy, right_compression, θz_max)
+
+    nothing
+end
+
+function update_wheel_center_path_plot!(section_plot, steering, suspension)
+    compression_values, left_path, right_path = wheel_center_path(steering, suspension)
+
+    section_plot.obs_wheel_center_left[] = left_path
+    section_plot.obs_wheel_center_right[] = right_path
+    section_plot.ax_wheel_center_path.title = wheel_center_path_title()
+    set_wheel_center_path_limits!(section_plot.ax_wheel_center_path, left_path, right_path)
+
+    nothing
+end
+
+function update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+    (
+        compression_values,
+        θz_values,
+        left_x,
+        left_y,
+        left_z,
+        right_x,
+        right_y,
+        right_z,
+    ) = wheel_center_surface(θx, θy, θz_max, steering, suspension)
+
+    section_plot.obs_wheel_center_surface_left_x[] = left_x
+    section_plot.obs_wheel_center_surface_left_y[] = left_y
+    section_plot.obs_wheel_center_surface_left_z[] = left_z
+    section_plot.obs_wheel_center_surface_right_x[] = right_x
+    section_plot.obs_wheel_center_surface_right_y[] = right_y
+    section_plot.obs_wheel_center_surface_right_z[] = right_z
+    section_plot.ax_wheel_center_surface.title = wheel_center_surface_title(θx, θy, θz_max)
+    set_wheel_center_surface_limits!(
+        section_plot.ax_wheel_center_surface,
+        (left_x, left_y, left_z),
+        (right_x, right_y, right_z),
+    )
+
+    nothing
+end
+
+function update_track_width_plot!(section_plot, steering, suspension)
+    compression_values, track_width = track_width_over_compression(steering, suspension)
+
+    section_plot.obs_track_width[] = track_width
+    section_plot.ax_track_width.title = track_width_title()
+    set_line_ylims!(section_plot.ax_track_width, track_width; lower_floor = 0.0, min_span = 1.0)
+
+    nothing
+end
+
+function update_motion_ratio_plot!(section_plot, steering, suspension)
+    compression_values, motion_ratio = damper_motion_ratio(steering, suspension)
+
+    section_plot.obs_motion_ratio[] = motion_ratio
+    section_plot.ax_motion_ratio.title = motion_ratio_title()
+    set_line_ylims!(section_plot.ax_motion_ratio, motion_ratio; lower_floor = 0.0, min_span = 0.1)
+
+    nothing
+end
+
+function update_roll_kinematics_plot!(section_plot, θ, chassis, steering, suspension; signed = ackermann_ratio_signed())
+    θx, θy, θz = θ
+    (
+        roll_values,
+        left_camber,
+        right_camber,
+        left_wheel_angle,
+        right_wheel_angle,
+        track_width,
+        ackermann_ratio_values,
+    ) = roll_kinematics(θ, chassis, steering, suspension; signed = signed)
+
+    section_plot.obs_roll_left_camber[] = left_camber
+    section_plot.obs_roll_right_camber[] = right_camber
+    section_plot.obs_roll_left_wheel_angle[] = left_wheel_angle
+    section_plot.obs_roll_right_wheel_angle[] = right_wheel_angle
+    section_plot.obs_roll_track_width[] = track_width
+    section_plot.obs_roll_ackermann_deviation[] = ackermann_ratio_values
+
+    section_plot.ax_roll_camber.title = roll_camber_title()
+    section_plot.ax_roll_wheel_angle.title = roll_wheel_angle_title()
+    section_plot.ax_roll_track_width.title = roll_track_width_title()
+    section_plot.ax_roll_ackermann_deviation.title = roll_ackermann_ratio_title(; signed = signed)
+    section_plot.ax_roll_ackermann_deviation.ylabel = "Ackermann ratio [%]"
+
+    set_line_ylims!(section_plot.ax_roll_camber, left_camber, right_camber; lower_floor = -Inf, min_span = 1.0)
+    set_line_ylims!(section_plot.ax_roll_wheel_angle, left_wheel_angle, right_wheel_angle; lower_floor = -Inf, min_span = 1.0)
+    set_line_ylims!(section_plot.ax_roll_track_width, track_width; lower_floor = 0.0, min_span = 1.0)
+    set_ratio_ylims!(section_plot.ax_roll_ackermann_deviation, ackermann_ratio_values; signed = signed, lower_default = 30.0)
 
     nothing
 end
@@ -408,6 +591,10 @@ function update_current_ackermann_ratio_views!(interaction_lyt, θ_max, chassis,
 
     if selected_plot == "Ackermann ratio surface plot"
         update_ratio_surface_plot!(section_plot, θy, θ_max, chassis, steering, suspension; signed = signed)
+    end
+
+    if selected_plot == "Roll kinematics"
+        update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension; signed = signed)
     end
 
     ratio = ackermannratio((θx,θy,θz), chassis, steering, suspension; signed = signed)

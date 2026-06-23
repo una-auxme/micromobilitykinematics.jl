@@ -54,6 +54,14 @@ mutable struct PlotSection  <: AbstractPlotSection
     ax_deviation_surface::Union{Axis3,Nothing}
     ax_compr_vs_δ::Union{Axis3,Nothing}
     ax_left_wheel_delta::Union{Axis3,Nothing}
+    ax_wheel_center_path::Union{Axis3,Nothing}
+    ax_wheel_center_surface::Union{Axis3,Nothing}
+    ax_track_width::Union{Axis,Nothing}
+    ax_motion_ratio::Union{Axis,Nothing}
+    ax_roll_camber::Union{Axis,Nothing}
+    ax_roll_wheel_angle::Union{Axis,Nothing}
+    ax_roll_track_width::Union{Axis,Nothing}
+    ax_roll_ackermann_deviation::Union{Axis,Nothing}
 
     txt_ratio_max::Union{Makie.Text,Nothing}
     txt_ratio_min::Union{Makie.Text,Nothing}
@@ -105,6 +113,22 @@ mutable struct PlotSection  <: AbstractPlotSection
     obs_compr_vs_δi::Union{Observable,Nothing}
     obs_compr_vs_δo::Union{Observable,Nothing}
     obs_left_wheel_delta::Union{Observable,Nothing}
+    obs_wheel_center_left::Union{Observable,Nothing}
+    obs_wheel_center_right::Union{Observable,Nothing}
+    obs_wheel_center_surface_left_x::Union{Observable,Nothing}
+    obs_wheel_center_surface_left_y::Union{Observable,Nothing}
+    obs_wheel_center_surface_left_z::Union{Observable,Nothing}
+    obs_wheel_center_surface_right_x::Union{Observable,Nothing}
+    obs_wheel_center_surface_right_y::Union{Observable,Nothing}
+    obs_wheel_center_surface_right_z::Union{Observable,Nothing}
+    obs_track_width::Union{Observable,Nothing}
+    obs_motion_ratio::Union{Observable,Nothing}
+    obs_roll_left_camber::Union{Observable,Nothing}
+    obs_roll_right_camber::Union{Observable,Nothing}
+    obs_roll_left_wheel_angle::Union{Observable,Nothing}
+    obs_roll_right_wheel_angle::Union{Observable,Nothing}
+    obs_roll_track_width::Union{Observable,Nothing}
+    obs_roll_ackermann_deviation::Union{Observable,Nothing}
 
 
     function PlotSection()
@@ -121,6 +145,14 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.ax_deviation_surface = nothing
         inst.ax_compr_vs_δ = nothing
         inst.ax_left_wheel_delta = nothing
+        inst.ax_wheel_center_path = nothing
+        inst.ax_wheel_center_surface = nothing
+        inst.ax_track_width = nothing
+        inst.ax_motion_ratio = nothing
+        inst.ax_roll_camber = nothing
+        inst.ax_roll_wheel_angle = nothing
+        inst.ax_roll_track_width = nothing
+        inst.ax_roll_ackermann_deviation = nothing
 
         inst.txt_ratio_max = nothing 
         inst.txt_ratio_min = nothing 
@@ -152,6 +184,22 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.obs_compr_vs_δi = nothing
         inst.obs_compr_vs_δo = nothing
         inst.obs_left_wheel_delta = nothing
+        inst.obs_wheel_center_left = nothing
+        inst.obs_wheel_center_right = nothing
+        inst.obs_wheel_center_surface_left_x = nothing
+        inst.obs_wheel_center_surface_left_y = nothing
+        inst.obs_wheel_center_surface_left_z = nothing
+        inst.obs_wheel_center_surface_right_x = nothing
+        inst.obs_wheel_center_surface_right_y = nothing
+        inst.obs_wheel_center_surface_right_z = nothing
+        inst.obs_track_width = nothing
+        inst.obs_motion_ratio = nothing
+        inst.obs_roll_left_camber = nothing
+        inst.obs_roll_right_camber = nothing
+        inst.obs_roll_left_wheel_angle = nothing
+        inst.obs_roll_right_wheel_angle = nothing
+        inst.obs_roll_track_width = nothing
+        inst.obs_roll_ackermann_deviation = nothing
 
         return inst
     end 
