@@ -63,7 +63,7 @@ function event_slider_θx(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Radii"
-                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
                 section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
@@ -201,7 +201,7 @@ function event_slider_θy(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Radii"
-                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
                 section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
@@ -340,7 +340,7 @@ function event_slider_θz(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Radii"
-                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
                 section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
@@ -531,7 +531,7 @@ function event_slider_left_compression(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Radii"
-                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
                 section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
@@ -685,7 +685,7 @@ function event_slider_right_compression(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Radii"
-                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
                 section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
@@ -1671,7 +1671,7 @@ function event_btn_reset(interaction_lyt::InteractionLyt,
         end
 
         if section_plot_settings.menu.selection.val == "Radii"
-            section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+            section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
             section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
         end
 
@@ -1831,7 +1831,7 @@ function event_slider_param_θx_radius(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Radii"
-                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
                 section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
@@ -1961,7 +1961,7 @@ function event_slider_param_θz_radius(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Radii"
-                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
                 section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
@@ -2091,7 +2091,7 @@ function event_slider_param_tierod(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Radii"
-                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
                 section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 
@@ -2221,7 +2221,7 @@ function event_slider_param_tracklever(interaction_lyt::InteractionLyt,
             end
 
             if section_plot_settings.menu.selection.val == "Radii"
-                section_plot.ax_radii.title = "Radii for (θx, θy, θz) = ($θx,$θy,$θz)"
+                section_plot.ax_radii.title = radii_title(θx, θy, θz_max)
                 section_plot.obs_radii_θz[] = steering_radii_θz(θx,θy,θz_max,chassis, steering, suspension) ./ 1000.0
             end
 

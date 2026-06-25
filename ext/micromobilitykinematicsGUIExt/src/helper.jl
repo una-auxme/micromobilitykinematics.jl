@@ -8,6 +8,7 @@ compr_vs_delta_title() = "Compression vs. wheel angles (δi = blue, δo = orange
 compr_vs_delta_title(θx, θy, θz) = "$(compr_vs_delta_title()) for (θx, θy, θz) = ($θx,$θy,$θz)"
 theta_vs_delta_title() = "Steering vs. wheel angles (δi = blue, δo = orange)"
 theta_vs_delta_title(θx_max, θy, θz_max) = "$(theta_vs_delta_title()) for (θx max, θy, θz max) = ($θx_max,$θy,$θz_max)"
+radii_title(θx, θy, θz_max) = "Outer wheel path radius over θz sweep (θx, θy, θz max) = ($θx,$θy,$θz_max)"
 ackermann_ratio_mode_label(; signed = ackermann_ratio_signed()) = signed ? "signed Ackermann ratio" : "Ackermann ratio"
 ackermann_ratio_title(θx, θy, θz; signed = ackermann_ratio_signed()) = "$(ackermann_ratio_mode_label(; signed = signed)) for (θx, θy, θz) = ($θx,$θy,$θz)"
 ackermann_ratio_θx_title(θy, θz; signed = ackermann_ratio_signed()) = "$(ackermann_ratio_mode_label(; signed = signed)) over θx for (θy, θz) = ($θy,$θz)"

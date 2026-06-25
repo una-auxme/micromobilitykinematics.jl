@@ -172,8 +172,8 @@ function radii_plot(θx,θy,θz_max,chassis, steering, suspension)
     ############| Radii θz Scene
     ax_radii = GLMakie.Axis(fig[1:2, 1:3], 
                             xlabel = "θz in [°]", 
-                            ylabel = "radius in [m]", 
-                            title = "Radii for (θx, θy, θz) = (0,0,0)",
+                            ylabel = "outer wheel path radius in [m]", 
+                            title = radii_title(θx, θy, θz_max),
                             yticks = 0:5:40) 
     #ax_radii.blockscene.visible[] = false
     # Limits
