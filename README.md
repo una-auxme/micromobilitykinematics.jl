@@ -117,10 +117,10 @@ error across a defined angle range.
 
     lower = (50.0, 50.0, 70.0, 195.0)
     upper = (100.0, 100.0, 200.0, 260.0)
-    maxθ  = (15.0, 1.0, 35.0)
+    maxϕ  = (15.0, 1.0, 35.0)
 
-    p = random_search(upper, lower, maxθ)
-    opt = optim_over_range(p..., maxθ)
+    p = random_search(upper, lower, maxϕ)
+    opt = optim_over_range(p..., maxϕ)
 
     opt.input
     opt.objective
@@ -129,7 +129,7 @@ error across a defined angle range.
 ```
 
 > **Note:**  
-> The optimisation evaluates the steering geometry at every angle inside maxθ.    
+> The optimisation evaluates the steering geometry at every angle inside maxϕ.    
 > This means the returned configuration is not optimised for just one steering angle,
 > but for the entire steering motion.  
 > This makes the result more robust and suitable for real vehicle applications.
@@ -151,12 +151,12 @@ Use this workflow when exploring new steering concepts or evaluating the influen
 
     lower = (50.0, 50.0, 70.0, 195.0)
     upper = (100.0, 100.0, 200.0, 260.0)
-    maxθ  = (15.0, 1.0, 35.0)
+    maxϕ  = (15.0, 1.0, 35.0)
 
-    p = random_search(upper, lower, maxθ)
+    p = random_search(upper, lower, maxϕ)
     xR, zR, leverL, rodL = p
 
-    opt = optim_over_range(xR, zR, leverL, rodL, maxθ)
+    opt = optim_over_range(xR, zR, leverL, rodL, maxϕ)
 
     steering    = opt.steering
     suspension  = Suspension((30,30))
@@ -170,7 +170,7 @@ Use this workflow when exploring new steering concepts or evaluating the influen
 > **Note:**  
 > The `random_search` step only identifies *feasible* parameter sets inside the given bounds.  
 > The actual optimisation happens in `optim_over_range`, which refines these parameters to minimise the steering error across the full angle  
-> range defined by `maxθ`.
+> range defined by `maxϕ`.
 
 > **Info:**  
 > Before launching the GUI, make sure to call `update!` with a valid steering  

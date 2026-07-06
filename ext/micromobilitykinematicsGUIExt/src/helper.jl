@@ -4,22 +4,56 @@ function set_axis_visible!(ax, v::Bool)
     ax.scene.visible[]      = v   # Plots (lines!, scatter!, …)
 end
 
+plot_title_size() = 28
+
+format_compression_percent(value) = "$(round(float(value), digits = 1))%"
+
+function compression_title_part(suspension)
+    suspension === nothing && return ""
+
+    left_compression = suspension.damper[1].compression
+    right_compression = suspension.damper[2].compression
+
+    if isapprox(float(left_compression), float(right_compression); atol = 1e-9)
+        return "compression = $(format_compression_percent(left_compression))"
+    end
+
+    return "compression L/R = $(format_compression_percent(left_compression))/$(format_compression_percent(right_compression))"
+end
+
+function title_with_compression(title, suspension)
+    compression = compression_title_part(suspension)
+    isempty(compression) && return title
+    return "$title, $compression"
+end
+
+geometry_title(ϕx, ϕy, ϕz, suspension = nothing) =
+    title_with_compression("Steering geometry for (φx, φy, φz) = ($ϕx,$ϕy,$ϕz)", suspension)
 compr_vs_delta_title() = "Compression vs. wheel angles (δi = blue, δo = orange)"
-compr_vs_delta_title(θx, θy, θz) = "$(compr_vs_delta_title()) for (θx, θy, θz) = ($θx,$θy,$θz)"
-theta_vs_delta_title() = "Steering vs. wheel angles (δi = blue, δo = orange)"
-theta_vs_delta_title(θx_max, θy, θz_max) = "$(theta_vs_delta_title()) for (θx max, θy, θz max) = ($θx_max,$θy,$θz_max)"
-radii_title(θx, θy, θz_max) = "Outer wheel path radius over θz sweep (θx, θy, θz max) = ($θx,$θy,$θz_max)"
+compr_vs_delta_title(ϕx, ϕy, ϕz) = "$(compr_vs_delta_title()) for (φx, φy, φz) = ($ϕx,$ϕy,$ϕz)"
+varphi_vs_delta_title() = "Steering vs. wheel angles (δi = blue, δo = orange)"
+varphi_vs_delta_title(ϕx_max, ϕy, ϕz_max, suspension = nothing) =
+    title_with_compression("$(varphi_vs_delta_title()) for (φx max, φy, φz max) = ($ϕx_max,$ϕy,$ϕz_max)", suspension)
+radii_title(ϕx, ϕy, ϕz_max, suspension = nothing) =
+    title_with_compression("Outer wheel path radius over φz sweep (φx, φy, φz max) = ($ϕx,$ϕy,$ϕz_max)", suspension)
 ackermann_ratio_mode_label(; signed = ackermann_ratio_signed()) = signed ? "signed Ackermann ratio" : "Ackermann ratio"
-ackermann_ratio_title(θx, θy, θz; signed = ackermann_ratio_signed()) = "$(ackermann_ratio_mode_label(; signed = signed)) for (θx, θy, θz) = ($θx,$θy,$θz)"
-ackermann_ratio_θx_title(θy, θz; signed = ackermann_ratio_signed()) = "$(ackermann_ratio_mode_label(; signed = signed)) over θx for (θy, θz) = ($θy,$θz)"
-ackermann_ratio_surface_title(; signed = ackermann_ratio_signed()) = signed ? "Signed Ackermann ratio surface plot" : "Ackermann ratio surface plot"
-left_wheel_delta_title(θx, θy, right_compression, θz_max) = "Left wheel Δδ vs. compression and θz (θx, θy, right compression, θz max) = ($θx,$θy,$right_compression,$θz_max)"
+ackermann_ratio_title(ϕx, ϕy, ϕz, suspension = nothing; signed = ackermann_ratio_signed()) =
+    title_with_compression("$(ackermann_ratio_mode_label(; signed = signed)) for (φx, φy, φz) = ($ϕx,$ϕy,$ϕz)", suspension)
+ackermann_ratio_ϕx_title(ϕy, ϕz, suspension = nothing; signed = ackermann_ratio_signed()) =
+    title_with_compression("$(ackermann_ratio_mode_label(; signed = signed)) over φx for (φy, φz) = ($ϕy,$ϕz)", suspension)
+ackermann_ratio_surface_title(suspension = nothing; signed = ackermann_ratio_signed()) =
+    title_with_compression(signed ? "Signed Ackermann ratio surface plot" : "Ackermann ratio surface plot", suspension)
+ackermann_deviation_title(ϕx, ϕy, ϕz, suspension = nothing) =
+    title_with_compression("Ackermann deviation for (φx, φy, φz) = ($ϕx,$ϕy,$ϕz)", suspension)
+ackermann_deviation_surface_title(suspension = nothing) =
+    title_with_compression("Ackermann deviation surface", suspension)
+left_wheel_delta_title(ϕx, ϕy, right_compression, ϕz_max) = "Left wheel Δδ vs. compression and φz (φx, φy, right compression, φz max) = ($ϕx,$ϕy,$right_compression,$ϕz_max)"
 wheel_center_path_title() = "Wheel center path over symmetric compression (left = blue, right = orange)"
-wheel_center_surface_title(θx, θy, θz_max) = "Wheel center surface over symmetric compression and signed θz (left = blue, right = orange, θx, θy, ±θz max) = ($θx,$θy,±$θz_max)"
+wheel_center_surface_title(ϕx, ϕy, ϕz_max) = "Wheel center surface over symmetric compression and signed φz (left = blue, right = orange, φx, φy, ±φz max) = ($ϕx,$ϕy,±$ϕz_max)"
 track_width_title() = "Track width over symmetric compression"
 motion_ratio_title() = "Damper travel / wheel center vertical travel over symmetric compression"
 motion_ratio_ylabel() = "Δdamper travel / Δwheel center z [mm/mm]"
-roll_kinematics_title(θx, θy, θz) = "Roll kinematics, left compression / right rebound for (θx, θy, θz) = ($θx,$θy,$θz)"
+roll_kinematics_title(ϕx, ϕy, ϕz) = "Roll kinematics, left compression / right rebound for (φx, φy, φz) = ($ϕx,$ϕy,$ϕz)"
 roll_camber_title() = "Camber (left = blue, right = orange)"
 roll_wheel_angle_title() = "Wheel angle δ (left = blue, right = orange)"
 roll_track_width_title() = "Track width"
@@ -31,14 +65,14 @@ roll_ackermann_ratio_title(; signed = ackermann_ratio_signed()) = "$(ackermann_r
                                 radii = false, 
                                 ratio = false, 
                                 ratio_surf = false, 
-                                ax_θ_vs_δ = false, 
+                                ax_ϕ_vs_δ = false, 
                                 deviation = false, 
                                 deviation_surf = false, 
                                 compr_vs_δ = false, 
                                 left_wheel_delta = false,
-                                sg_θx = false, 
-                                sg_θy = false, 
-                                sg_θz = false, 
+                                sg_φx = false, 
+                                sg_φy = false, 
+                                sg_φz = false, 
                                 comprL = false, 
                                 comprR = false)
 
@@ -52,13 +86,13 @@ Controls the visibility of plots and sliders in the `InteractionLyt` layout.
 - `radii`: Show or hide the radii plot.
 - `ratio`: Show or hide the Ackermann ratio plot.
 - `ratio_surf`: Show or hide the Ackermann ratio surface plot.
-- `ax_θ_vs_δ`: Show or hide the θ vs δ surface plot.
+- `ax_ϕ_vs_δ`: Show or hide the ϕ vs δ surface plot.
 - `deviation`: Show or hide the deviation plot.
 - `deviation_surf`: Show or hide the deviation surface plot.
 - `compr_vs_δ`: Show or hide the compression vs δi plot.
-- `sg_θx`: Show or hide the θx angle slider.
-- `sg_θy`: Show or hide the θy angle slider.
-- `sg_θz`: Show or hide the θz angle slider.
+- `sg_φx`: Show or hide the φx angle slider.
+- `sg_φy`: Show or hide the φy angle slider.
+- `sg_φz`: Show or hide the φz angle slider.
 - `comprL`: Show or hide the left compression slider.
 - `comprR`: Show or hide the right compression slider.
 
@@ -74,9 +108,9 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
                                         geom = false, 
                                         radii = false, 
                                         ratio = false, 
-                                        ratio_θx = false, 
+                                        ratio_ϕx = false, 
                                         ratio_surf = false, 
-                                        θ_vs_δ = false, 
+                                        ϕ_vs_δ = false, 
                                         deviation = false, 
                                         deviation_surf = false, 
                                         compr_vs_δ = false, 
@@ -86,9 +120,9 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
                                         track_width = false,
                                         motion_ratio = false,
                                         roll_kinematics = false,
-                                        sg_θx = false, 
-                                        sg_θy = false, 
-                                        sg_θz = false, 
+                                        sg_ϕx = false, 
+                                        sg_ϕy = false, 
+                                        sg_ϕz = false, 
                                         comprL = false, 
                                         comprR = false )
 
@@ -108,9 +142,9 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
     set_axis_visible!(section_plot.ax_geom,              geom)
     set_axis_visible!(section_plot.ax_radii,             radii)
     set_axis_visible!(section_plot.ax_ratio,             ratio)
-    set_axis_visible!(section_plot.ax_ratio_θx,          ratio_θx)
+    set_axis_visible!(section_plot.ax_ratio_ϕx,          ratio_ϕx)
     set_axis_visible!(section_plot.ax_ratio_surface,     ratio_surf)
-    set_axis_visible!(section_plot.ax_θ_vs_δ_surface,    θ_vs_δ)
+    set_axis_visible!(section_plot.ax_ϕ_vs_δ_surface,    ϕ_vs_δ)
     set_axis_visible!(section_plot.ax_deviation,         deviation)
     set_axis_visible!(section_plot.ax_deviation_surface, deviation_surf)
     set_axis_visible!(section_plot.ax_compr_vs_δ,        compr_vs_δ)
@@ -127,9 +161,9 @@ function update_layout_visibility!(interaction_lyt::InteractionLyt;
 
 
     # Toggle angle slider visibility
-    section_angle.sg_θ.sliders[1].blockscene.visible[] = sg_θx
-    section_angle.sg_θ.sliders[2].blockscene.visible[] = sg_θy
-    section_angle.sg_θ.sliders[3].blockscene.visible[] = sg_θz
+    section_angle.sg_ϕ.sliders[1].blockscene.visible[] = sg_ϕx
+    section_angle.sg_ϕ.sliders[2].blockscene.visible[] = sg_ϕy
+    section_angle.sg_ϕ.sliders[3].blockscene.visible[] = sg_ϕz
 
     # Toggle compression slider visibility
     section_damper.sg_compr.sliders[1].blockscene.visible[] = comprL
@@ -403,10 +437,10 @@ function set_wheel_center_surface_limits!(ax, coordinate_surfaces...)
     nothing
 end
 
-function update_compr_vs_delta_surface!(section_plot, θ, steering, suspension)
+function update_compr_vs_delta_surface!(section_plot, ϕ, steering, suspension)
     steering_copy = deepcopy(steering)
     suspension_copy = deepcopy(suspension)
-    delta_i, delta_o = compr_vs_δ(θ, steering_copy, suspension_copy)
+    delta_i, delta_o = compr_vs_δ(ϕ, steering_copy, suspension_copy)
 
     section_plot.obs_compr_vs_δi[] = delta_i
     section_plot.obs_compr_vs_δo[] = delta_o
@@ -415,15 +449,15 @@ function update_compr_vs_delta_surface!(section_plot, θ, steering, suspension)
     nothing
 end
 
-function update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steering, suspension)
+function update_left_wheel_delta_surface!(section_plot, ϕx, ϕy, ϕz_max, steering, suspension)
     steering_copy = deepcopy(steering)
     suspension_copy = deepcopy(suspension)
     right_compression = suspension.damper[2].compression
 
-    delta_left = left_wheel_delta_vs_compression_θz(
-        θx,
-        θy,
-        θz_max,
+    delta_left = left_wheel_delta_vs_compression_ϕz(
+        ϕx,
+        ϕy,
+        ϕz_max,
         steering_copy,
         suspension_copy;
         fixed_right_compression = right_compression,
@@ -431,7 +465,7 @@ function update_left_wheel_delta_surface!(section_plot, θx, θy, θz_max, steer
 
     section_plot.obs_left_wheel_delta[] = delta_left
     set_left_wheel_delta_zlims!(section_plot.ax_left_wheel_delta, delta_left)
-    section_plot.ax_left_wheel_delta.title = left_wheel_delta_title(θx, θy, right_compression, θz_max)
+    section_plot.ax_left_wheel_delta.title = left_wheel_delta_title(ϕx, ϕy, right_compression, ϕz_max)
 
     nothing
 end
@@ -447,17 +481,17 @@ function update_wheel_center_path_plot!(section_plot, steering, suspension)
     nothing
 end
 
-function update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, steering, suspension)
+function update_wheel_center_surface_plot!(section_plot, ϕx, ϕy, ϕz_max, steering, suspension)
     (
         compression_values,
-        θz_values,
+        ϕz_values,
         left_x,
         left_y,
         left_z,
         right_x,
         right_y,
         right_z,
-    ) = wheel_center_surface(θx, θy, θz_max, steering, suspension)
+    ) = wheel_center_surface(ϕx, ϕy, ϕz_max, steering, suspension)
 
     section_plot.obs_wheel_center_surface_left_x[] = left_x
     section_plot.obs_wheel_center_surface_left_y[] = left_y
@@ -465,7 +499,7 @@ function update_wheel_center_surface_plot!(section_plot, θx, θy, θz_max, stee
     section_plot.obs_wheel_center_surface_right_x[] = right_x
     section_plot.obs_wheel_center_surface_right_y[] = right_y
     section_plot.obs_wheel_center_surface_right_z[] = right_z
-    section_plot.ax_wheel_center_surface.title = wheel_center_surface_title(θx, θy, θz_max)
+    section_plot.ax_wheel_center_surface.title = wheel_center_surface_title(ϕx, ϕy, ϕz_max)
     set_wheel_center_surface_limits!(
         section_plot.ax_wheel_center_surface,
         (left_x, left_y, left_z),
@@ -495,8 +529,8 @@ function update_motion_ratio_plot!(section_plot, steering, suspension)
     nothing
 end
 
-function update_roll_kinematics_plot!(section_plot, θ, chassis, steering, suspension; signed = ackermann_ratio_signed())
-    θx, θy, θz = θ
+function update_roll_kinematics_plot!(section_plot, ϕ, chassis, steering, suspension; signed = ackermann_ratio_signed())
+    ϕx, ϕy, ϕz = ϕ
     (
         roll_values,
         left_camber,
@@ -505,7 +539,7 @@ function update_roll_kinematics_plot!(section_plot, θ, chassis, steering, suspe
         right_wheel_angle,
         track_width,
         ackermann_ratio_values,
-    ) = roll_kinematics(θ, chassis, steering, suspension; signed = signed)
+    ) = roll_kinematics(ϕ, chassis, steering, suspension; signed = signed)
 
     section_plot.obs_roll_left_camber[] = left_camber
     section_plot.obs_roll_right_camber[] = right_camber
@@ -528,77 +562,77 @@ function update_roll_kinematics_plot!(section_plot, θ, chassis, steering, suspe
     nothing
 end
 
-function update_ratio_θz_plot!(section_plot, θx, θy, θz, θz_max, chassis, steering, suspension; signed = ackermann_ratio_signed())
-    ratio_θz = ackermannratio_θz(θx, θy, θz_max, chassis, steering, suspension; signed = signed)
+function update_ratio_ϕz_plot!(section_plot, ϕx, ϕy, ϕz, ϕz_max, chassis, steering, suspension; signed = ackermann_ratio_signed())
+    ratio_ϕz = ackermannratio_ϕz(ϕx, ϕy, ϕz_max, chassis, steering, suspension; signed = signed)
 
-    section_plot.ax_ratio.title = ackermann_ratio_title(θx, θy, θz; signed = signed)
-    section_plot.obs_ratio_θz[] = ratio_θz
-    section_plot.obs_ratio_min[] = finite_minimum(ratio_θz)
-    section_plot.obs_ratio_max[] = finite_maximum(ratio_θz)
-    set_ratio_ylims!(section_plot.ax_ratio, ratio_θz; signed = signed, lower_default = 30.0)
-
-    nothing
-end
-
-function update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension; signed = ackermann_ratio_signed())
-    chassis_copy = deepcopy(chassis)
-    steering_copy = deepcopy(steering)
-    suspension_copy = deepcopy(suspension)
-    ratio_θx = ackermannratio_θx(θx_max, θy, θz, chassis_copy, steering_copy, suspension_copy; signed = signed)
-
-    section_plot.ax_ratio_θx.title = ackermann_ratio_θx_title(θy, θz; signed = signed)
-    section_plot.obs_ratio_θx[] = ratio_θx
-    section_plot.obs_ratio_θx_min[] = finite_minimum(ratio_θx)
-    section_plot.obs_ratio_θx_max[] = finite_maximum(ratio_θx)
-    set_ratio_ylims!(section_plot.ax_ratio_θx, ratio_θx; signed = signed, lower_default = 30.0)
+    section_plot.ax_ratio.title = ackermann_ratio_title(ϕx, ϕy, ϕz, suspension; signed = signed)
+    section_plot.obs_ratio_ϕz[] = ratio_ϕz
+    section_plot.obs_ratio_min[] = finite_minimum(ratio_ϕz)
+    section_plot.obs_ratio_max[] = finite_maximum(ratio_ϕz)
+    set_ratio_ylims!(section_plot.ax_ratio, ratio_ϕz; signed = signed, lower_default = 30.0)
 
     nothing
 end
 
-function update_ratio_surface_plot!(section_plot, θy, θ_max, chassis, steering, suspension; signed = ackermann_ratio_signed())
-    θx_max, θy_max, θz_max = θ_max
+function update_ratio_ϕx_plot!(section_plot, ϕx_max, ϕy, ϕz, chassis, steering, suspension; signed = ackermann_ratio_signed())
     chassis_copy = deepcopy(chassis)
     steering_copy = deepcopy(steering)
     suspension_copy = deepcopy(suspension)
-    ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (θx_max, θy, θz_max); signed = signed)
+    ratio_ϕx = ackermannratio_ϕx(ϕx_max, ϕy, ϕz, chassis_copy, steering_copy, suspension_copy; signed = signed)
 
-    section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title(; signed = signed)
+    section_plot.ax_ratio_ϕx.title = ackermann_ratio_ϕx_title(ϕy, ϕz, suspension; signed = signed)
+    section_plot.obs_ratio_ϕx[] = ratio_ϕx
+    section_plot.obs_ratio_ϕx_min[] = finite_minimum(ratio_ϕx)
+    section_plot.obs_ratio_ϕx_max[] = finite_maximum(ratio_ϕx)
+    set_ratio_ylims!(section_plot.ax_ratio_ϕx, ratio_ϕx; signed = signed, lower_default = 30.0)
+
+    nothing
+end
+
+function update_ratio_surface_plot!(section_plot, ϕy, ϕ_max, chassis, steering, suspension; signed = ackermann_ratio_signed())
+    ϕx_max, ϕy_max, ϕz_max = ϕ_max
+    chassis_copy = deepcopy(chassis)
+    steering_copy = deepcopy(steering)
+    suspension_copy = deepcopy(suspension)
+    ratio_surface = ackermannratio_surface(chassis_copy, steering_copy, suspension_copy, (ϕx_max, ϕy, ϕz_max); signed = signed)
+
+    section_plot.ax_ratio_surface.title = ackermann_ratio_surface_title(suspension; signed = signed)
     section_plot.obs_ratio_surface[] = ratio_surface
     set_ratio_zlims!(section_plot.ax_ratio_surface, ratio_surface; signed = signed)
 
     nothing
 end
 
-function update_current_ackermann_ratio_views!(interaction_lyt, θ_max, chassis, steering, suspension)
-    θx_max, θy_max, θz_max = θ_max
+function update_current_ackermann_ratio_views!(interaction_lyt, ϕ_max, chassis, steering, suspension)
+    ϕx_max, ϕy_max, ϕz_max = ϕ_max
     section_plot = interaction_lyt.section_plot
     section_angle = interaction_lyt.section_angle
     section_plot_settings = interaction_lyt.section_plot_settings
     section_info = interaction_lyt.section_info
 
-    θx = section_angle.sg_θ.sliders[1].value.val
-    θy = section_angle.sg_θ.sliders[2].value.val
-    θz = section_angle.sg_θ.sliders[3].value.val
+    ϕx = section_angle.sg_ϕ.sliders[1].value.val
+    ϕy = section_angle.sg_ϕ.sliders[2].value.val
+    ϕz = section_angle.sg_ϕ.sliders[3].value.val
     signed = ackermann_ratio_signed()
     selected_plot = section_plot_settings.menu.selection.val
 
     if selected_plot == "Ackermann ratio"
-        update_ratio_θz_plot!(section_plot, θx, θy, θz, θz_max, chassis, steering, suspension; signed = signed)
+        update_ratio_ϕz_plot!(section_plot, ϕx, ϕy, ϕz, ϕz_max, chassis, steering, suspension; signed = signed)
     end
 
-    if selected_plot == "Ackermann ratio θx sweep"
-        update_ratio_θx_plot!(section_plot, θx_max, θy, θz, chassis, steering, suspension; signed = signed)
+    if selected_plot == "Ackermann ratio φx sweep"
+        update_ratio_ϕx_plot!(section_plot, ϕx_max, ϕy, ϕz, chassis, steering, suspension; signed = signed)
     end
 
     if selected_plot == "Ackermann ratio surface plot"
-        update_ratio_surface_plot!(section_plot, θy, θ_max, chassis, steering, suspension; signed = signed)
+        update_ratio_surface_plot!(section_plot, ϕy, ϕ_max, chassis, steering, suspension; signed = signed)
     end
 
     if selected_plot == "Roll kinematics"
-        update_roll_kinematics_plot!(section_plot, (θx, θy, θz), chassis, steering, suspension; signed = signed)
+        update_roll_kinematics_plot!(section_plot, (ϕx, ϕy, ϕz), chassis, steering, suspension; signed = signed)
     end
 
-    ratio = ackermannratio((θx,θy,θz), chassis, steering, suspension; signed = signed)
+    ratio = ackermannratio((ϕx,ϕy,ϕz), chassis, steering, suspension; signed = signed)
     section_info.tb_ratio.displayed_string = "Ackermann ratio: $(round(ratio, digits=2))%"
 
     nothing

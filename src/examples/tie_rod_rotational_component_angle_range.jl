@@ -125,11 +125,11 @@ function sweep_values(min_value, max_value, step_size)
     return values
 end
 
-function compression_values_for_phi_z(phi_z,
+function compression_values_for_varphi_z(varphi_z,
                                         default_compression_values,
                                         high_steering_compression_values;
-                                        high_steering_phi_z_threshold_deg = 15.0)
-    if abs(phi_z) > high_steering_phi_z_threshold_deg
+                                        high_steering_varphi_z_threshold_deg = 15.0)
+    if abs(varphi_z) > high_steering_varphi_z_threshold_deg
         return high_steering_compression_values
     end
 
@@ -176,24 +176,24 @@ function tie_rod_rotational_component_geometry(steering, side_index)
     )
 end
 
-function pose_row(phi_x, phi_y, phi_z, suspension, side)
+function pose_row(varphi_x, varphi_y, varphi_z, suspension, side)
     return (
         side = side,
-        phi_x_deg = phi_x,
-        phi_y_deg = phi_y,
-        phi_z_deg = phi_z,
+        varphi_x_deg = varphi_x,
+        varphi_y_deg = varphi_y,
+        varphi_z_deg = varphi_z,
         compression_percent = suspension.damper[1].compression,
         left_damper_length_mm = suspension.damper[1].length,
         right_damper_length_mm = suspension.damper[2].length,
     )
 end
 
-function failed_pose_row(phi_x, phi_y, phi_z, compression, side)
+function failed_pose_row(varphi_x, varphi_y, varphi_z, compression, side)
     return (
         side = side,
-        phi_x_deg = phi_x,
-        phi_y_deg = phi_y,
-        phi_z_deg = phi_z,
+        varphi_x_deg = varphi_x,
+        varphi_y_deg = varphi_y,
+        varphi_z_deg = varphi_z,
         compression_percent = compression,
     )
 end
@@ -491,13 +491,13 @@ function side_index_from_symbol(side)
     error("side must be :Left or :Right")
 end
 
-function reference_geometry(phi_y, steering, suspension, side_index; reference_compression_percent = 30.0)
+function reference_geometry(varphi_y, steering, suspension, side_index; reference_compression_percent = 30.0)
     steering_reference = deepcopy(steering)
     suspension_reference = deepcopy(suspension)
 
     suspension_reference.damper[1].compression = reference_compression_percent
     suspension_reference.damper[2].compression = reference_compression_percent
-    micromobilitykinematics.update!((0.0, phi_y, 0.0), steering_reference, suspension_reference)
+    micromobilitykinematics.update!((0.0, varphi_y, 0.0), steering_reference, suspension_reference)
 
     return tie_rod_rotational_component_geometry(steering_reference, side_index)
 end
@@ -528,9 +528,9 @@ function add_plot_vector!(
 end
 
 """
-    tie_rod_rotational_component_angle_sweep(phi_limits_deg, steering, suspension; side = :Left, ...)
+    tie_rod_rotational_component_angle_sweep(varphi_limits_deg, steering, suspension; side = :Left, ...)
 
-Sweeps phi_x, phi_z and symmetric compression while phi_y is fixed.
+Sweeps φx, φz and symmetric compression while φy is fixed.
 The rotational component lever/tie rod angle is evaluated at the shared ball joint:
 
 - rotational component lever vector: ball joint -> rotational component lever mount
@@ -542,21 +542,21 @@ For the 3D plot the rotational component lever is kept fixed in a local coordina
 - x-axis along the current rotational component lever, from mount to ball joint
 - z-axis is the vehicle z-axis projected orthogonal to the current x-axis
 
-At phi_z = 0 deg and 30% compression this is the requested reference
+At φz = 0 deg and 30% compression this is the requested reference
 coordinate system. The plot therefore shows the tie-rod direction envelope relative
 to the rotational component lever. For symmetric vehicles one side is sufficient; `side = :Left`
 is used by default.
 """
-function tie_rod_rotational_component_angle_sweep(phi_limits_deg,
+function tie_rod_rotational_component_angle_sweep(varphi_limits_deg,
                                          steering,
                                          suspension;
                                          side = :Left,
-                                         phi_x_range_deg = (0.0, phi_limits_deg[1]),
-                                         phi_y_deg = phi_limits_deg[2],
-                                         phi_z_range_deg = (-phi_limits_deg[3], phi_limits_deg[3]),
+                                         varphi_x_range_deg = (0.0, varphi_limits_deg[1]),
+                                         varphi_y_deg = varphi_limits_deg[2],
+                                         varphi_z_range_deg = (-varphi_limits_deg[3], varphi_limits_deg[3]),
                                          compression_range_percent = (0.0, 100.0),
                                          high_steering_compression_range_percent = compression_range_percent,
-                                         high_steering_phi_z_threshold_deg = 15.0,
+                                         high_steering_varphi_z_threshold_deg = 15.0,
                                          angle_step_deg = 1.0,
                                          compression_step_percent = 1.0,
                                          reference_compression_percent = 30.0,
@@ -564,8 +564,8 @@ function tie_rod_rotational_component_angle_sweep(phi_limits_deg,
                                          display_tie_rod_length_mm = 70.0,
                                          normalize_tie_rod_vectors_for_plot = true,
                                          progress_every = 100_000)
-    phi_x_values = sweep_values(phi_x_range_deg[1], phi_x_range_deg[2], angle_step_deg)
-    phi_z_values = sweep_values(phi_z_range_deg[1], phi_z_range_deg[2], angle_step_deg)
+    varphi_x_values = sweep_values(varphi_x_range_deg[1], varphi_x_range_deg[2], angle_step_deg)
+    varphi_z_values = sweep_values(varphi_z_range_deg[1], varphi_z_range_deg[2], angle_step_deg)
     default_compression_values = sweep_values(compression_range_percent[1], compression_range_percent[2], compression_step_percent)
     high_steering_compression_values = sweep_values(
         high_steering_compression_range_percent[1],
@@ -574,18 +574,18 @@ function tie_rod_rotational_component_angle_sweep(phi_limits_deg,
     )
 
     total_pose_count = sum(
-        length(compression_values_for_phi_z(
-            phi_z,
+        length(compression_values_for_varphi_z(
+            varphi_z,
             default_compression_values,
             high_steering_compression_values;
-            high_steering_phi_z_threshold_deg = high_steering_phi_z_threshold_deg,
-        )) for _ in phi_x_values, phi_z in phi_z_values
+            high_steering_varphi_z_threshold_deg = high_steering_varphi_z_threshold_deg,
+        )) for _ in varphi_x_values, varphi_z in varphi_z_values
     )
     plot_stride = max(1, ceil(Int, total_pose_count / max_plot_vectors_per_side))
 
     side_index = side_index_from_symbol(side)
     reference = reference_geometry(
-        phi_y_deg,
+        varphi_y_deg,
         steering,
         suspension,
         side_index;
@@ -605,24 +605,24 @@ function tie_rod_rotational_component_angle_sweep(phi_limits_deg,
     suspension_work = deepcopy(suspension)
     pose_index = 0
 
-    @printf("Sweeping %d poses (%d phi_x * %d phi_z with variable symmetric compression ranges)\n",
+    @printf("Sweeping %d poses (%d φx * %d φz with variable symmetric compression ranges)\n",
             total_pose_count,
-            length(phi_x_values),
-            length(phi_z_values))
-    @printf("Using %.1f..%.1f %% compression for |phi_z| <= %.1f deg, %.1f..%.1f %% for larger |phi_z|\n",
+            length(varphi_x_values),
+            length(varphi_z_values))
+    @printf("Using %.1f..%.1f %% compression for |φz| <= %.1f deg, %.1f..%.1f %% for larger |φz|\n",
             compression_range_percent[1],
             compression_range_percent[2],
-            high_steering_phi_z_threshold_deg,
+            high_steering_varphi_z_threshold_deg,
             high_steering_compression_range_percent[1],
             high_steering_compression_range_percent[2])
     @printf("Plotting every %d pose(s), up to about %d vectors per side\n", plot_stride, max_plot_vectors_per_side)
 
-    for phi_x in phi_x_values, phi_z in phi_z_values
-        compression_values = compression_values_for_phi_z(
-            phi_z,
+    for varphi_x in varphi_x_values, varphi_z in varphi_z_values
+        compression_values = compression_values_for_varphi_z(
+            varphi_z,
             default_compression_values,
             high_steering_compression_values;
-            high_steering_phi_z_threshold_deg = high_steering_phi_z_threshold_deg,
+            high_steering_varphi_z_threshold_deg = high_steering_varphi_z_threshold_deg,
         )
 
         for compression in compression_values
@@ -632,10 +632,10 @@ function tie_rod_rotational_component_angle_sweep(phi_limits_deg,
             suspension_work.damper[2].compression = compression
 
             try
-                micromobilitykinematics.update!((phi_x, phi_y_deg, phi_z), steering_work, suspension_work)
+                micromobilitykinematics.update!((varphi_x, varphi_y_deg, varphi_z), steering_work, suspension_work)
 
                 geometry = tie_rod_rotational_component_geometry(steering_work, side_index)
-                pose = pose_row(phi_x, phi_y_deg, phi_z, suspension_work, side)
+                pose = pose_row(varphi_x, varphi_y_deg, varphi_z, suspension_work, side)
                 update_summary!(summary, geometry, pose)
 
                 if pose_index % plot_stride == 0
@@ -650,7 +650,7 @@ function tie_rod_rotational_component_angle_sweep(phi_limits_deg,
                     )
                 end
             catch err
-                pose = failed_pose_row(phi_x, phi_y_deg, phi_z, compression, side)
+                pose = failed_pose_row(varphi_x, varphi_y_deg, varphi_z, compression, side)
                 reason = kinematics_failure_reason(err, steering_work, suspension_work)
                 record_failure!(summary, pose, reason)
                 steering_work = deepcopy(steering)
@@ -801,26 +801,26 @@ function print_failed_state_summary(summary)
         return nothing
     end
 
-    phi_x_min, phi_x_max = field_extrema(summary.failed_poses, :phi_x_deg)
-    phi_z_min, phi_z_max = field_extrema(summary.failed_poses, :phi_z_deg)
+    varphi_x_min, varphi_x_max = field_extrema(summary.failed_poses, :varphi_x_deg)
+    varphi_z_min, varphi_z_max = field_extrema(summary.failed_poses, :varphi_z_deg)
     compression_min, compression_max = field_extrema(summary.failed_poses, :compression_percent)
 
     @printf(
-        "  failed poses: %d\n  phi_x range: %.1f .. %.1f deg\n  phi_z range: %.1f .. %.1f deg\n  compression range: %.1f .. %.1f %%\n",
+        "  failed poses: %d\n  φx range: %.1f .. %.1f deg\n  φz range: %.1f .. %.1f deg\n  compression range: %.1f .. %.1f %%\n",
         summary.failed_count,
-        phi_x_min,
-        phi_x_max,
-        phi_z_min,
-        phi_z_max,
+        varphi_x_min,
+        varphi_x_max,
+        varphi_z_min,
+        varphi_z_max,
         compression_min,
         compression_max,
     )
 
     print_top_counts(value_counts(summary.failed_poses, :compression_percent), "compression values")
-    print_top_counts(value_counts(summary.failed_poses, :phi_z_deg), "phi_z values")
-    print_top_counts(value_counts(summary.failed_poses, :phi_x_deg), "phi_x values")
-    print_min_failed_compression_by_field(summary.failed_poses, :phi_z_deg, "phi_z")
-    print_min_failed_compression_by_field(summary.failed_poses, :phi_x_deg, "phi_x")
+    print_top_counts(value_counts(summary.failed_poses, :varphi_z_deg), "φz values")
+    print_top_counts(value_counts(summary.failed_poses, :varphi_x_deg), "φx values")
+    print_min_failed_compression_by_field(summary.failed_poses, :varphi_z_deg, "φz")
+    print_min_failed_compression_by_field(summary.failed_poses, :varphi_x_deg, "φx")
 
     println("  first failed pose: ", first(summary.failed_poses))
     println("  last failed pose: ", last(summary.failed_poses))
@@ -839,9 +839,9 @@ function format_pose_for_label(pose)
     pose === nothing && return "n/a"
 
     return @sprintf(
-        "phi_x %.1f deg, phi_z %.1f deg, compression %.1f%%",
-        pose.phi_x_deg,
-        pose.phi_z_deg,
+        "φx %.1f deg, φz %.1f deg, compression %.1f%%",
+        pose.varphi_x_deg,
+        pose.varphi_z_deg,
         pose.compression_percent,
     )
 end
@@ -994,8 +994,8 @@ function plot_tie_rod_rotational_component_vectors(result;
 end
 
 function run_tie_rod_rotational_component_angle_example()
-    phi_limits_deg = (15.0, 1.0, 35.0)
-    phi_x_max_deg = 10.0
+    varphi_limits_deg = (15.0, 1.0, 35.0)
+    varphi_x_max_deg = 10.0
     angle_step_deg = 1.0
     compression_step_percent = 1.0
 
@@ -1003,16 +1003,16 @@ function run_tie_rod_rotational_component_angle_example()
     suspension_to_evaluate = isdefined(Main, :suspension) ? deepcopy(Main.suspension) : tie_rod_rotational_component_example_suspension()
 
     result = tie_rod_rotational_component_angle_sweep(
-        phi_limits_deg,
+        varphi_limits_deg,
         steering_to_evaluate,
         suspension_to_evaluate;
         side = :Left,
-        phi_x_range_deg = (0.0, phi_x_max_deg),
-        phi_y_deg = phi_limits_deg[2],
-        phi_z_range_deg = (-phi_limits_deg[3], phi_limits_deg[3]),
+        varphi_x_range_deg = (0.0, varphi_x_max_deg),
+        varphi_y_deg = varphi_limits_deg[2],
+        varphi_z_range_deg = (-varphi_limits_deg[3], varphi_limits_deg[3]),
         compression_range_percent = (10.0, 90.0),
         high_steering_compression_range_percent = (20.0, 70.0),
-        high_steering_phi_z_threshold_deg = 15.0,
+        high_steering_varphi_z_threshold_deg = 15.0,
         angle_step_deg = angle_step_deg,
         compression_step_percent = compression_step_percent,
         reference_compression_percent = 30.0,

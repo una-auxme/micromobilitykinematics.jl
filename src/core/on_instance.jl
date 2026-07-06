@@ -15,8 +15,8 @@
 #    
 #    copy = Steering(comp...)
 #
-#    copy.θx = steering.θx
-#    copy.θz = steering.θz
+#    copy.ϕx = steering.ϕx
+#    copy.ϕz = steering.ϕz
 #
 #    copy.δi = steering.δi
 #    copy.δo = steering.δo
@@ -149,15 +149,15 @@ end
 
 
 """
-    update!(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    update!(ϕ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
 # Arguments
-- `θ::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
-        - `θx`: Angle of rotation of the rotation component around the x-axis
-        - `θy`: Angle of rotation of the rotation component around the y-axis
-        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `ϕ::Tuple{T,T,T}`: angles (ϕx,ϕy,ϕz) in which the rotational component is rotated
+        - `ϕx`: Angle of rotation of the rotation component around the x-axis
+        - `ϕy`: Angle of rotation of the rotation component around the y-axis
+        - `ϕz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
 
@@ -173,15 +173,15 @@ function update!(args...)
 end 
 
 """
-    update!(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    update!(ϕ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 updates the kinematics of the given steering instance on the new angles and suspension
 
 # Arguments
-- `θ::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
-        - `θx`: Angle of rotation of the rotation component around the x-axis
-        - `θy`: Angle of rotation of the rotation component around the y-axis
-        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `ϕ::Tuple{T,T,T}`: angles (ϕx,ϕy,ϕz) in which the rotational component is rotated
+        - `ϕx`: Angle of rotation of the rotation component around the x-axis
+        - `ϕy`: Angle of rotation of the rotation component around the y-axis
+        - `ϕz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
 
@@ -189,9 +189,9 @@ updates the kinematics of the given steering instance on the new angles and susp
 -`steering::Steering`: Instance of a specific steering
 
 """
-function update(θ::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+function update(ϕ::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
     cpy_steering = deepcopy(steering)
-    update!(θ, cpy_steering, suspension)
+    update!(ϕ, cpy_steering, suspension)
     return cpy_steering
 end 
 

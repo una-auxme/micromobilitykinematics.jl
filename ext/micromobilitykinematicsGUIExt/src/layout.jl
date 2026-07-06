@@ -4,12 +4,12 @@
 # Layout Wrapper  |	layout_*_section  |	   l_*s  |	  z.B. lps, lpls, lcs
 #
 """
-    interactionlyt(θ_max, chassis, steering, suspension)
+    interactionlyt(ϕ_max, chassis, steering, suspension)
 
 Constructs the full interactive GUI layout, integrating all major UI sections into a single figure.
 
 # Arguments
-- `θ_max`: A tuple `(θx_max, θy_max, θz_max)` defining maximum steering angles.
+- `ϕ_max`: A tuple `(φx_max, φy_max, φz_max)` defining maximum steering angles.
 - `chassis`: The `Chassis` object representing the vehicle frame.
 - `steering`: The `Steering` system with kinematic configuration.
 - `suspension`: The `Suspension` system influencing geometry and steering behavior.
@@ -28,7 +28,7 @@ It also sets relative column widths to evenly distribute the interface.
 # Returns
 - `InteractionLyt`: A structured container with references to all major UI sections and the main figure.
 """
-function interactionlyt(θ_max, chassis, steering, suspension; path = @__DIR__)
+function interactionlyt(ϕ_max, chassis, steering, suspension; path = @__DIR__)
 
     interaction_lyt = InteractionLyt()
     
@@ -38,8 +38,8 @@ function interactionlyt(θ_max, chassis, steering, suspension; path = @__DIR__)
     # Figure
     interaction_lyt.fig = GLMakie.Figure(size = (1450, 1200))
 
-    interaction_lyt.section_plot = layout_section_plot(interaction_lyt.fig,(1:2,1:3), θ_max, deepcopy(chassis), deepcopy(steering), deepcopy(suspension))
-    interaction_lyt.section_angle = layout_section_angles(interaction_lyt.fig,(3,1),θ_max, deepcopy(steering))
+    interaction_lyt.section_plot = layout_section_plot(interaction_lyt.fig,(1:2,1:3), ϕ_max, deepcopy(chassis), deepcopy(steering), deepcopy(suspension))
+    interaction_lyt.section_angle = layout_section_angles(interaction_lyt.fig,(3,1),ϕ_max, deepcopy(steering))
     interaction_lyt.section_param = layout_section_param(interaction_lyt.fig,(3,2), deepcopy(steering))
     interaction_lyt.section_damper = layout_section_damper(interaction_lyt.fig,(3,3))
     interaction_lyt.section_plot_settings = layout_section_plot_settings(interaction_lyt.fig,(4,1)) 
@@ -59,22 +59,22 @@ end
 
 
 """
-    layout_section_angles(fig, slot, θ_max)
+    layout_section_angles(fig, slot, ϕ_max)
 
 
 
-Creates a UI section with sliders for configuring steering rotation angles (θx, θy, θz).
+Creates a UI section with sliders for configuring steering rotation angles (φx, φy, φz).
 
 # Arguments
 - `fig`: A `GLMakie.Figure` object where the slider section will be placed.
 - `slot`: A tuple `(row, col)` specifying the position in the figure's grid layout.
-- `θ_max`: A tuple `(θx_max, θy_max, θz_max)` defining the maximum values for the respective rotation angles.
+- `ϕ_max`: A tuple `(φx_max, φy_max, φz_max)` defining the maximum values for the respective rotation angles.
 
 # Description
 This function:
 - Initializes a new `AngleSection` containing:
   - A titled label ("Rotation angle configuration")
-  - A `SliderGrid` for the three angles `θx`, `θy`, and `θz`, each with a range from 0 to their respective max value.
+  - A `SliderGrid` for the three angles `φx`, `φy`, and `φz`, each with a range from 0 to their respective max value.
 - Embeds the slider layout into the specified slot of the provided figure.
 - Applies a vertical compression using `rowgap!` for tighter layout appearance.
 
@@ -83,14 +83,14 @@ The returned `AngleSection` struct contains references to the sliders and layout
 # Returns
 - `AngleSection`: A structured object containing the slider layout, title label, and angle values.
 """
-function layout_section_angles(fig, slot, θ_max, steering) 
+function layout_section_angles(fig, slot, ϕ_max, steering) 
 
     angle_section = AngleSection()
 
-    θx_max , θy_max, θz_max  = θ_max
-    θx = steering.θx 
-    θy = steering.θy 
-    θz = steering.θz 
+    ϕx_max , ϕy_max, ϕz_max  = ϕ_max
+    ϕx = steering.ϕx 
+    ϕy = steering.ϕy 
+    ϕz = steering.ϕz 
 
     angle_section.lyt = GridLayout(tellheight = false)
 
@@ -103,10 +103,10 @@ function layout_section_angles(fig, slot, θ_max, steering)
     angle_section.title = Label(angle_section.lyt[1,1], "Rotation Angle Configuration", fontsize = 15)
 
 
-    angle_section.sg_θ = SliderGrid( angle_section.lyt[2, 1],
-                                    (label = "θx", range = 0.0:1.0:θx_max, format = "{:.1f}°", startvalue = θx),
-                                    (label = "θy", range = 0.0:0.1:θy_max, format = "{:.1f}°", startvalue = θy),
-                                    (label = "θz", range = 0.0:1.0:θz_max, format = "{:.1f}°", startvalue = θz),
+    angle_section.sg_ϕ = SliderGrid( angle_section.lyt[2, 1],
+                                    (label = "φx", range = 0.0:1.0:ϕx_max, format = "{:.1f}°", startvalue = ϕx),
+                                    (label = "φy", range = 0.0:0.1:ϕy_max, format = "{:.1f}°", startvalue = ϕy),
+                                    (label = "φz", range = 0.0:1.0:ϕz_max, format = "{:.1f}°", startvalue = ϕz),
                                     width = 350,
                                     tellheight = false)
 
@@ -130,8 +130,8 @@ Creates a UI section with sliders for configuring various component parameters.
 This function initializes a `ParamSection` UI element consisting of:
 - A title label: "Components configuration"
 - A `SliderGrid` with four sliders for key vehicle parameters:
-  - `θx radius`: Range 50–100 mm
-  - `θz radius`: Range 50–200 mm
+  - `φx radius`: Range 50–100 mm
+  - `φz radius`: Range 50–200 mm
   - `track lever`: Range 70–200 mm
   - `tie rod`: Range 195–260 mm
 
@@ -142,8 +142,8 @@ Each slider uses a consistent formatting style and layout width, and the section
 """
 function layout_section_param(fig,slot, steering)
 
-    θx_radius = steering.init_steering.θx_radius
-    θz_radius = steering.init_steering.θz_radius
+    ϕx_radius = steering.init_steering.ϕx_radius
+    ϕz_radius = steering.init_steering.ϕz_radius
     track_lever_length = steering.init_steering.track_lever_length
     tie_rod_length = steering.init_steering.tie_rod_length
 
@@ -161,8 +161,8 @@ function layout_section_param(fig,slot, steering)
     section_param.title = Label(section_param.lyt[1,1], "Component Configuration", fontsize = 15)
 
     section_param.sg_param = SliderGrid(section_param.lyt[2, 1],
-                                        (label = "θx radius", range = 50:1:100, format = "{:.1f}mm", startvalue = θx_radius),
-                                        (label = "θz radius", range = 50:1:200, format = "{:.1f}mm", startvalue = θz_radius),
+                                        (label = "φx radius", range = 50:1:100, format = "{:.1f}mm", startvalue = ϕx_radius),
+                                        (label = "φz radius", range = 50:1:200, format = "{:.1f}mm", startvalue = ϕz_radius),
                                         (label = "track lever", range = 70:1:200, format = "{:.1f}mm", startvalue = track_lever_length),
                                         (label = "tie rod", range = 195:1:260, format = "{:.1f}mm", startvalue = tie_rod_length),
                                         width = 350,
@@ -218,7 +218,7 @@ function layout_section_plot_settings(fig,slot)
                                         options = ["Geometry", 
                                                     "Radii", 
                                                     "Ackermann ratio", 
-                                                    "Ackermann ratio θx sweep",
+                                                    "Ackermann ratio φx sweep",
                                                     "Ackermann ratio surface plot", 
                                                     "Steering vs. wheel angles", 
                                                     "Ackermann deviation", 
@@ -398,7 +398,7 @@ end
 
 
 """
-    layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
+    layout_section_plot(fig,slot, ϕ_max, chassis, steering, suspension)
 
 
 Initializes and returns a `PlotSection` containing all core visualizations related to the steering system.
@@ -406,7 +406,7 @@ Initializes and returns a `PlotSection` containing all core visualizations relat
 # Arguments
 - `fig`: A `GLMakie.Figure` into which the plot section will be inserted.
 - `slot`: A tuple `(row, col)` defining the layout position in the figure's grid.
-- `θ_max`: A tuple `(θx_max, θy_max, θz_max)` indicating the maximum steering angles.
+- `ϕ_max`: A tuple `(φx_max, φy_max, φz_max)` indicating the maximum steering angles.
 - `chassis`: The `Chassis` model representing the vehicle frame.
 - `steering`: The `Steering` object containing all kinematic and joint configuration data.
 - `suspension`: The `Suspension` model affecting wheel positions and geometry.
@@ -414,17 +414,17 @@ Initializes and returns a `PlotSection` containing all core visualizations relat
 # Description
 This function constructs a complete set of plots related to the vehicle's steering dynamics by:
 - Rendering a **3D geometry plot** of the steering linkage (`geom_plot!`)
-- Drawing a **2D plot** of the turning radii over θz (`radii_plot!`)
+- Drawing a **2D plot** of the turning radii over φz (`radii_plot!`)
 - Creating a **2D Ackermann ratio plot** with dynamic min/max indicators (`ratio_plot!`)
-- Adding a **3D surface plot** of the Ackermann ratio over θx and θz (`ratio_surface_plot!`)
+- Adding a **3D surface plot** of the Ackermann ratio over φx and φz (`ratio_surface_plot!`)
 
 Each plot is added to the same layout cell in the figure but is initially hidden. Visibility can be controlled interactively via the plot settings menu.
 
 # Returns
 - `PlotSection`: A container object holding references to all plot axes and their reactive observables.
 """
-function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
-    θx_max, θy_max, θz_max = θ_max
+function layout_section_plot(fig,slot, ϕ_max, chassis, steering, suspension)
+    ϕx_max, ϕy_max, ϕz_max = ϕ_max
 
     section_plot = PlotSection()
 
@@ -440,29 +440,29 @@ function layout_section_plot(fig,slot, θ_max, chassis, steering, suspension)
 
     #############| Radii Plot
 
-    radii_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
+    radii_plot!(fig,section_plot, ϕ_max, chassis, steering, suspension)
 
     ##############| ackermannratio Plot
-    ratio_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
-    ratio_θx_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
+    ratio_plot!(fig, section_plot, ϕ_max, chassis, steering, suspension)
+    ratio_ϕx_plot!(fig, section_plot, ϕ_max, chassis, steering, suspension)
 
-    ratio_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
+    ratio_surface_plot!(fig,section_plot, ϕ_max, chassis, steering, suspension)
 
-    ##############| θ_vs_δ Plot
-    θ_vs_δ_plot!(fig, section_plot, θ_max, steering, suspension) 
+    ##############| ϕ_vs_δ Plot
+    ϕ_vs_δ_plot!(fig, section_plot, ϕ_max, steering, suspension) 
 
     ##############| ackermann devitation Plot
-    deviation_plot!(fig, section_plot, θ_max, chassis, steering, suspension)
+    deviation_plot!(fig, section_plot, ϕ_max, chassis, steering, suspension)
 
-    deviation_surface_plot!(fig,section_plot, θ_max, chassis, steering, suspension)
+    deviation_surface_plot!(fig,section_plot, ϕ_max, chassis, steering, suspension)
 
     compr_vs_δ_plot!(fig, section_plot, steering, suspension)
 
-    left_wheel_delta_plot!(fig, section_plot, θ_max, steering, suspension)
+    left_wheel_delta_plot!(fig, section_plot, ϕ_max, steering, suspension)
 
     wheel_center_path_plot!(fig, section_plot, steering, suspension)
 
-    wheel_center_surface_plot!(fig, section_plot, θ_max, steering, suspension)
+    wheel_center_surface_plot!(fig, section_plot, ϕ_max, steering, suspension)
 
     track_width_plot!(fig, section_plot, steering, suspension)
 

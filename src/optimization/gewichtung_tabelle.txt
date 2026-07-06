@@ -1,4 +1,4 @@
-θx (deg)	θz (deg)	Gewicht (%)
+ϕx (deg)	ϕz (deg)	Gewicht (%)
 0		    0		    100.0
 0		    10		    88.48
 0		    20		    61.28

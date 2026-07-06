@@ -3,7 +3,7 @@ using GLMakie
 
 ## Steering geometry
 
-max_angle_config = (15.0, 1.0, 35.0)
+max_varphi_config = (15.0, 1.0, 35.0)
 
 steering = Steering(
     57.4050864963812,
@@ -104,9 +104,9 @@ chassis = Chassis()
 
 ## Evaluate kinematics
 
-angle_config = (0.0, 1.0, 0.0)
+varphi_config = (0.0, 1.0, 0.0)
 
-micromobilitykinematics.update!(angle_config, steering, suspension)
+micromobilitykinematics.update!(varphi_config, steering, suspension)
 
 steering.δi
 steering.δo
@@ -116,13 +116,13 @@ steering.δo
 lower_border = (50.0, 50.0, 70.0, 195.0)
 upper_border = (100.0, 100.0, 200.0, 260.0)
 
-# start_parameters = random_search(upper_border, lower_border, max_angle_config)
-# opt = optim_over_range(start_parameters..., max_angle_config)
+# start_parameters = random_search(upper_border, lower_border, max_varphi_config)
+# opt = optim_over_range(start_parameters..., max_varphi_config)
 # steering = opt.steering
-# micromobilitykinematics.update!(angle_config, steering, suspension)
+# micromobilitykinematics.update!(varphi_config, steering, suspension)
 
 ## Interactive GUI
 
-gui_angle_limits = (15.0, 5.0, 35.0)
+gui_varphi_limits = (15.0, 5.0, 35.0)
 
-launch_gui(gui_angle_limits, chassis, steering, suspension; path = @__DIR__)
+launch_gui(gui_varphi_limits, chassis, steering, suspension; path = @__DIR__)

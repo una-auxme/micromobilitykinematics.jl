@@ -9,7 +9,7 @@ Calculates the Ackermann steering ratio [%] based on the current steering config
 A result of 100% indicates a perfect match with ideal Ackermann behavior, while lower values indicate deviation due to geometry, articulation, or linkage constraints.
 
 # Arguments
-- `angleConfig::Tuple{T,T,T}`: A tuple `(θx, θy, θz)` representing the current steering angles.
+- `angleConfig::Tuple{T,T,T}`: A tuple `(ϕx, ϕy, ϕz)` representing the current steering angles.
 - `chassis::Chassis`: The chassis object containing structural vehicle information such as wheelbase.
 - `steering::Steering`: The steering system configuration, used to evaluate current joint and linkage positions.
 - `suspension::Suspension`: The suspension model affecting the geometry during steering.
@@ -82,22 +82,22 @@ end
     steering_radii(chassis::Chassis, 
                    steering::Steering, 
                    suspension::Suspension, 
-                   θ_max::Tuple{T,T,T}; 
+                   ϕ_max::Tuple{T,T,T}; 
                    step_size = 1) where {T <: Any}
 
-Computes a matrix of turning radii over a grid of steering angles (θx, θz), with θy held constant.
+Computes a matrix of turning radii over a grid of steering angles (ϕx, ϕz), with ϕy held constant.
 
 Arguments:
 - `chassis::Chassis`: The vehicle's chassis model, providing wheelbase information.
 - `steering::Steering`: The steering system, used to determine steering angles.
 - `suspension::Suspension`: The suspension system affecting the steering geometry.
-- `θ_max::Tuple{T,T,T}`: Maximum angle values (θx_max, θy_fixed, θz_max) defining the steering input space.
+- `ϕ_max::Tuple{T,T,T}`: Maximum angle values (ϕx_max, ϕy_fixed, ϕz_max) defining the steering input space.
 
 # Keywords
-- `step_size`: Step size for the θx and θz sweep. Defaults to 1 degree.
+- `step_size`: Step size for the ϕx and ϕz sweep. Defaults to 1 degree.
 
 # Description:
-This function creates a 2D grid over the (θx, θz) angle space and computes the turning radius for each combination.
+This function creates a 2D grid over the (ϕx, ϕz) angle space and computes the turning radius for each combination.
 For each angle configuration:
 - The steering system is updated via `update!`.
 - The outer wheel angle δo is used to compute the radius as:
@@ -107,31 +107,31 @@ For each angle configuration:
 - If δo is 0.0, the radius is set to NaN.
 
 # Returns:
-- A 2D Array of Float64 values representing turning radii in millimeters across the θx–θz angle grid.
+- A 2D Array of Float64 values representing turning radii in millimeters across the ϕx–ϕz angle grid.
 """
 function steering_radii(chassis::Chassis, 
                             steering::Steering, 
                             suspension::Suspension, 
-                            θ_max::Tuple{T,T,T}; 
+                            ϕ_max::Tuple{T,T,T}; 
                             step_size = 1 ) where {T <: Any}
 
-    θx_max , θy, θz_max = θ_max
-    θ_matrix = [(θx, θy, θz) for θx in 0:step_size:θx_max, θz in 0:step_size:θz_max]
-    radii = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+    ϕx_max , ϕy, ϕz_max = ϕ_max
+    ϕ_matrix = [(ϕx, ϕy, ϕz) for ϕx in 0:step_size:ϕx_max, ϕz in 0:step_size:ϕz_max]
+    radii = [ 0.0 for x in 0:step_size:ϕx_max, z in 0:step_size:ϕz_max]
 
 
-    for θ in θ_matrix
-        θx, θy, θz = θ
-        update!(θ, steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕx, ϕy, ϕz = ϕ
+        update!(ϕ, steering, suspension)
 
         if steering.δo == 0.0
-            radii[θx+1,θz+1] = NaN
+            radii[ϕx+1,ϕz+1] = NaN
         else
     
         measurment = Measurements(chassis, steering)
         δo = deg2rad(steering.δo)
     
-        radii[θx + 1,θz + 1] = measurment.wheel_base / sin(δo)
+        radii[ϕx + 1,ϕz + 1] = measurment.wheel_base / sin(δo)
         end
     end 
 
@@ -140,52 +140,52 @@ function steering_radii(chassis::Chassis,
 end
 
 """
-    steering_radii_θz(θx::T, θy::T, θz_max::T, 
+    steering_radii_ϕz(ϕx::T, ϕy::T, ϕz_max::T, 
                       chassis::Chassis, 
                       steering::Steering, 
                       suspension::Suspension; 
                       step_size = 1) where {T <: Any}
 
-Computes a list of turning radii for a sweep of θz (inner wheel angle), with fixed θx and θy.
+Computes a list of turning radii for a sweep of ϕz (inner wheel angle), with fixed ϕx and ϕy.
 
 # Arguments:
-- `θx::T`: Steering angle around the x-axis (fixed).
-- `θy::T`: Steering angle around the y-axis (fixed).
-- `θz_max::T`: Maximum steering angle to sweep over θz (in degrees).
+- `ϕx::T`: Steering angle around the x-axis (fixed).
+- `ϕy::T`: Steering angle around the y-axis (fixed).
+- `ϕz_max::T`: Maximum steering angle to sweep over ϕz (in degrees).
 - `chassis::Chassis`: The vehicle chassis model.
 - `steering::Steering`: The steering system, providing access to current δo (outer steering angle).
 - `suspension::Suspension`: The suspension model used in geometry update.
 
 # Keywords
-- `step_size`: Angle increment for θz sweep. Defaults to 1 degree.
+- `step_size`: Angle increment for ϕz sweep. Defaults to 1 degree.
 
 Description:
-This function iterates over the range `0:step_size:θz_max`, updating the steering and suspension system
-for each θz value (with θx and θy held constant). It computes the turning radius using:
+This function iterates over the range `0:step_size:ϕz_max`, updating the steering and suspension system
+for each ϕz value (with ϕx and ϕy held constant). It computes the turning radius using:
 
     radius = wheel_base / sin(δo)
 
 If `δo == 0.0`, the function returns `NaN` for that configuration.
 
 # Returns:
-- A 1D Array of Float64 values representing turning radii [mm] across the θz angle sweep.
+- A 1D Array of Float64 values representing turning radii [mm] across the ϕz angle sweep.
 """
-function steering_radii_θz(θx::T,
-                            θy::T,
-                            θz_max::T, 
+function steering_radii_ϕz(ϕx::T,
+                            ϕy::T,
+                            ϕz_max::T, 
                             chassis::Chassis, 
                             steering::Steering, 
                             suspension::Suspension; 
                             signed = false,
                             step_size = 1 ) where {T <: Any}
 
-    θ_matrix = [i for i in 0:step_size:θz_max]
+    ϕ_matrix = [i for i in 0:step_size:ϕz_max]
     radii = []
 
 
-    for θ in θ_matrix
-        θz = θ
-        update!((θx, θy, θz), steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕz = ϕ
+        update!((ϕx, ϕy, ϕz), steering, suspension)
 
         if steering.δo == 0.0
             push!(radii,NaN)
@@ -203,54 +203,54 @@ end
 
 
 """
-    ackermannratio_θz(θx::T, θy::T, θz_max::T,
+    ackermannratio_ϕz(ϕx::T, ϕy::T, ϕz_max::T,
                       chassis::Chassis,
                       steering::Steering,
                       suspension::Suspension;
                       step_size = 1) where {T <: Any}
 
-Computes the Ackermann ratio [%] across a sweep of θz values, with fixed θx and θy angles.
+Computes the Ackermann ratio [%] across a sweep of ϕz values, with fixed ϕx and ϕy angles.
 
 # Arguments:
-- `θx::T`: Fixed steering angle around the x-axis.
-- `θy::T`: Fixed steering angle around the y-axis.
-- `θz_max::T`: Maximum value for θz (inner wheel angle in degrees).
+- `ϕx::T`: Fixed steering angle around the x-axis.
+- `ϕy::T`: Fixed steering angle around the y-axis.
+- `ϕz_max::T`: Maximum value for ϕz (inner wheel angle in degrees).
 - `chassis::Chassis`: The vehicle chassis model.
 - `steering::Steering`: The steering system used to retrieve joint states and δo.
 - `suspension::Suspension`: The suspension system affecting wheel geometry.
 
 # Keywords
-- `step_size`: Step size for the θz sweep (in degrees). Defaults to 1.
+- `step_size`: Step size for the ϕz sweep (in degrees). Defaults to 1.
 
 # Description:
-This function sweeps θz from 0 to `θz_max` in the specified step size and computes the Ackermann ratio
+This function sweeps ϕz from 0 to `ϕz_max` in the specified step size and computes the Ackermann ratio
 at each step using the current steering and suspension configuration.
 
-If the outer wheel angle `δo` is 0.0 (undefined steering geometry), the function substitutes `θz + 1` to avoid division by zero.
+If the outer wheel angle `δo` is 0.0 (undefined steering geometry), the function substitutes `ϕz + 1` to avoid division by zero.
 
 # Returns:
-- A 1D Array of Float64 values representing the Ackermann ratio [%] across the θz sweep.
+- A 1D Array of Float64 values representing the Ackermann ratio [%] across the ϕz sweep.
 """
-function ackermannratio_θz(θx::T, 
-                            θy::T, 
-                            θz_max::T, 
+function ackermannratio_ϕz(ϕx::T, 
+                            ϕy::T, 
+                            ϕz_max::T, 
                             chassis::Chassis, 
                             steering::Steering, 
                             suspension::Suspension; 
                             step_size = 1 ) where {T <: Any}
 
-    θ_matrix = [i for i in 0:step_size:θz_max]
+    ϕ_matrix = [i for i in 0:step_size:ϕz_max]
     ratio = []
 
 
-    for θ in θ_matrix
-        θz = θ
-        update!((θx, θy, θz), steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕz = ϕ
+        update!((ϕx, ϕy, ϕz), steering, suspension)
 
         if steering.δo == 0.0
-            push!(ratio,ackermannratio((θx, θy, θz+1),chassis, steering, suspension; signed = signed))
+            push!(ratio,ackermannratio((ϕx, ϕy, ϕz+1),chassis, steering, suspension; signed = signed))
         else
-            push!(ratio,ackermannratio((θx, θy, θz),chassis, steering, suspension; signed = signed))
+            push!(ratio,ackermannratio((ϕx, ϕy, ϕz),chassis, steering, suspension; signed = signed))
         end
     end 
     return ratio
@@ -261,49 +261,49 @@ end
     ackermannratio_surface(chassis::Chassis, 
                            steering::Steering, 
                            suspension::Suspension, 
-                           θ_max::Tuple{T,T,T}; 
+                           ϕ_max::Tuple{T,T,T}; 
                            step_size = 1) where {T <: Any}
 
-Computes a 2D surface of Ackermann ratio [%] values over a grid of (θx, θz) steering angles, with θy fixed.
+Computes a 2D surface of Ackermann ratio [%] values over a grid of (ϕx, ϕz) steering angles, with ϕy fixed.
 
 # Arguments:
 - `chassis::Chassis`: The vehicle chassis model.
 - `steering::Steering`: The steering system model containing joint and linkage data.
 - `suspension::Suspension`: The suspension system that affects wheel positioning.
-- `θ_max::Tuple{T,T,T}`: Tuple `(θx_max, θy_fixed, θz_max)` specifying angle sweep limits.
+- `ϕ_max::Tuple{T,T,T}`: Tuple `(ϕx_max, ϕy_fixed, ϕz_max)` specifying angle sweep limits.
 
 # Keywords
-- `step_size`: Increment size for the θx and θz sweep. Default is 1 degree.
+- `step_size`: Increment size for the ϕx and ϕz sweep. Default is 1 degree.
 
 # Description:
-This function creates a 2D grid of angle configurations for θx and θz (holding θy constant) and computes
+This function creates a 2D grid of angle configurations for ϕx and ϕz (holding ϕy constant) and computes
 the Ackermann ratio at each grid point using the current steering and suspension configuration.
 
 If the outer wheel steering angle `δo` is zero, the corresponding ratio value is set to NaN to avoid invalid computation.
 
 # Returns:
-- A 2D Array of Float64 values representing the Ackermann ratio [%] across the θx–θz parameter space.
+- A 2D Array of Float64 values representing the Ackermann ratio [%] across the ϕx–ϕz parameter space.
 """
 function ackermannratio_surface(chassis::Chassis, 
                                     steering::Steering, 
                                     suspension::Suspension, 
-                                    θ_max::Tuple{T,T,T};
+                                    ϕ_max::Tuple{T,T,T};
                                     signed = false,
                                     step_size = 1 ) where {T <: Any}
 
-    θx_max , θy, θz_max = θ_max
-    θ_matrix = [(θx, θy, θz) for θx in 0:step_size:θx_max, θz in 0:step_size:θz_max]
-    ratio = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+    ϕx_max , ϕy, ϕz_max = ϕ_max
+    ϕ_matrix = [(ϕx, ϕy, ϕz) for ϕx in 0:step_size:ϕx_max, ϕz in 0:step_size:ϕz_max]
+    ratio = [ 0.0 for x in 0:step_size:ϕx_max, z in 0:step_size:ϕz_max]
 
-    for θ in θ_matrix
-        θx, θy, θz = θ
-        update!(θ, steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕx, ϕy, ϕz = ϕ
+        update!(ϕ, steering, suspension)
 
         if steering.δo == 0.0
-            ratio[θx+1,θz+1] = NaN
+            ratio[ϕx+1,ϕz+1] = NaN
         else
     
-        ratio[θx+1,θz+1] = ackermannratio(θ,chassis, steering, suspension; signed = signed)
+        ratio[ϕx+1,ϕz+1] = ackermannratio(ϕ,chassis, steering, suspension; signed = signed)
         end
     end 
     return ratio

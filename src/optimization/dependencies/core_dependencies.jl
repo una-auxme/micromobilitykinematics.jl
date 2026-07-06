@@ -8,7 +8,7 @@ The result of the subtraction should always be negativ.
 !marked with a  at the beginning !
 # Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
-- `steering_next::Steering`: The state of the steering kinematics when the rotating part of the steering is rotated about θz+1.
+- `steering_next::Steering`: The state of the steering kinematics when the rotating part of the steering is rotated about ϕz+1.
 
 # Returns:
 - Difference between the current outer turning angle of the wheel and the next step
@@ -28,7 +28,7 @@ The result of the subtraction should always be negativ.
 !marked with a  at the beginning !
 # Arguments
 - `steering_now::Steering`: the current state of the steering kinematics
-- `steering_next::Steering`: The state of the steering kinematics when the rotating part of the steering is rotated about θz+1.
+- `steering_next::Steering`: The state of the steering kinematics when the rotating part of the steering is rotated about ϕz+1.
 
 # Returns:
 - Difference between the current inner turning angle of the wheel and the next step

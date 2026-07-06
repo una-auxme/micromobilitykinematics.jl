@@ -1,5 +1,5 @@
 """
-    ackermannratio(θ::Tuple{T,T,T}, 
+    ackermannratio(ϕ::Tuple{T,T,T}, 
                         chassis::Chassis, 
                         steering::Steering, 
                         suspension::Suspension) where {T >: Any}
@@ -9,7 +9,7 @@ Calculates the Ackermann steering ratio [%] based on the current steering config
 A result of 100% indicates a perfect match with ideal Ackermann behavior, while lower values indicate deviation due to geometry, articulation, or linkage constraints.
 
 # Arguments
-- `θ::Tuple{T,T,T}`: A tuple `(θx, θy, θz)` representing the current steering angles.
+- `ϕ::Tuple{T,T,T}`: A tuple `(ϕx, ϕy, ϕz)` representing the current steering angles.
 - `chassis::Chassis`: The chassis object containing structural vehicle information such as wheelbase.
 - `steering::Steering`: The steering system configuration, used to evaluate current joint and linkage positions.
 - `suspension::Suspension`: The suspension model affecting the geometry during steering.
@@ -25,7 +25,7 @@ This function evaluates how closely the current steering geometry approximates i
 # Returns 
 - Float64: The computed Ackermann ratio in percent [%].
 """
-function ackermannratio(θ::Tuple{T,T,T}, 
+function ackermannratio(ϕ::Tuple{T,T,T}, 
                             chassis::Chassis, 
                             steering::Steering, 
                             suspension::Suspension;
@@ -34,7 +34,7 @@ function ackermannratio(θ::Tuple{T,T,T},
     #offset = wheel_offset * sind(δo)
 
     measurment = Measurements(chassis, steering)
-    deviation = ackermann_deviation(θ, chassis, steering, suspension)
+    deviation = ackermann_deviation(ϕ, chassis, steering, suspension)
 
     objective = abs(deviation)
     L = objective + measurment.wheel_base #+ offset
@@ -87,22 +87,22 @@ end
     steering_radii(chassis::Chassis, 
                    steering::Steering, 
                    suspension::Suspension, 
-                   θ_max::Tuple{T,T,T}; 
+                   ϕ_max::Tuple{T,T,T}; 
                    step_size = 1) where {T <: Any}
 
-Computes a matrix of turning radii over a grid of steering angles (θx, θz), with θy held constant.
+Computes a matrix of turning radii over a grid of steering angles (ϕx, ϕz), with ϕy held constant.
 
 Arguments:
 - `chassis::Chassis`: The vehicle's chassis model, providing wheelbase information.
 - `steering::Steering`: The steering system, used to determine steering angles.
 - `suspension::Suspension`: The suspension system affecting the steering geometry.
-- `θ_max::Tuple{T,T,T}`: Maximum angle values (θx_max, θy_fixed, θz_max) defining the steering input space.
+- `ϕ_max::Tuple{T,T,T}`: Maximum angle values (ϕx_max, ϕy_fixed, ϕz_max) defining the steering input space.
 
 # Keywords
-- `step_size`: Step size for the θx and θz sweep. Defaults to 1 degree.
+- `step_size`: Step size for the ϕx and ϕz sweep. Defaults to 1 degree.
 
 # Description:
-This function creates a 2D grid over the (θx, θz) angle space and computes the turning radius for each combination.
+This function creates a 2D grid over the (ϕx, ϕz) angle space and computes the turning radius for each combination.
 For each angle configuration:
 - The steering system is updated via `update!`.
 - The outer wheel angle δo is used to compute the radius as:
@@ -112,34 +112,34 @@ For each angle configuration:
 - If δo is 0.0, the radius is set to NaN.
 
 # Returns:
-- A 2D Array of Float64 values representing turning radii in millimeters across the θx–θz angle grid.
+- A 2D Array of Float64 values representing turning radii in millimeters across the ϕx–ϕz angle grid.
 """
 function steering_radii(chassis::Chassis, 
                             steering::Steering, 
                             suspension::Suspension, 
-                            θ_max::Tuple{T,T,T}; 
+                            ϕ_max::Tuple{T,T,T}; 
                             step_size = 1 ) where {T <: Any}
 
-    θx_max , θy, θz_max = θ_max
-    θ_matrix = [(θx, θy, θz) for θx in 0:step_size:θx_max, θz in 0:step_size:θz_max]
-    radii = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+    ϕx_max , ϕy, ϕz_max = ϕ_max
+    ϕ_matrix = [(ϕx, ϕy, ϕz) for ϕx in 0:step_size:ϕx_max, ϕz in 0:step_size:ϕz_max]
+    radii = [ 0.0 for x in 0:step_size:ϕx_max, z in 0:step_size:ϕz_max]
 
 
-    for θ in θ_matrix
-        θx, θy, θz = θ
-        MMK.update!(θ, steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕx, ϕy, ϕz = ϕ
+        MMK.update!(ϕ, steering, suspension)
 
-        θx_i = Int(round(θx))
-        θz_i = Int(round(θz))
+        ϕx_i = Int(round(ϕx))
+        ϕz_i = Int(round(ϕz))
 
         if steering.δo == 0.0
-            radii[θx_i+1,θz_i+1] = NaN
+            radii[ϕx_i+1,ϕz_i+1] = NaN
         else
     
         measurment = Measurements(chassis, steering)
         δo = deg2rad(steering.δo)
     
-        radii[θx_i + 1,θz_i + 1] = measurment.wheel_base / sin(δo)
+        radii[ϕx_i + 1,ϕz_i + 1] = measurment.wheel_base / sin(δo)
         end
     end 
 
@@ -148,51 +148,51 @@ function steering_radii(chassis::Chassis,
 end
 
 """
-    steering_radii_θz(θx::T, θy::T, θz_max::T, 
+    steering_radii_ϕz(ϕx::T, ϕy::T, ϕz_max::T, 
                       chassis::Chassis, 
                       steering::Steering, 
                       suspension::Suspension; 
                       step_size = 1) where {T <: Any}
 
-Computes a list of turning radii for a sweep of θz (inner wheel angle), with fixed θx and θy.
+Computes a list of turning radii for a sweep of ϕz (inner wheel angle), with fixed ϕx and ϕy.
 
 # Arguments:
-- `θx::T`: Steering angle around the x-axis (fixed).
-- `θy::T`: Steering angle around the y-axis (fixed).
-- `θz_max::T`: Maximum steering angle to sweep over θz (in degrees).
+- `ϕx::T`: Steering angle around the x-axis (fixed).
+- `ϕy::T`: Steering angle around the y-axis (fixed).
+- `ϕz_max::T`: Maximum steering angle to sweep over ϕz (in degrees).
 - `chassis::Chassis`: The vehicle chassis model.
 - `steering::Steering`: The steering system, providing access to current δo (outer steering angle).
 - `suspension::Suspension`: The suspension model used in geometry update.
 
 # Keywords
-- `step_size`: Angle increment for θz sweep. Defaults to 1 degree.
+- `step_size`: Angle increment for ϕz sweep. Defaults to 1 degree.
 
 Description:
-This function iterates over the range `0:step_size:θz_max`, updating the steering and suspension system
-for each θz value (with θx and θy held constant). It computes the turning radius using:
+This function iterates over the range `0:step_size:ϕz_max`, updating the steering and suspension system
+for each ϕz value (with ϕx and ϕy held constant). It computes the turning radius using:
 
     radius = wheel_base / sin(δo)
 
 If `δo == 0.0`, the function returns `NaN` for that configuration.
 
 # Returns:
-- A 1D Array of Float64 values representing turning radii [mm] across the θz angle sweep.
+- A 1D Array of Float64 values representing turning radii [mm] across the ϕz angle sweep.
 """
-function steering_radii_θz(θx::T,
-                            θy::T,
-                            θz_max::T, 
+function steering_radii_ϕz(ϕx::T,
+                            ϕy::T,
+                            ϕz_max::T, 
                             chassis::Chassis, 
                             steering::Steering, 
                             suspension::Suspension; 
                             step_size = 1 ) where {T <: Any}
 
-    θ_matrix = [i for i in 0:step_size:θz_max]
+    ϕ_matrix = [i for i in 0:step_size:ϕz_max]
     radii = []
 
 
-    for θ in θ_matrix
-        θz = θ
-        MMK.update!((θx, θy, θz), steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕz = ϕ
+        MMK.update!((ϕx, ϕy, ϕz), steering, suspension)
 
         if steering.δo == 0.0
             push!(radii,NaN)
@@ -210,83 +210,83 @@ end
 
 
 """
-    ackermannratio_θz(θx::T, θy::T, θz_max::T,
+    ackermannratio_ϕz(ϕx::T, ϕy::T, ϕz_max::T,
                       chassis::Chassis,
                       steering::Steering,
                       suspension::Suspension;
                       step_size = 1) where {T <: Any}
 
-Computes the Ackermann ratio [%] across a sweep of θz values, with fixed θx and θy angles.
+Computes the Ackermann ratio [%] across a sweep of ϕz values, with fixed ϕx and ϕy angles.
 
 # Arguments:
-- `θx::T`: Fixed steering angle around the x-axis.
-- `θy::T`: Fixed steering angle around the y-axis.
-- `θz_max::T`: Maximum value for θz (inner wheel angle in degrees).
+- `ϕx::T`: Fixed steering angle around the x-axis.
+- `ϕy::T`: Fixed steering angle around the y-axis.
+- `ϕz_max::T`: Maximum value for ϕz (inner wheel angle in degrees).
 - `chassis::Chassis`: The vehicle chassis model.
 - `steering::Steering`: The steering system used to retrieve joint states and δo.
 - `suspension::Suspension`: The suspension system affecting wheel geometry.
 
 # Keywords
-- `step_size`: Step size for the θz sweep (in degrees). Defaults to 1.
+- `step_size`: Step size for the ϕz sweep (in degrees). Defaults to 1.
 
 # Description:
-This function sweeps θz from 0 to `θz_max` in the specified step size and computes the Ackermann ratio
+This function sweeps ϕz from 0 to `ϕz_max` in the specified step size and computes the Ackermann ratio
 at each step using the current steering and suspension configuration.
 
-If the outer wheel angle `δo` is 0.0 (undefined steering geometry), the function substitutes `θz + 1` to avoid division by zero.
+If the outer wheel angle `δo` is 0.0 (undefined steering geometry), the function substitutes `ϕz + 1` to avoid division by zero.
 
 # Returns:
-- A 1D Array of Float64 values representing the Ackermann ratio [%] across the θz sweep.
+- A 1D Array of Float64 values representing the Ackermann ratio [%] across the ϕz sweep.
 """
-function ackermannratio_θz(θx::T, 
-                            θy::T, 
-                            θz_max::T, 
+function ackermannratio_ϕz(ϕx::T, 
+                            ϕy::T, 
+                            ϕz_max::T, 
                             chassis::Chassis, 
                             steering::Steering, 
                             suspension::Suspension; 
                             signed = ackermann_ratio_signed(),
                             step_size = 1 ) where {T <: Any}
 
-    θ_matrix = [i for i in 0:step_size:θz_max]
+    ϕ_matrix = [i for i in 0:step_size:ϕz_max]
     ratio = []
 
 
-    for θ in θ_matrix
-        θz = θ
-        MMK.update!((θx, θy, θz), steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕz = ϕ
+        MMK.update!((ϕx, ϕy, ϕz), steering, suspension)
 
 
 
         if steering.δo == 0.0
-            push!(ratio,ackermannratio((θx, θy, θz+1.0),chassis, steering, suspension; signed = signed))
+            push!(ratio,ackermannratio((ϕx, ϕy, ϕz+1.0),chassis, steering, suspension; signed = signed))
         else
-            push!(ratio,ackermannratio((θx, θy, θz),chassis, steering, suspension; signed = signed))
+            push!(ratio,ackermannratio((ϕx, ϕy, ϕz),chassis, steering, suspension; signed = signed))
         end
     end 
     return ratio
 
 end
 
-function ackermannratio_θx(θx_max::T, 
-                            θy::T, 
-                            θz::T, 
+function ackermannratio_ϕx(ϕx_max::T, 
+                            ϕy::T, 
+                            ϕz::T, 
                             chassis::Chassis, 
                             steering::Steering, 
                             suspension::Suspension; 
                             signed = ackermann_ratio_signed(),
                             step_size = 1 ) where {T <: Any}
 
-    θ_matrix = [i for i in 0:step_size:θx_max]
+    ϕ_matrix = [i for i in 0:step_size:ϕx_max]
     ratio = []
 
-    for θ in θ_matrix
-        θx = θ
-        MMK.update!((θx, θy, θz), steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕx = ϕ
+        MMK.update!((ϕx, ϕy, ϕz), steering, suspension)
 
         if steering.δo == 0.0
             push!(ratio, NaN)
         else
-            push!(ratio, ackermannratio((θx, θy, θz), chassis, steering, suspension; signed = signed))
+            push!(ratio, ackermannratio((ϕx, ϕy, ϕz), chassis, steering, suspension; signed = signed))
         end
     end
 
@@ -303,77 +303,77 @@ set_ackermann_ratio_signed!(value::Bool) = (ACKERMANN_RATIO_SIGNED[] = value)
     ackermannratio_surface(chassis::Chassis, 
                            steering::Steering, 
                            suspension::Suspension, 
-                           θ_max::Tuple{T,T,T}; 
+                           ϕ_max::Tuple{T,T,T}; 
                            step_size = 1) where {T <: Any}
 
-Computes a 2D surface of Ackermann ratio [%] values over a grid of (θx, θz) steering angles, with θy fixed.
+Computes a 2D surface of Ackermann ratio [%] values over a grid of (ϕx, ϕz) steering angles, with ϕy fixed.
 
 # Arguments:
 - `chassis::Chassis`: The vehicle chassis model.
 - `steering::Steering`: The steering system model containing joint and linkage data.
 - `suspension::Suspension`: The suspension system that affects wheel positioning.
-- `θ_max::Tuple{T,T,T}`: Tuple `(θx_max, θy_fixed, θz_max)` specifying angle sweep limits.
+- `ϕ_max::Tuple{T,T,T}`: Tuple `(ϕx_max, ϕy_fixed, ϕz_max)` specifying angle sweep limits.
 
 # Keywords
-- `step_size`: Increment size for the θx and θz sweep. Default is 1 degree.
+- `step_size`: Increment size for the ϕx and ϕz sweep. Default is 1 degree.
 
 # Description:
-This function creates a 2D grid of angle configurations for θx and θz (holding θy constant) and computes
+This function creates a 2D grid of angle configurations for ϕx and ϕz (holding ϕy constant) and computes
 the Ackermann ratio at each grid point using the current steering and suspension configuration.
 
 If the outer wheel steering angle `δo` is zero, the corresponding ratio value is set to NaN to avoid invalid computation.
 
 # Returns:
-- A 2D Array of Float64 values representing the Ackermann ratio [%] across the θx–θz parameter space.
+- A 2D Array of Float64 values representing the Ackermann ratio [%] across the ϕx–ϕz parameter space.
 """
 function ackermannratio_surface(chassis::Chassis, 
                                     steering::Steering, 
                                     suspension::Suspension, 
-                                    θ_max::Tuple{T,T,T};
+                                    ϕ_max::Tuple{T,T,T};
                                     signed = ackermann_ratio_signed(),
                                     step_size = 1 ) where {T <: Any}
 
-    θx_max , θy, θz_max = θ_max
-    θ_matrix = [(θx, θy, θz) for θx in 0.0:step_size:θx_max, θz in 0.0:step_size:θz_max]
-    ratio = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+    ϕx_max , ϕy, ϕz_max = ϕ_max
+    ϕ_matrix = [(ϕx, ϕy, ϕz) for ϕx in 0.0:step_size:ϕx_max, ϕz in 0.0:step_size:ϕz_max]
+    ratio = [ 0.0 for x in 0:step_size:ϕx_max, z in 0:step_size:ϕz_max]
 
-    for θ in θ_matrix
-        θx, θy, θz = θ
-        MMK.update!(θ, steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕx, ϕy, ϕz = ϕ
+        MMK.update!(ϕ, steering, suspension)
 
-        θx_i = Int(round(θx))
-        θz_i = Int(round(θz))
+        ϕx_i = Int(round(ϕx))
+        ϕz_i = Int(round(ϕz))
 
         if steering.δo == 0.0
-            ratio[θx_i+1,θz_i+1] = NaN
+            ratio[ϕx_i+1,ϕz_i+1] = NaN
         else
     
-        ratio[θx_i+1,θz_i+1] = ackermannratio(θ,chassis, steering, suspension; signed = signed)
+        ratio[ϕx_i+1,ϕz_i+1] = ackermannratio(ϕ,chassis, steering, suspension; signed = signed)
         end
     end 
     return ratio
 end
 
-function ackermann_deviation_θz(θx::T, 
-                                    θy::T, 
-                                    θz_max::T, 
+function ackermann_deviation_ϕz(ϕx::T, 
+                                    ϕy::T, 
+                                    ϕz_max::T, 
                                     chassis::Chassis, 
                                     steering::Steering, 
                                     suspension::Suspension; 
                                     step_size = 1 ) where {T <: Any}
 
-    θ_matrix = [i for i in 0:step_size:θz_max]
+    ϕ_matrix = [i for i in 0:step_size:ϕz_max]
     deviation = []
 
 
-    for θ in θ_matrix
-        θz = θ
-        MMK.update!((θx, θy, θz), steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕz = ϕ
+        MMK.update!((ϕx, ϕy, ϕz), steering, suspension)
 
         if steering.δo == 0.0
-            push!(deviation,ackermann_deviation((θx, θy, θz+1.0),chassis, steering, suspension))
+            push!(deviation,ackermann_deviation((ϕx, ϕy, ϕz+1.0),chassis, steering, suspension))
         else
-            push!(deviation,ackermann_deviation((θx, θy, θz),chassis, steering, suspension))
+            push!(deviation,ackermann_deviation((ϕx, ϕy, ϕz),chassis, steering, suspension))
         end
     end 
     return deviation
@@ -384,28 +384,28 @@ end
 function ackermann_deviation_surface(chassis::Chassis, 
                                         steering::Steering, 
                                         suspension::Suspension, 
-                                        θ_max::Tuple{T,T,T};
+                                        ϕ_max::Tuple{T,T,T};
                                         step_size = 1 ) where {T <: Any}
 
-    θx_max , θy, θz_max = θ_max
-    θ_matrix = [(θx, θy, θz) for θx in 0.0:step_size:θx_max, θz in 0.0:step_size:θz_max]
-    deviation = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+    ϕx_max , ϕy, ϕz_max = ϕ_max
+    ϕ_matrix = [(ϕx, ϕy, ϕz) for ϕx in 0.0:step_size:ϕx_max, ϕz in 0.0:step_size:ϕz_max]
+    deviation = [ 0.0 for x in 0:step_size:ϕx_max, z in 0:step_size:ϕz_max]
 
-    for θ in θ_matrix
-        θx, θy, θz = θ
-        θx_i = Int(round(θx))
-        θz_i = Int(round(θz))
+    for ϕ in ϕ_matrix
+        ϕx, ϕy, ϕz = ϕ
+        ϕx_i = Int(round(ϕx))
+        ϕz_i = Int(round(ϕz))
 
         try
-            MMK.update!(θ, steering, suspension)
+            MMK.update!(ϕ, steering, suspension)
 
             if steering.δo == 0.0
-                deviation[θx_i+1,θz_i+1] = NaN
+                deviation[ϕx_i+1,ϕz_i+1] = NaN
             else
-                deviation[θx_i+1,θz_i+1] = ackermann_deviation(θ,chassis, steering, suspension)
+                deviation[ϕx_i+1,ϕz_i+1] = ackermann_deviation(ϕ,chassis, steering, suspension)
             end
         catch
-            deviation[θx_i+1,θz_i+1] = NaN
+            deviation[ϕx_i+1,ϕz_i+1] = NaN
         end
     end 
     return deviation
@@ -414,48 +414,48 @@ end
 
 
 """
-    ax_θ_vs_δi(steering::Steering, θ_max::Tuple{T,T,T}; step_size = 1) where {T <: Any}
+    ax_ϕ_vs_δi(steering::Steering, ϕ_max::Tuple{T,T,T}; step_size = 1) where {T <: Any}
 
 Generates a matrix of inner wheel steering angles (`δi`) over a grid of steering input angles.
 
 # Arguments
 - `steering`: The `Steering` object, which provides access to current kinematic state and computes updated angles.
-- `θ_max`: A tuple `(θx_max, θy, θz_max)` defining the maximum steering angles to sample.
-- `step_size`: Optional; step resolution for θx and θz sampling (default: `1`).
+- `ϕ_max`: A tuple `(ϕx_max, ϕy, ϕz_max)` defining the maximum steering angles to sample.
+- `step_size`: Optional; step resolution for ϕx and ϕz sampling (default: `1`).
 
 # Description
 This function:
-- Constructs a grid of steering input angles `(θx, θy, θz)` where `θx` and `θz` are varied over their ranges.
+- Constructs a grid of steering input angles `(ϕx, ϕy, ϕz)` where `ϕx` and `ϕz` are varied over their ranges.
 - Calls `update!` for each angle combination to compute the steering state.
 - Extracts the inner wheel angle `δi` from the `steering` object and stores it in a 2D matrix.
 - Handles the case where `δo == 0.0` by inserting `NaN` to avoid divide-by-zero or undefined states.
 
-This function is typically used to prepare surface data for plotting steering behavior, e.g., in `ax_θ_vs_δ_plot!`.
+This function is typically used to prepare surface data for plotting steering behavior, e.g., in `ax_ϕ_vs_δ_plot!`.
 
 # Returns
-A 2D array (`Matrix{Float64}`) of computed inner wheel angles `δi` indexed by discretized `θx` and `θz`.
+A 2D array (`Matrix{Float64}`) of computed inner wheel angles `δi` indexed by discretized `ϕx` and `ϕz`.
 """
-function ax_θ_vs_δi(steering::Steering,
+function ax_ϕ_vs_δi(steering::Steering,
                         suspension::Suspension, 
-                        θ_max::Tuple{T,T,T};
+                        ϕ_max::Tuple{T,T,T};
                         step_size = 1 ) where {T <: Any}
 
-    θx_max , θy, θz_max = θ_max
-    θ_matrix = [(θx, θy, θz) for θx in 0.0:step_size:θx_max, θz in 0.0:step_size:θz_max]
-    δi = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+    ϕx_max , ϕy, ϕz_max = ϕ_max
+    ϕ_matrix = [(ϕx, ϕy, ϕz) for ϕx in 0.0:step_size:ϕx_max, ϕz in 0.0:step_size:ϕz_max]
+    δi = [ 0.0 for x in 0:step_size:ϕx_max, z in 0:step_size:ϕz_max]
 
-    for θ in θ_matrix
-        θx, θy, θz = θ
-        MMK.update!(θ, steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕx, ϕy, ϕz = ϕ
+        MMK.update!(ϕ, steering, suspension)
 
-        θx_i = Int(round(θx))
-        θz_i = Int(round(θz))
+        ϕx_i = Int(round(ϕx))
+        ϕz_i = Int(round(ϕz))
 
         if steering.δo == 0.0
-            δi[θx_i+1,θz_i+1] = NaN
+            δi[ϕx_i+1,ϕz_i+1] = NaN
         else
     
-        δi[θx_i+1,θz_i+1] = steering.δi
+        δi[ϕx_i+1,ϕz_i+1] = steering.δi
         end
     end 
     return δi
@@ -463,48 +463,48 @@ end
 
 
 """
-    ax_θ_vs_δo(steering::Steering, θ_max::Tuple{T,T,T}; step_size = 1) where {T <: Any}
+    ax_ϕ_vs_δo(steering::Steering, ϕ_max::Tuple{T,T,T}; step_size = 1) where {T <: Any}
 
 Generates a matrix of outer wheel steering angles (`δo`) over a grid of steering input angles.
 
 # Arguments
 - `steering`: The `Steering` object, which holds the kinematic model and computes steering responses.
-- `θ_max`: A tuple `(θx_max, θy, θz_max)` defining the maximum values for the steering input angles.
-- `step_size`: Optional; resolution of the sampling grid for `θx` and `θz` (default: `1`).
+- `ϕ_max`: A tuple `(ϕx_max, ϕy, ϕz_max)` defining the maximum values for the steering input angles.
+- `step_size`: Optional; resolution of the sampling grid for `ϕx` and `ϕz` (default: `1`).
 
 # Description
 This function:
-- Constructs a 2D parameter grid of steering angles `(θx, θy, θz)`, keeping `θy` fixed.
+- Constructs a 2D parameter grid of steering angles `(ϕx, ϕy, ϕz)`, keeping `ϕy` fixed.
 - Iteratively calls `update!` on the `steering` object for each angle combination.
-- Records the outer wheel steering angle `δo` into a matrix indexed by `θx` and `θz`.
+- Records the outer wheel steering angle `δo` into a matrix indexed by `ϕx` and `ϕz`.
 - Fills matrix entries with `NaN` when `δo` is zero, signaling invalid or unresponsive configurations.
 
-The resulting matrix is used for visualization of steering behavior in 3D surface plots (e.g., `ax_θ_vs_δ_plot!`).
+The resulting matrix is used for visualization of steering behavior in 3D surface plots (e.g., `ax_ϕ_vs_δ_plot!`).
 
 # Returns
 A 2D array (`Matrix{Float64}`) containing outer wheel angles `δo` over the sampled input range.
 """
-function ax_θ_vs_δo(steering::Steering,
+function ax_ϕ_vs_δo(steering::Steering,
                         suspension::Suspension, 
-                        θ_max::Tuple{T,T,T};
+                        ϕ_max::Tuple{T,T,T};
                         step_size = 1 ) where {T <: Any}
 
-    θx_max , θy, θz_max = θ_max
-    θ_matrix = [(θx, θy, θz) for θx in 0.0:step_size:θx_max, θz in 0.0:step_size:θz_max]
-    δo = [ 0.0 for x in 0:step_size:θx_max, z in 0:step_size:θz_max]
+    ϕx_max , ϕy, ϕz_max = ϕ_max
+    ϕ_matrix = [(ϕx, ϕy, ϕz) for ϕx in 0.0:step_size:ϕx_max, ϕz in 0.0:step_size:ϕz_max]
+    δo = [ 0.0 for x in 0:step_size:ϕx_max, z in 0:step_size:ϕz_max]
 
-    for θ in θ_matrix
-        θx, θy, θz = θ
-        MMK.update!(θ, steering, suspension)
+    for ϕ in ϕ_matrix
+        ϕx, ϕy, ϕz = ϕ
+        MMK.update!(ϕ, steering, suspension)
 
-        θx_i = Int(round(θx))
-        θz_i = Int(round(θz))
+        ϕx_i = Int(round(ϕx))
+        ϕz_i = Int(round(ϕz))
 
         if steering.δo == 0.0
-            δo[θx_i+1,θz_i+1] = NaN
+            δo[ϕx_i+1,ϕz_i+1] = NaN
         else
     
-        δo[θx_i+1,θz_i+1] = steering.δo
+        δo[ϕx_i+1,ϕz_i+1] = steering.δo
         end
     end 
     return δo
@@ -512,7 +512,7 @@ end
 
 
 
-function compr_vs_δ(θ::Tuple{T,T,T},
+function compr_vs_δ(ϕ::Tuple{T,T,T},
                         steering::Steering,
                         suspension::Suspension;
                         step_size = 1 ) where {T <: Any}
@@ -527,7 +527,7 @@ function compr_vs_δ(θ::Tuple{T,T,T},
         suspension.damper[2].compression = r_compr
 
         try
-            MMK.update!(θ, steering, suspension)
+            MMK.update!(ϕ, steering, suspension)
 
             δi[l_index,r_index] = steering.δi
             δo[l_index,r_index] = steering.δo
@@ -540,9 +540,9 @@ function compr_vs_δ(θ::Tuple{T,T,T},
     return δi, δo
 end
 
-function left_wheel_delta_vs_compression_θz(θx::T,
-                                            θy::T,
-                                            θz_max::T,
+function left_wheel_delta_vs_compression_ϕz(ϕx::T,
+                                            ϕy::T,
+                                            ϕz_max::T,
                                             steering::Steering,
                                             suspension::Suspension;
                                             fixed_right_compression = suspension.damper[2].compression,
@@ -551,25 +551,25 @@ function left_wheel_delta_vs_compression_θz(θx::T,
     compression_values = collect(0.0:step_size:100.0)
     last(compression_values) == 100.0 || push!(compression_values, 100.0)
 
-    θz_values = collect(0.0:step_size:θz_max)
-    last(θz_values) == θz_max || push!(θz_values, θz_max)
+    ϕz_values = collect(0.0:step_size:ϕz_max)
+    last(ϕz_values) == ϕz_max || push!(ϕz_values, ϕz_max)
 
-    delta_left = fill(NaN, length(compression_values), length(θz_values))
+    delta_left = fill(NaN, length(compression_values), length(ϕz_values))
 
-    for (compression_index, left_compression) in enumerate(compression_values), (θz_index, θz) in enumerate(θz_values)
+    for (compression_index, left_compression) in enumerate(compression_values), (ϕz_index, ϕz) in enumerate(ϕz_values)
         suspension.damper[1].compression = left_compression
         suspension.damper[2].compression = fixed_right_compression
 
         try
-            MMK.update!((θx, θy, 0.0), steering, suspension)
+            MMK.update!((ϕx, ϕy, 0.0), steering, suspension)
             baseline_left_angle = steering.δo
 
-            MMK.update!((θx, θy, θz), steering, suspension)
+            MMK.update!((ϕx, ϕy, ϕz), steering, suspension)
             current_left_angle = steering.δo
 
-            delta_left[compression_index, θz_index] = current_left_angle - baseline_left_angle
+            delta_left[compression_index, ϕz_index] = current_left_angle - baseline_left_angle
         catch
-            delta_left[compression_index, θz_index] = NaN
+            delta_left[compression_index, ϕz_index] = NaN
         end
     end
 
@@ -731,20 +731,20 @@ function wheel_center_surface_coordinate_matrices(points)
     return xs, ys, zs
 end
 
-function wheel_center_surface(θx,
-                                θy,
-                                θz_max,
+function wheel_center_surface(ϕx,
+                                ϕy,
+                                ϕz_max,
                                 steering::Steering,
                                 suspension::Suspension;
                                 compression_step = 5.0,
-                                θz_step = 2.0)
+                                ϕz_step = 2.0)
     compression_values = compression_sweep_values(; step_size = compression_step)
-    θz_values = signed_sweep_values(θz_max; step_size = θz_step)
+    ϕz_values = signed_sweep_values(ϕz_max; step_size = ϕz_step)
 
-    left_points = fill(Point3f(NaN, NaN, NaN), length(compression_values), length(θz_values))
-    right_points = fill(Point3f(NaN, NaN, NaN), length(compression_values), length(θz_values))
+    left_points = fill(Point3f(NaN, NaN, NaN), length(compression_values), length(ϕz_values))
+    right_points = fill(Point3f(NaN, NaN, NaN), length(compression_values), length(ϕz_values))
 
-    for (compression_index, compression) in enumerate(compression_values), (θz_index, θz) in enumerate(θz_values)
+    for (compression_index, compression) in enumerate(compression_values), (ϕz_index, ϕz) in enumerate(ϕz_values)
         steering_copy = clean_error_info_copy(steering)
         suspension_copy = clean_error_info_copy(suspension)
 
@@ -752,23 +752,23 @@ function wheel_center_surface(θx,
         suspension_copy.damper[2].compression = compression
 
         try
-            MMK.update!((θx, θy, θz), steering_copy, suspension_copy)
+            MMK.update!((ϕx, ϕy, ϕz), steering_copy, suspension_copy)
 
             left_center = steered_wheel_center_vehicle_position(steering_copy, suspension_copy, 1)
             right_center = steered_wheel_center_vehicle_position(steering_copy, suspension_copy, 2)
 
-            left_points[compression_index, θz_index] = Point3f(left_center...)
-            right_points[compression_index, θz_index] = Point3f(right_center...)
+            left_points[compression_index, ϕz_index] = Point3f(left_center...)
+            right_points[compression_index, ϕz_index] = Point3f(right_center...)
         catch
-            left_points[compression_index, θz_index] = Point3f(NaN, NaN, NaN)
-            right_points[compression_index, θz_index] = Point3f(NaN, NaN, NaN)
+            left_points[compression_index, ϕz_index] = Point3f(NaN, NaN, NaN)
+            right_points[compression_index, ϕz_index] = Point3f(NaN, NaN, NaN)
         end
     end
 
     left_x, left_y, left_z = wheel_center_surface_coordinate_matrices(left_points)
     right_x, right_y, right_z = wheel_center_surface_coordinate_matrices(right_points)
 
-    return compression_values, θz_values, left_x, left_y, left_z, right_x, right_y, right_z
+    return compression_values, ϕz_values, left_x, left_y, left_z, right_x, right_y, right_z
 end
 
 function track_width_over_compression(steering::Steering,
@@ -806,7 +806,7 @@ function damper_motion_ratio(steering::Steering,
     return compression_values, motion_ratio
 end
 
-function roll_kinematics(θ::Tuple{T,T,T},
+function roll_kinematics(ϕ::Tuple{T,T,T},
                             chassis::Chassis,
                             steering::Steering,
                             suspension::Suspension;
@@ -828,7 +828,7 @@ function roll_kinematics(θ::Tuple{T,T,T},
         suspension_copy.damper[2].compression = 100.0 - roll_state
 
         try
-            MMK.update!(θ, steering_copy, suspension_copy)
+            MMK.update!(ϕ, steering_copy, suspension_copy)
 
             left_camber[index] = wheel_camber_angle(suspension_copy, 1)
             right_camber[index] = wheel_camber_angle(suspension_copy, 2)
@@ -839,7 +839,7 @@ function roll_kinematics(θ::Tuple{T,T,T},
             right_center = wheel_center_vehicle_position(steering_copy, suspension_copy, 2)
             track_width[index] = abs(Float64(left_center[2]) - Float64(right_center[2]))
 
-            ackermann_ratio_values[index] = steering_copy.δo == 0.0 ? NaN : ackermannratio(θ, chassis, steering_copy, suspension_copy; signed = signed)
+            ackermann_ratio_values[index] = steering_copy.δo == 0.0 ? NaN : ackermannratio(ϕ, chassis, steering_copy, suspension_copy; signed = signed)
         catch
             left_camber[index] = NaN
             right_camber[index] = NaN

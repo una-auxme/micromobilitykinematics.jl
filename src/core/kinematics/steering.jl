@@ -1,36 +1,36 @@
 """
-    steeringkinematicsMOVED!(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    steeringkinematicsMOVED!(ϕ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
-For the moving rotational component with the angles (θx, θz), the kinematics of the steering is calculated
+For the moving rotational component with the angles (ϕx, ϕz), the kinematics of the steering is calculated
 
 # Arguments
-- `θ::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
-        - `θx`: Angle of rotation of the rotation component around the x-axis
-        - `θy`: Angle of rotation of the rotation component around the y-axis
-        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `ϕ::Tuple{T,T,T}`: angles (ϕx,ϕy,ϕz) in which the rotational component is rotated
+        - `ϕx`: Angle of rotation of the rotation component around the x-axis
+        - `ϕy`: Angle of rotation of the rotation component around the y-axis
+        - `ϕz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
 - no returns because of in place programming
 """
-function steeringkinematicsMOVED!(θ::Tuple, steering::Steering, suspension::Suspension)
+function steeringkinematicsMOVED!(ϕ::Tuple, steering::Steering, suspension::Suspension)
     
     steering.err_info.id = :steeringkinematicsMOVED
 
 
     # --- extract steering angles ---
-    θx, θy, θz = θ
+    ϕx, ϕy, ϕz = ϕ
 
     # --- Save input steering angles to steering object (in degrees) ---
-    steering.θx = θx
-    steering.θy = θy
-    steering.θz = θz
+    steering.ϕx = ϕx
+    steering.ϕy = ϕy
+    steering.ϕz = ϕz
 
     # --- Convert angles to radians for computation ---
-    θx = deg2rad(θx)
-    θy = deg2rad(θy)
-    θz = deg2rad(θz)
+    ϕx = deg2rad(ϕx)
+    ϕy = deg2rad(ϕy)
+    ϕz = deg2rad(ϕz)
 
     ############# INITIAL NEUTRAL POSITIONS ################
 
@@ -45,10 +45,10 @@ function steeringkinematicsMOVED!(θ::Tuple, steering::Steering, suspension::Sus
     right_sphere_joints_neutral = [0.0; -steering.rotational_component.to_joint_pivot_point; 0] + vec_z_rotational_neutral
     
     # --- Apply rotation around Y-axis (handlebar tilt) ---
-    ~, vec_x_rotational_neutral = rotate3(vec_x_rotational_neutral, rotational_component_ucs[2,:], -θy)
-    ~, vec_z_rotational_neutral = rotate3(vec_z_rotational_neutral, rotational_component_ucs[2,:], -θy)
-    ~, left_sphere_joints_neutral = rotate3(left_sphere_joints_neutral, rotational_component_ucs[2,:], -θy)
-    ~, right_sphere_joints_neutral = rotate3(right_sphere_joints_neutral, rotational_component_ucs[2,:], -θy)
+    ~, vec_x_rotational_neutral = rotate3(vec_x_rotational_neutral, rotational_component_ucs[2,:], -ϕy)
+    ~, vec_z_rotational_neutral = rotate3(vec_z_rotational_neutral, rotational_component_ucs[2,:], -ϕy)
+    ~, left_sphere_joints_neutral = rotate3(left_sphere_joints_neutral, rotational_component_ucs[2,:], -ϕy)
+    ~, right_sphere_joints_neutral = rotate3(right_sphere_joints_neutral, rotational_component_ucs[2,:], -ϕy)
 
     # --- Save updated neutral vectors ---
     steering.vec_x_rotational_neutral = vec_x_rotational_neutral
@@ -57,16 +57,16 @@ function steeringkinematicsMOVED!(θ::Tuple, steering::Steering, suspension::Sus
 
 
     ############# APPLY ROTATIONS (X, THEN Z) ################
-    ~, vec_x_rotational = rotate3(vec_x_rotational_neutral, rotational_component_ucs[1,:], θx)
+    ~, vec_x_rotational = rotate3(vec_x_rotational_neutral, rotational_component_ucs[1,:], ϕx)
 
-    ~, vec_z_rotational = rotate3(vec_z_rotational_neutral, rotational_component_ucs[1,:], θx)
-    ~, vec_z_rotational = rotate3(vec_z_rotational, vec_x_rotational, θz)
+    ~, vec_z_rotational = rotate3(vec_z_rotational_neutral, rotational_component_ucs[1,:], ϕx)
+    ~, vec_z_rotational = rotate3(vec_z_rotational, vec_x_rotational, ϕz)
     
-    ~, left_sphere_joints = rotate3(steering.sphere_joints_neutral[1], rotational_component_ucs[1,:], θx)
-    ~, left_sphere_joints = rotate3(left_sphere_joints, vec_x_rotational, θz)
+    ~, left_sphere_joints = rotate3(steering.sphere_joints_neutral[1], rotational_component_ucs[1,:], ϕx)
+    ~, left_sphere_joints = rotate3(left_sphere_joints, vec_x_rotational, ϕz)
 
-    ~, right_sphere_joints = rotate3(steering.sphere_joints_neutral[2], rotational_component_ucs[1,:], θx)
-    ~, right_sphere_joints = rotate3(right_sphere_joints, vec_x_rotational, θz)
+    ~, right_sphere_joints = rotate3(steering.sphere_joints_neutral[2], rotational_component_ucs[1,:], ϕx)
+    ~, right_sphere_joints = rotate3(right_sphere_joints, vec_x_rotational, ϕz)
 
     # --- Save rotated joint vectors ---
     steering.vec_z_rotational = vec_z_rotational
@@ -164,32 +164,32 @@ end
 
 
 """
-    steeringkinematicsNEUTRAL!(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    steeringkinematicsNEUTRAL!(ϕ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
-For the rotation component in its rest position with the angles (θx, θz) = (0,0), the kinematics of the steering is calculated
+For the rotation component in its rest position with the angles (ϕx, ϕz) = (0,0), the kinematics of the steering is calculated
 
 # Arguments
-- `θ::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
-        - `θx`: Angle of rotation of the rotation component around the x-axis
-        - `θy`: Angle of rotation of the rotation component around the y-axis
-        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `ϕ::Tuple{T,T,T}`: angles (ϕx,ϕy,ϕz) in which the rotational component is rotated
+        - `ϕx`: Angle of rotation of the rotation component around the x-axis
+        - `ϕy`: Angle of rotation of the rotation component around the y-axis
+        - `ϕz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
 - no returns because of in place programming
 """
-function steeringkinematicsNEUTRAL!(θ::Tuple, steering::Steering, suspension::Suspension)
+function steeringkinematicsNEUTRAL!(ϕ::Tuple, steering::Steering, suspension::Suspension)
 
     steering.err_info.id = :steeringkinematicsNEUTRAL
 
     # --- extract steering angles ---
-    θx, θy, θz = θ
+    ϕx, ϕy, ϕz = ϕ
 
     # --- Convert angles to radians for computation ---
-    θx = deg2rad(0.0)
-    θy = deg2rad(θy)
-    θz = deg2rad(0.0)
+    ϕx = deg2rad(0.0)
+    ϕy = deg2rad(ϕy)
+    ϕz = deg2rad(0.0)
 
     ############# INITIAL NEUTRAL POSITIONS ################
     # --- Coordinate system basis vectors (identity matrix) ---
@@ -206,25 +206,25 @@ function steeringkinematicsNEUTRAL!(θ::Tuple, steering::Steering, suspension::S
 
 
     # --- Apply rotation around Y-axis (handlebar tilt) ---
-    ~, vec_x_rotational_neutral = rotate3(vec_x_rotational_neutral, rotational_component_ucs[2,:], -θy)
-    ~, vec_z_rotational_neutral = rotate3(vec_z_rotational_neutral, rotational_component_ucs[2,:], -θy)
-    ~, left_sphere_joints_neutral = rotate3(left_sphere_joints_neutral, rotational_component_ucs[2,:], -θy)
-    ~, right_sphere_joints_neutral = rotate3(right_sphere_joints_neutral, rotational_component_ucs[2,:], -θy)
+    ~, vec_x_rotational_neutral = rotate3(vec_x_rotational_neutral, rotational_component_ucs[2,:], -ϕy)
+    ~, vec_z_rotational_neutral = rotate3(vec_z_rotational_neutral, rotational_component_ucs[2,:], -ϕy)
+    ~, left_sphere_joints_neutral = rotate3(left_sphere_joints_neutral, rotational_component_ucs[2,:], -ϕy)
+    ~, right_sphere_joints_neutral = rotate3(right_sphere_joints_neutral, rotational_component_ucs[2,:], -ϕy)
 
 
 
 
     ############# APPLY ROTATIONS (X, THEN Z) ################
-    ~, vec_x_rotational = rotate3(vec_x_rotational_neutral, rotational_component_ucs[1,:], θx)
+    ~, vec_x_rotational = rotate3(vec_x_rotational_neutral, rotational_component_ucs[1,:], ϕx)
 
-    ~, vec_z_rotational = rotate3(vec_z_rotational_neutral, rotational_component_ucs[1,:], θx)
-    ~, vec_z_rotational = rotate3(vec_z_rotational, vec_x_rotational, θz)
+    ~, vec_z_rotational = rotate3(vec_z_rotational_neutral, rotational_component_ucs[1,:], ϕx)
+    ~, vec_z_rotational = rotate3(vec_z_rotational, vec_x_rotational, ϕz)
     
-    ~, left_sphere_joints = rotate3(steering.sphere_joints_neutral[1], rotational_component_ucs[1,:], θx)
-    ~, left_sphere_joints = rotate3(left_sphere_joints, vec_x_rotational, θz)
+    ~, left_sphere_joints = rotate3(steering.sphere_joints_neutral[1], rotational_component_ucs[1,:], ϕx)
+    ~, left_sphere_joints = rotate3(left_sphere_joints, vec_x_rotational, ϕz)
 
-    ~, right_sphere_joints = rotate3(steering.sphere_joints_neutral[2], rotational_component_ucs[1,:], θx)
-    ~, right_sphere_joints = rotate3(right_sphere_joints, vec_x_rotational, θz)
+    ~, right_sphere_joints = rotate3(steering.sphere_joints_neutral[2], rotational_component_ucs[1,:], ϕx)
+    ~, right_sphere_joints = rotate3(right_sphere_joints, vec_x_rotational, ϕz)
 
     # --- Save rotated joint vectors ---
     steering.sphere_joints_neutral = (left_sphere_joints, right_sphere_joints) 
@@ -320,14 +320,14 @@ end
 
 
 """
-    steeringkinematics!(θ::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    steeringkinematics!(ϕ::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
 
 # Arguments
-- `θ::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        - `θx`: Angle of rotation of the rotation component around the x-axis
-        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `ϕ::Tuple{T,T}`: angles (ϕx,ϕz) in which the rotational component is rotated
+        - `ϕx`: Angle of rotation of the rotation component around the x-axis
+        - `ϕz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
 
@@ -341,22 +341,22 @@ function steeringkinematics!(args...)
 end
 
 """
-    steeringkinematics(θ::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
+    steeringkinematics(ϕ::Tuple{T,T}, steering::Steering, suspension::Suspension) where {T<:Real}
 
 To fully describe the kinematics of the steering system, both MOVED and NEUTRAL states must be calculated
 
 # Arguments
-- `θ::Tuple{T,T}`: angles (θx,θz) in which the rotational component is rotated
-        - `θx`: Angle of rotation of the rotation component around the x-axis
-        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `ϕ::Tuple{T,T}`: angles (ϕx,ϕz) in which the rotational component is rotated
+        - `ϕx`: Angle of rotation of the rotation component around the x-axis
+        - `ϕz`: Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
 
 # Returns:
 - `steering::Steering`: Instance of a specific steering
 """
-function steeringkinematics(θ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
+function steeringkinematics(ϕ::Tuple{T,T,T}, steering::Steering, suspension::Suspension) where {T<:Any}
     cpy_steering = deepcopy(steering)
-    steeringkinematics!(θ,steering,suspension)
+    steeringkinematics!(ϕ,steering,suspension)
     return cpy_steering
 end

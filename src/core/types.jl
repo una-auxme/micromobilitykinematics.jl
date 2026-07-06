@@ -113,23 +113,23 @@ end
 mutable struct InitSteeringParam
 
     ######## depends on the kinematics
-    θx::Any                  # Angle of rotation of the rotation component around the x-axis
-    θy::Any                  # Angle of rotation of the rotation component around the x-axis
-    θz::Any                  # Angle of rotation of the rotation component around the z-axis
+    ϕx::Any                  # Angle of rotation of the rotation component around the x-axis
+    ϕy::Any                  # Angle of rotation of the rotation component around the x-axis
+    ϕz::Any                  # Angle of rotation of the rotation component around the z-axis
 
-    θx_radius::Any
-    θz_radius::Any
+    ϕx_radius::Any
+    ϕz_radius::Any
     track_lever_length::Any
     tie_rod_length::Any
-    function InitSteeringParam(θx_radius, θz_radius, track_lever_length, tie_rod_length)
+    function InitSteeringParam(ϕx_radius, ϕz_radius, track_lever_length, tie_rod_length)
         inst = new()
 
-        inst.θx = nothing
-        inst.θy = nothing
-        inst.θz = nothing
+        inst.ϕx = nothing
+        inst.ϕy = nothing
+        inst.ϕz = nothing
 
-        inst.θx_radius = θx_radius
-        inst.θz_radius = θz_radius
+        inst.ϕx_radius = ϕx_radius
+        inst.ϕz_radius = ϕz_radius
         inst.track_lever_length = track_lever_length
         inst.tie_rod_length = tie_rod_length
         
@@ -147,9 +147,9 @@ mutable struct Steering <: AbstractSteering
     tie_rod::Union{TieRod,Nothing}
 
     ######## depends on the kinematics
-    θx::Any                  # Angle of rotation of the rotation component around the x-axis
-    θy::Any                  # Angle of rotation of the rotation component around the x-axis
-    θz::Any                  # Angle of rotation of the rotation component around the z-axis
+    ϕx::Any                  # Angle of rotation of the rotation component around the x-axis
+    ϕy::Any                  # Angle of rotation of the rotation component around the x-axis
+    ϕz::Any                  # Angle of rotation of the rotation component around the z-axis
 
     δi::Any                 # inner steering angle of the wheel
     δo::Any                   # outer steering angle of the wheel
@@ -202,9 +202,9 @@ mutable struct Steering <: AbstractSteering
         inst.tie_rod = TieRod(tie_rod_length)
 
 
-        inst.θx = nothing
-        inst.θy = nothing
-        inst.θz = nothing
+        inst.ϕx = nothing
+        inst.ϕy = nothing
+        inst.ϕz = nothing
 
         inst.δi = nothing 
         inst.δo = nothing      
@@ -596,7 +596,7 @@ end
 
 
 mutable struct OptDa # optimisation data
-    θ::Union{Tuple{Int64,Int64},Nothing}
+    ϕ::Union{Tuple{Int64,Int64},Nothing}
     input::Union{Tuple{<:Number,<:Number,<:Number,<:Number},Nothing}
     steering::Union{Steering, Nothing}
     objective::Union{<:Number, Nothing}
@@ -604,7 +604,7 @@ mutable struct OptDa # optimisation data
 
     function OptDa(input::Tuple{<:Number,<:Number,<:Number,<:Number}, steering::Steering, objective::Any, status::Any)
         inst = new()
-        inst.θ = (steering.θx, steering.θz)
+        inst.ϕ = (steering.ϕx, steering.ϕz)
         inst.input = input
         inst.steering = steering
         inst.objective = objective 

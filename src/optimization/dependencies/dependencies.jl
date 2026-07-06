@@ -106,16 +106,16 @@ function TrackingCircleConstraint(arge...)
 end
 
 """
-checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspension::Suspension)
+checkConstraints(step_size, ϕ_max::Tuple, steering::Steering, suspension::Suspension)
 
     checks  all constraints and dependencies
 
 # Arguments 
 - `step_size`: step_size in which the angular area should be checked
-- `maxθ::Tuple{T,T,T}`: angles (θx,θz) in which the rotational component is rotated
-        -`θx`: maximal Angle of rotation of the rotation component around the x-axis
-        -`θy`: Angle of rotation of the rotation component around the y-axis
-        -`θz`: maximal Angle of rotation of the rotation component around the z-axis
+- `maxϕ::Tuple{T,T,T}`: angles (ϕx,ϕz) in which the rotational component is rotated
+        -`ϕx`: maximal Angle of rotation of the rotation component around the x-axis
+        -`ϕy`: Angle of rotation of the rotation component around the y-axis
+        -`ϕz`: maximal Angle of rotation of the rotation component around the z-axis
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
 
@@ -124,8 +124,8 @@ checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspension::Suspe
         - `false`: It is not possible to match the constraints in a satisfactory manner
         - `true`: It is possible to match the constraints in a satisfactory manner
 """
-function checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspension::Suspension)
-    θx_max, θy , θz_max = θ_max
+function checkConstraints(step_size, ϕ_max::Tuple, steering::Steering, suspension::Suspension)
+    ϕx_max, ϕy , ϕz_max = ϕ_max
     try
         kin_Bool = []
         angle_Bool = []
@@ -133,8 +133,8 @@ function checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspensi
         track_Bool = []
 
         # One-time calculation of the kinematics and storage in instances until the intersection needs to be checked.  
-        θ_tuples = [(i, j) for i in 0.0:step_size:θx_max, j in 0.0:step_size:θz_max] # searching space of (θx, θz)
-        steerings = [kinematicsUNTILmount°((θ_tuple[1], θy, θ_tuple[2]) , steering, suspension) for θ_tuple in θ_tuples]
+        ϕ_tuples = [(i, j) for i in 0.0:step_size:ϕx_max, j in 0.0:step_size:ϕz_max] # searching space of (ϕx, ϕz)
+        steerings = [kinematicsUNTILmount°((ϕ_tuple[1], ϕy, ϕ_tuple[2]) , steering, suspension) for ϕ_tuple in ϕ_tuples]
         # checks if steering.sphere_joints is calculable (intersection is posible)
         for steering in steerings
             push!(kin_Bool, KinematicDependency(steering))
@@ -147,7 +147,7 @@ function checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspensi
 
         # Calculate the further kinematics for all angular positions of the steering system.
         for steering in steerings
-            if steering.θx == 0.0 && steering.θz == 0.0
+            if steering.ϕx == 0.0 && steering.ϕz == 0.0
                 continue
             else 
                 update°!(steering)
@@ -156,19 +156,19 @@ function checkConstraints(step_size, θ_max::Tuple, steering::Steering, suspensi
 
         # calculation of complete kinematics necessary (steering.sphere_joints)
         for steering in steerings
-            #for (θx,θz) = (0,0) AngleDependency and SingularityConstraintis not expressive
-            #println("------------------------------------------> $((steering.θx, steering.θy, steering.θz)) ")
-            if steering.θx == 0.0 && steering.θz == 0.0 
+            #for (ϕx,ϕz) = (0,0) AngleDependency and SingularityConstraintis not expressive
+            #println("------------------------------------------> $((steering.ϕx, steering.ϕy, steering.ϕz)) ")
+            if steering.ϕx == 0.0 && steering.ϕz == 0.0 
                 continue
             end
             push!(angle_Bool, AngleDependency(steering))
 
-            # for (θx,θz) = (n,θz_max) SingularityConstraint checks out of bounds
-            if steering.θz == θz_max
+            # for (ϕx,ϕz) = (n,ϕz_max) SingularityConstraint checks out of bounds
+            if steering.ϕz == ϕz_max
                 continue
             end
-            θx, θz = (Int(round(steering.θx)), Int(round(steering.θz)))
-            steering_next = steerings[θx+1, θz+2]
+            ϕx, ϕz = (Int(round(steering.ϕx)), Int(round(steering.ϕz)))
+            steering_next = steerings[ϕx+1, ϕz+2]
           	
             push!(sin_Bool, SingularityConstraint(steering,steering_next))
         end
@@ -211,8 +211,8 @@ The wrapper function of the checkConstraints procedure is employed for the purpo
 
 """
 function checkConstraints°(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
-    θx_max, θz_max  = (15.0,35.0)
-    θy = 0.0
+    ϕx_max, ϕz_max  = (15.0,35.0)
+    ϕy = 0.0
 
     println("Thread $(Threads.threadid()):> checkConstraints°")
 
@@ -220,30 +220,30 @@ function checkConstraints°(x_rotational_radius, z_rotational_radius, track_leve
         println("Thread $(Threads.threadid()):> ($(x_rotational_radius), $(z_rotational_radius), $(track_lever_length), $(tie_rod_length))")
     end
 
-    θ = (θx_max,θy,θz_max)
+    ϕ = (ϕx_max,ϕy,ϕz_max)
 
     steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
     
     suspension = Suspension((30,30))
     suspensionkinematics!(suspension)
-    #println(":> $(checkConstraints(1,θ,steering,suspension) ? 1.0 : 0.0)")
-    return checkConstraints(1.0,θ,steering,suspension) ? 1.0 : 0.0
+    #println(":> $(checkConstraints(1,ϕ,steering,suspension) ? 1.0 : 0.0)")
+    return checkConstraints(1.0,ϕ,steering,suspension) ? 1.0 : 0.0
 end
 
 
 
 """
-    random_search(upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},θ_max; info = false, radius = 3500, step_size = 1 )
+    random_search(upper_border::Tuple{Float64, Float64, Float64, Float64},lower_border::Tuple{Float64, Float64, Float64, Float64},ϕ_max; info = false, radius = 3500, step_size = 1 )
 
 random search with given border for the parameters and given angular area for rotary component 
 
 # Arguments:
 - `upper_border::Tuple{Float64, Float64, Float64, Float64}`: upper border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)  (guidline = (100.0, 140.0,150.0,270.0))
 - `lower_border::Tuple{Float64, Float64, Float64, Float64}`: lower border Tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length) (guidline = (50.0,100.0, 100.0, 100.0))
-- `θ_max`: maximal angular area for rotary component (defult: (0,0,35))
-        - `θx`: Angle of rotation of the rotation component around the x-axis
-        - `θy`: Angle of rotation of the rotation component around the y-axis
-        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `ϕ_max`: maximal angular area for rotary component (defult: (0,0,35))
+        - `ϕx`: Angle of rotation of the rotation component around the x-axis
+        - `ϕy`: Angle of rotation of the rotation component around the y-axis
+        - `ϕz`: Angle of rotation of the rotation component around the z-axis
 
 # Keywords:
 - `info::Bool`: true if info should be printed
@@ -253,7 +253,7 @@ random search with given border for the parameters and given angular area for ro
 # Returns:
 - `compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
 """
-function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, θ_max::Tuple{I,I,I}; info = false, step_size = 1.0 ) where {T<:Number, I<:Number}
+function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, ϕ_max::Tuple{I,I,I}; info = false, step_size = 1.0 ) where {T<:Number, I<:Number}
     param = nothing
     valid_param = false
 
@@ -270,7 +270,7 @@ function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}
         suspensionkinematics!(suspension)
         steering = Steering(param...)
 
-        valid_param = checkConstraints(step_size, θ_max, steering, suspension)
+        valid_param = checkConstraints(step_size, ϕ_max, steering, suspension)
         i +=1
     end
     return Tuple(param)

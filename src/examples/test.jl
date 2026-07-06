@@ -95,8 +95,8 @@ chassis = Chassis()
 
 steeringkinematics!(angleConfig, st, suspension)
 
-θ_max = (15.0,1.0,35.0)
-GUI_steering(θ_max, chassis , st, suspension)
+ϕ_max = (15.0,1.0,35.0)
+GUI_steering(ϕ_max, chassis , st, suspension)
 
 
 
@@ -106,8 +106,8 @@ checkConstraints°((71.72351165297609, 99.99961733848545, 116.65242673951506, 22
 
 
 
-θ_max = (15.0,0.0,35.0)
-GUI_steering(θ_max, chassis , st, suspension)
+ϕ_max = (15.0,0.0,35.0)
+GUI_steering(ϕ_max, chassis , st, suspension)
 
 
 
@@ -128,16 +128,16 @@ grid_optim(upper_bourder,lower_bourder, max_angleConfig)
 
 
 
- θ_tuples = [(i, j) for i in 0.0:1.0:15, j in 0.0:1.0:35] # searching space of (θx, θz)
-θy = 0.0
-[(θ_tuple[1], θy, θ_tuple[2]) for θ_tuple in θ_tuples]
+ ϕ_tuples = [(i, j) for i in 0.0:1.0:15, j in 0.0:1.0:35] # searching space of (ϕx, ϕz)
+ϕy = 0.0
+[(ϕ_tuple[1], ϕy, ϕ_tuple[2]) for ϕ_tuple in ϕ_tuples]
 
 
 
 
 
 
- θ_tuples = [(i,l, j) for i in 0.0:1.0:10.0, l in 0.0:0.1:5.0, j in 0.0:1.0:30.0] # searching space of (θx, θz)
+ ϕ_tuples = [(i,l, j) for i in 0.0:1.0:10.0, l in 0.0:0.1:5.0, j in 0.0:1.0:30.0] # searching space of (ϕx, ϕz)
 
 
 
@@ -286,12 +286,12 @@ fig[3,1] = angle_layout
 titel = Label(angle_layout[1,1], "Rotation angle configuration", fontsize = 15)
 
 
-#sl_θz = Slider(angle_layout[2, 1], range = -30:1:30, startvalue = 0)
-sl_θ = SliderGrid(
+#sl_ϕz = Slider(angle_layout[2, 1], range = -30:1:30, startvalue = 0)
+sl_ϕ = SliderGrid(
                 angle_layout[2, 1],
-                (label = "θx", range = -30:1:30, format = "{:.1f}°", startvalue = 0),
-                (label = "θz", range = 0:1:15, format = "{:.1f}°", startvalue = 0),
-                (label = "θz", range = -30:1:30, format = "{:.1f}°", startvalue = 0),
+                (label = "ϕx", range = -30:1:30, format = "{:.1f}°", startvalue = 0),
+                (label = "ϕz", range = 0:1:15, format = "{:.1f}°", startvalue = 0),
+                (label = "ϕz", range = -30:1:30, format = "{:.1f}°", startvalue = 0),
                 width = 350,
                 tellheight = false)
 
@@ -308,8 +308,8 @@ rowgap!(angle_layout, 1, -200)
 
 #sg2 = SliderGrid(
 #                param_layout[2, 1],
-#                (label = "θx radius", range = 50:1:100, format = "{:.1f}mm", startvalue = 0),
-#                (label = "θz radius", range = 50:1:200, format = "{:.1f}mm", startvalue = 0),
+#                (label = "ϕx radius", range = 50:1:100, format = "{:.1f}mm", startvalue = 0),
+#                (label = "ϕz radius", range = 50:1:200, format = "{:.1f}mm", startvalue = 0),
 #                (label = "track lever", range = 70:1:200, format = "{:.1f}mm", startvalue = 0),
 #                (label = "tie rod", range = 195:1:260, format = "{:.1f}mm", startvalue = 0),
 #                width = 350,
@@ -418,9 +418,9 @@ GLMakie.lines!(ax, observe_right)
 
 
 
-function update_geometry!((θx,θy,θz))
-    println((θx, θy, θz))
-    steeringkinematicsMOVED!((θx, θy, θz), steering, suspension)
+function update_geometry!((ϕx,ϕy,ϕz))
+    println((ϕx, ϕy, ϕz))
+    steeringkinematicsMOVED!((ϕx, ϕy, ϕz), steering, suspension)
 
     rotational_coponent = [Point3f([0,0,0]),
                             Point3f(steering.vec_x_rotational...),
@@ -446,35 +446,35 @@ function update_geometry!((θx,θy,θz))
     observe_stationary[] = stationary
 end 
 
-sl_θ.sliders[1].value.val
+sl_ϕ.sliders[1].value.val
 
 
 
 
-on(sl_θ.sliders[1].value) do val
-    θx = val
-    θy = sl_θ.sliders[2].value.val
-    θz = sl_θ.sliders[3].value.val
+on(sl_ϕ.sliders[1].value) do val
+    ϕx = val
+    ϕy = sl_ϕ.sliders[2].value.val
+    ϕz = sl_ϕ.sliders[3].value.val
 
-    update_geometry!((θx,θy,θz))
+    update_geometry!((ϕx,ϕy,ϕz))
     #autolimits!(ax)
 end
 
-on(sl_θ.sliders[2].value) do val
-    θx = sl_θ.sliders[1].value.val
-    θy = val
-    θz = sl_θ.sliders[3].value.val
+on(sl_ϕ.sliders[2].value) do val
+    ϕx = sl_ϕ.sliders[1].value.val
+    ϕy = val
+    ϕz = sl_ϕ.sliders[3].value.val
 
-    update_geometry!((θx,θy,θz))
+    update_geometry!((ϕx,ϕy,ϕz))
     #autolimits!(ax)
 end
 
-on(sl_θ.sliders[3].value) do val
-    θx = sl_θ.sliders[1].value.val
-    θy = sl_θ.sliders[2].value.val
-    θz = val
+on(sl_ϕ.sliders[3].value) do val
+    ϕx = sl_ϕ.sliders[1].value.val
+    ϕy = sl_ϕ.sliders[2].value.val
+    ϕz = val
 
-    update_geometry!((θx,θy,θz))
+    update_geometry!((ϕx,ϕy,ϕz))
     #autolimits!(ax)
 end
 
@@ -540,7 +540,7 @@ steering
 
 
 
-steering.θx
+steering.ϕx
 
 
 
@@ -579,13 +579,13 @@ function winkel_zwischen(a, b; in_grad=true)
         error("Einer der Vektoren hat die Länge 0 – Winkel ist undefiniert.")
     end
 
-    cos_theta = skalarprodukt / (betrag_a * betrag_b)
-    # Sicherstellen, dass cos_theta im Bereich [-1, 1] bleibt (Numerik!)
-    cos_theta = clamp(cos_theta, -1.0, 1.0)
+    cos_varphi = skalarprodukt / (betrag_a * betrag_b)
+    # Sicherstellen, dass cos_varphi im Bereich [-1, 1] bleibt (Numerik!)
+    cos_varphi = clamp(cos_varphi, -1.0, 1.0)
 
-    theta = acos(cos_theta)  # in Radiant
+    varphi = acos(cos_varphi)  # in Radiant
 
-    return in_grad ? rad2deg(theta) : theta
+    return in_grad ? rad2deg(varphi) : varphi
 end
 
 # === Makie Setup ===
@@ -593,9 +593,9 @@ fig = Figure(resolution=(800, 600))
 ax = Axis3(fig[1, 1])
 
 # Observable Slider-Werte
-θx = Node(0.0)
-θy = Node(0.0)
-θz = Node(0.0)
+ϕx = Node(0.0)
+ϕy = Node(0.0)
+ϕz = Node(0.0)
 
 # Die Observable für die Punktwolke
 points = Node(Point3f0[])
@@ -605,27 +605,27 @@ sc = scatter!(ax, points, markersize=10)
 
 # Update-Funktion
 function update_geometry!()
-    steeringkinematicsMOVED!((θx[], θy[], θz[]), steering, suspension)
+    steeringkinematicsMOVED!((ϕx[], ϕy[], ϕz[]), steering, suspension)
     left, right = steering.circle_joints
     points[] = Point3f0[left... , right...]
 end
 
 # Slider erstellen
-sl_θx = Slider(fig[2, 1], range = -30:1:30, startvalue = 0) 
-sl_θy = Slider(fig[3, 1], range = -30:1:30, startvalue = 0)
-sl_θz = Slider(fig[4, 1], range = -30:1:30, startvalue = 0)
+sl_ϕx = Slider(fig[2, 1], range = -30:1:30, startvalue = 0) 
+sl_ϕy = Slider(fig[3, 1], range = -30:1:30, startvalue = 0)
+sl_ϕz = Slider(fig[4, 1], range = -30:1:30, startvalue = 0)
 
 # Slider-Callbacks setzen
-on(sl_θx.value) do val
-    θx[] = val
+on(sl_ϕx.value) do val
+    ϕx[] = val
     update_geometry!()
 end
-on(sl_θy.value) do val
-    θy[] = val
+on(sl_ϕy.value) do val
+    ϕy[] = val
     update_geometry!()
 end
-on(sl_θz.value) do val
-    θz[] = val
+on(sl_ϕz.value) do val
+    ϕz[] = val
     update_geometry!()
 end
 
@@ -646,9 +646,9 @@ fig
 
 ###################### Versuche 1
 
-θx_max, θz_max  = (10,35)
+ϕx_max, ϕz_max  = (10,35)
 start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = (54.0, 157.0, 189.0, 196.0) #(69.0, 144.0, 180.0, 200.0) (106.0, 146.0, 188.0, 200.0)# (67.0, 158.0, 195.0, 196.0)
-θx_,θz_ = (10,20)
+ϕx_,ϕz_ = (10,20)
 model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e0, 
                                                         "acceptable_tol" => 1e0, 
                                                         "dual_inf_tol" =>1e0, 
@@ -670,8 +670,8 @@ model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e0,
 @variable(model, 70.0 <= track_lever_length <= 200.0)
 @variable(model, 195.0 <= tie_rod_length <= 260.0)
 
-@variable(model, θx)
-@variable(model, θz)
+@variable(model, ϕx)
+@variable(model, ϕz)
 
 
 steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
@@ -681,7 +681,7 @@ register(model, :checkConstraints°, 4, checkConstraints°, autodiff=true)
 
 
 ################## objective function ##################
-@NLobjective(model, Min, objective(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length))
+@NLobjective(model, Min, objective(ϕx, ϕz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length))
 
 ################## constraints        ##################
 #hier ligt der Fehler
@@ -693,8 +693,8 @@ set_start_value(z_rotational_radius, start_z_rotational_radius)
 set_start_value(track_lever_length, start_track_lever_length)
 set_start_value(tie_rod_length, start_tie_rod_length)
 
-fix(θx, θx_)
-fix(θz,θz_)
+fix(ϕx, ϕx_)
+fix(ϕz,ϕz_)
 
 JuMP.optimize!(model)
 
@@ -706,9 +706,9 @@ JuMP.optimize!(model)
 
 
 
-θx_max, θz_max  = (10,35)
+ϕx_max, ϕz_max  = (10,35)
 start_x_rotational_radius,start_z_rotational_radius,start_track_lever_length,start_tie_rod_length = (106.0, 146.0, 188.0, 200.0) #(96.0, 134.0, 146.0, 235.0)
-θx_,θz_ = (1,20)
+ϕx_,ϕz_ = (1,20)
 model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e-2, 
                                                         "acceptable_tol" => 1e-2, 
                                                         "dual_inf_tol" =>1e-2, 
@@ -730,8 +730,8 @@ model = Model(optimizer_with_attributes(Ipopt.Optimizer,"tol" => 1e-2,
 @variable(model, 70.0 <= track_lever_length <= 200.0)
 @variable(model, 195.0 <= tie_rod_length <= 260.0)
 
-@variable(model, θx)
-@variable(model, θz)
+@variable(model, ϕx)
+@variable(model, ϕz)
 
 
 steering = Steering(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
@@ -753,32 +753,32 @@ register(model, :angle_dependence°, 6, angle_dependence°, autodiff=true)
 
 step_size = 1
 ################## objective function ##################
-@NLobjective(model, Min, objective(θx, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length))
+@NLobjective(model, Min, objective(ϕx, ϕz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length))
 
 ################## constraints        ##################
 #hier ligt der Fehler
 
-@NLconstraint(model, C1_1[i=0:step_size:θx_max, j=0:step_size:θz_max],  left_circsphere_plane_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
-@NLconstraint(model, C1_2[i=0:step_size:θx_max, j=0:step_size:θz_max],  right_circsphere_plane_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
+@NLconstraint(model, C1_1[i=0:step_size:ϕx_max, j=0:step_size:ϕz_max],  left_circsphere_plane_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
+@NLconstraint(model, C1_2[i=0:step_size:ϕx_max, j=0:step_size:ϕz_max],  right_circsphere_plane_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
 
-@NLconstraint(model, C2_1[i=0:step_size:θx_max, j=0:step_size:θz_max],  left_circcirc_min_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
-@NLconstraint(model, C2_2[i=0:step_size:θx_max, j=0:step_size:θz_max],  right_circcirc_min_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
+@NLconstraint(model, C2_1[i=0:step_size:ϕx_max, j=0:step_size:ϕz_max],  left_circcirc_min_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
+@NLconstraint(model, C2_2[i=0:step_size:ϕx_max, j=0:step_size:ϕz_max],  right_circcirc_min_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
 
-@NLconstraint(model, C3_1[i=0:step_size:θx_max, j=0:step_size:θz_max],  left_circcirc_max_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
-@NLconstraint(model, C3_2[i=0:step_size:θx_max, j=0:step_size:θz_max],  right_circcirc_max_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
+@NLconstraint(model, C3_1[i=0:step_size:ϕx_max, j=0:step_size:ϕz_max],  left_circcirc_max_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
+@NLconstraint(model, C3_2[i=0:step_size:ϕx_max, j=0:step_size:ϕz_max],  right_circcirc_max_intersec_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0)
 
-@NLconstraint(model, C4_1[i=step_size:step_size:θx_max, j=0:step_size:(θz_max-2)], outer_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01 ) 
-@NLconstraint(model, C4_2[i=0, j=step_size:step_size:(θz_max-2)], outer_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01) 
+@NLconstraint(model, C4_1[i=step_size:step_size:ϕx_max, j=0:step_size:(ϕz_max-2)], outer_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01 ) 
+@NLconstraint(model, C4_2[i=0, j=step_size:step_size:(ϕz_max-2)], outer_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01) 
 
-@NLconstraint(model, C5_1[i=step_size:step_size:θx_max, j=0:step_size:(θz_max-2)], inner_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01 ) 
-@NLconstraint(model, C5_2[i=0, j=step_size:step_size:(θz_max-2)], inner_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01) 
+@NLconstraint(model, C5_1[i=step_size:step_size:ϕx_max, j=0:step_size:(ϕz_max-2)], inner_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01 ) 
+@NLconstraint(model, C5_2[i=0, j=step_size:step_size:(ϕz_max-2)], inner_sigularity_constraint°(i, j, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) <= 0.01) 
 
-@NLconstraint(model, C6_1[i=step_size:step_size:θx_max, j=0:step_size:θz_max], angle_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) >= 0.01 )
-@NLconstraint(model, C6_2[i=0, j=step_size:step_size:θz_max],  angle_dependence°(θx, θz,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) >= 0.01 )
+@NLconstraint(model, C6_1[i=step_size:step_size:ϕx_max, j=0:step_size:ϕz_max], angle_dependence°(i, j,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) >= 0.01 )
+@NLconstraint(model, C6_2[i=0, j=step_size:step_size:ϕz_max],  angle_dependence°(ϕx, ϕz,x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length) >= 0.01 )
 
 
 
-@NLconstraint(model, C7, track_circle_dependence°(0, θz_max, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)  >= 0)
+@NLconstraint(model, C7, track_circle_dependence°(0, ϕz_max, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)  >= 0)
 
 
 
@@ -787,8 +787,8 @@ set_start_value(z_rotational_radius, start_z_rotational_radius)
 set_start_value(track_lever_length, start_track_lever_length)
 set_start_value(tie_rod_length, start_tie_rod_length)
 
-fix(θx, θx_)
-fix(θz,θz_)
+fix(ϕx, ϕx_)
+fix(ϕz,ϕz_)
 
 JuMP.optimize!(model)
 
@@ -1054,7 +1054,7 @@ function handle_instance(child, inst)
             add_text(name_child, field_name)
     
             unit = ""
-            if field == :δi || field == :δo || field == :θx || field == :θy
+            if field == :δi || field == :δo || field == :ϕx || field == :ϕy
                 unit = "deg"
             else
                 unit = "mm"

@@ -1,13 +1,13 @@
 """
-    ackermann_deviation(θ::Tuple{T,T,T}, chassis::Chassis, steering::Steering, suspension::Suspension) where {T<:Any}
+    ackermann_deviation(ϕ::Tuple{T,T,T}, chassis::Chassis, steering::Steering, suspension::Suspension) where {T<:Any}
 
     Calculates the distance between the optimum point of intersection of the wheel axis (normally on the rear wheel axis) and the current point of intersection of the axis.
 
 # Arguments
-- `θ::Tuple{T,T,T}`: angles (θx,θy,θz) in which the rotational component is rotated
-        - `θx`: Angle of rotation of the rotation component around the x-axis
-        - `θy`: Angle of rotation of the rotation component around the y-axis
-        - `θz`: Angle of rotation of the rotation component around the z-axis
+- `ϕ::Tuple{T,T,T}`: angles (ϕx,ϕy,ϕz) in which the rotational component is rotated
+        - `ϕx`: Angle of rotation of the rotation component around the x-axis
+        - `ϕy`: Angle of rotation of the rotation component around the y-axis
+        - `ϕz`: Angle of rotation of the rotation component around the z-axis
 - `measurements::Measurements`: Instance of a specific all relevant Measurements of the vehicle
 - `steering::Steering`: Instance of a specific steering
 - `suspension::Suspension`: Instance of a specific suspension
@@ -15,13 +15,13 @@
 # Returns
 - Distance between optimal and current intersection point
 """
-function ackermann_deviation(θ::Tuple{T,T,T}, 
+function ackermann_deviation(ϕ::Tuple{T,T,T}, 
                                 chassis::Chassis, 
                                 steering::Steering, 
                                 suspension::Suspension) where {T<:Any}
 
     # --- Update steering and suspension system with new steering angles ---
-    update!(θ, steering, suspension)
+    update!(ϕ, steering, suspension)
 
     # --- Unpack important measurements from the vehicle model ---
     measurements = Measurements(chassis, steering)
@@ -60,14 +60,14 @@ end
 
 
 """
-    ackermann_deviation_at_pose(θx, θy, θz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    ackermann_deviation_at_pose(ϕx, ϕy, ϕz, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 
     Calculates the Ackerman deviation for a given steering angle position.
 
 # Arguments
-- `θx`: Angle of rotation of the rotation component around the x-axis
-- `θy`: Angle of rotation of the rotation component around the y-axis
-- `θz`: Angle of rotation of the rotation component around the z-axis
+- `ϕx`: Angle of rotation of the rotation component around the x-axis
+- `ϕy`: Angle of rotation of the rotation component around the y-axis
+- `ϕz`: Angle of rotation of the rotation component around the z-axis
 - `x_rotational_radius`: length of the rotation component around the x-axis
 - `z_rotational_radius`: length of the rotation component around the z-axis
 - `track_lever_length`: length of the track lever
@@ -77,9 +77,9 @@ end
 - Distance between optimal and current intersection point (known as ackermann deviation)
 
 """
-function ackermann_deviation_for_pose(θx, 
-                    θy,     
-                    θz, 
+function ackermann_deviation_for_pose(ϕx, 
+                    ϕy,     
+                    ϕz, 
                     x_rotational_radius, 
                     z_rotational_radius, 
                     track_lever_length, 
@@ -92,24 +92,24 @@ function ackermann_deviation_for_pose(θx,
             chassis = Chassis()
 
              # --- Angle preprocessing ---
-            θx__ = θx*100
-            θx_ = Int(round(θx__))
-            θx = θx_ / 100
+            ϕx__ = ϕx*100
+            ϕx_ = Int(round(ϕx__))
+            ϕx = ϕx_ / 100
 
-            θy__ = θy*100
-            θy_ = Int(round(θy__))
-            θy = θy_ / 100
+            ϕy__ = ϕy*100
+            ϕy_ = Int(round(ϕy__))
+            ϕy = ϕy_ / 100
 
-            θz__ = θz*100
-            θz_ = Int(round(θz__))
-            θz = θz_ / 100
+            ϕz__ = ϕz*100
+            ϕz_ = Int(round(ϕz__))
+            ϕz = ϕz_ / 100
 
             # --- Evaluate Ackermann deviation for given pose --- 
             cost = try
-                abs(ackermann_deviation((θx,θy,θz), chassis, steering, suspension))
+                abs(ackermann_deviation((ϕx,ϕy,ϕz), chassis, steering, suspension))
             catch err
                 # --- Invalid point → assign high cost ---
-                @warn "Error by ackermann_deviation($θx, $θy, $θz): $err"
+                @warn "Error by ackermann_deviation($ϕx, $ϕy, $ϕz): $err"
                 return Inf
             end
 
@@ -117,7 +117,7 @@ function ackermann_deviation_for_pose(θx,
 
     catch err
         # --- Invalid point → assign high cost ---
-        @warn "Error by ackermann_deviation($θx, $θy, $θz): $err"
+        @warn "Error by ackermann_deviation($ϕx, $ϕy, $ϕz): $err"
         return Inf
     end
 
@@ -126,16 +126,16 @@ end
 
 
 """
-    ackermann_deviation_over_range(θx_max, θy_max, θz_max, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    ackermann_deviation_over_range(ϕx_max, ϕy_max, ϕz_max, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
 
     Calculates the Ackerman deviation for a given steering angle position.
-    !!! θy_max describes the desired rotation around the y-axis. The optimization is performed using the search space θx_max, θz_max with a constant θy_max.!!!
+    !!! ϕy_max describes the desired rotation around the y-axis. The optimization is performed using the search space ϕx_max, ϕz_max with a constant ϕy_max.!!!
     
 
 # Arguments
-- `θx_max`: The maximal angle of rotation of the rotation component around the x-axis
-- `θy_max`: !!! Angle of rotation of the rotation component around the y-axis !!!
-- `θz_max`: The maximal angle of rotation of the rotation component around the z-axis
+- `ϕx_max`: The maximal angle of rotation of the rotation component around the x-axis
+- `ϕy_max`: !!! Angle of rotation of the rotation component around the y-axis !!!
+- `ϕz_max`: The maximal angle of rotation of the rotation component around the z-axis
 - `x_rotational_radius`: length of the rotation component around the x-axis
 - `z_rotational_radius`: length of the rotation component around the z-axis
 - `track_lever_length`: length of the track lever
@@ -145,9 +145,9 @@ end
 - Distance between optimal and current intersection point (known as ackermann deviation)
 
 """
-function ackermann_deviation_over_range(θx_max, 
-                                    θy_max, 
-                                    θz_max, 
+function ackermann_deviation_over_range(ϕx_max, 
+                                    ϕy_max, 
+                                    ϕz_max, 
                                     x_rotational_radius, 
                                     z_rotational_radius, 
                                     track_lever_length, 
@@ -159,38 +159,38 @@ function ackermann_deviation_over_range(θx_max,
         chassis = Chassis()
 
         # --- Angle preprocessing ---
-        θy_max = θy_max*100
-        θy_ = Int(round(θy_max))
-        θy = θy_ / 100
+        ϕy_max = ϕy_max*100
+        ϕy_ = Int(round(ϕy_max))
+        ϕy = ϕy_ / 100
 
         
-        θx_max = Int(round(θx_max))
-        θz_max = Int(round(θz_max))
+        ϕx_max = Int(round(ϕx_max))
+        ϕz_max = Int(round(ϕz_max))
 
         step_size = 1.0
-        θ_tuple = [(i, j) for i in 0.0:step_size:θx_max, j in 0.0:step_size:θz_max]
+        ϕ_tuple = [(i, j) for i in 0.0:step_size:ϕx_max, j in 0.0:step_size:ϕz_max]
 
 
         # --- Main cost loop ---
         cost = 0
-        for i in 1:Int((θx_max/step_size)+1)
-            for θ in θ_tuple[i,:] 
-                if θ != (0,0)
+        for i in 1:Int((ϕx_max/step_size)+1)
+            for ϕ in ϕ_tuple[i,:] 
+                if ϕ != (0,0)
 
                     # Compose full angle vector
-                    θx,θz = θ
-                    θ_ = (θx,θy,θz)
+                    ϕx,ϕz = ϕ
+                    ϕ_ = (ϕx,ϕy,ϕz)
 
                     # Weighting: penalize large angles
-                    # weight = 1.0 - ((θx / θx_max)^2 + (θz / θz_max)^2) / 2
+                    # weight = 1.0 - ((ϕx / ϕx_max)^2 + (ϕz / ϕz_max)^2) / 2
                     α = 1.5           # 1-5    – je höher, desto schneller fällt Gewicht ab.
-                    weight = exp(-α * ((θx/θx_max)^2 + (θz/θz_max)^2))
+                    weight = exp(-α * ((ϕx/ϕx_max)^2 + (ϕz/ϕz_max)^2))
 
                     # Evaluate error
                     error = try
-                        abs(ackermann_deviation(θ_, chassis, steering, suspension))
+                        abs(ackermann_deviation(ϕ_, chassis, steering, suspension))
                     catch err
-                        @warn "Error in ackermann_deviation(θ=$θ): $err"
+                        @warn "Error in ackermann_deviation(ϕ=$ϕ): $err"
                         return Inf  # ungültiger Punkt → hohe Kosten
                     end
                   

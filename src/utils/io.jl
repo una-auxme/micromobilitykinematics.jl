@@ -193,7 +193,7 @@ function handle_single(child::XMLElement, field::Symbol, inst::Union{T,D}) where
     add_text(name_child, name)
 
     unit = ""
-    if field == :δi || field == :δo || field == :θx || field == :θy
+    if field == :δi || field == :δo || field == :ϕx || field == :ϕy
         unit = "deg"
     else
         unit = "mm"
@@ -316,19 +316,19 @@ function save_best_objective()
     @load pathTOdata steering obj
 
     # get values
-    θx = steering.θx
-    θz = steering.θz
+    ϕx = steering.ϕx
+    ϕz = steering.ϕz
     objective = obj
 
-    pathTOdata2 = joinpath(@__DIR__,"data\\backup\\best_obj($θx, $θz).jld2")
+    pathTOdata2 = joinpath(@__DIR__,"data\\backup\\best_obj($ϕx, $ϕz).jld2")
 
     try
         @load pathTOdata2 data
-        push!(data["($θx, $θz)"], (steering, objective))
+        push!(data["($ϕx, $ϕz)"], (steering, objective))
         @save pathTOdata2 data
     catch err
         data = Dict()
-        data["($θx, $θz)"] = (steering, objective)
+        data["($ϕx, $ϕz)"] = (steering, objective)
         @save pathTOdata2 data
     end
     rm(pathTOdata)
@@ -337,14 +337,14 @@ end
 
 
 """
-    function load_data(θ::Tuple, path = @__DIR__)
+    function load_data(ϕ::Tuple, path = @__DIR__)
 
     
 
 """
-function load_data(θ::Tuple, path = @__DIR__)
-    θx,θz = θ
-    data_path = joinpath(path, "optimization\\data\\data($θx,n)\\opt_series($θx,$θz).jld2")
+function load_data(ϕ::Tuple, path = @__DIR__)
+    ϕx,ϕz = ϕ
+    data_path = joinpath(path, "optimization\\data\\data($ϕx,n)\\opt_series($ϕx,$ϕz).jld2")
     @load data_path opt_series
     return opt_series
 end

@@ -6,8 +6,8 @@
 """
 function get_insights(steering::Steering)
     # Extrahiere die benötigten Werte aus dem Steering-Objekt
-    θx = steering.θx
-    θz = steering.θz
+    ϕx = steering.ϕx
+    ϕz = steering.ϕz
     δi = steering.δi
     δo = steering.δo
 
@@ -20,8 +20,8 @@ function get_insights(steering::Steering)
 
     # Erstelle eine Tabelle (DataFrame)
     df = DataFrame(
-        Parameter = ["θx", "θz", "δi", "δo", "x_rotational_radius", "z_rotational_radius", "track_lever.length", "tie_rod.length"],
-        Value = [θx, θz, δi, δo, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length]
+        Parameter = ["ϕx", "ϕz", "δi", "δo", "x_rotational_radius", "z_rotational_radius", "track_lever.length", "tie_rod.length"],
+        Value = [ϕx, ϕz, δi, δo, x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length]
     )
 
     return df
@@ -43,24 +43,24 @@ end
 
 
 """
-    grid_data_obj(θ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassis; step_size = 1) where {I <: Any}
+    grid_data_obj(ϕ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassis; step_size = 1) where {I <: Any}
 
 calculates the objective of the given 
 
 """
-function grid_data_obj(θ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension, chassi::Chassis; step_size = 1) 
-    θx_max, θz_max = θ_max
+function grid_data_obj(ϕ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension, chassi::Chassis; step_size = 1) 
+    ϕx_max, ϕz_max = ϕ_max
     
     
-    θ_tuple = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
-    objective = [ 0.0 for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
+    ϕ_tuple = [(i, j) for i in 0:step_size:ϕx_max, j in 0:step_size:ϕz_max]
+    objective = [ 0.0 for i in 0:step_size:ϕx_max, j in 0:step_size:ϕz_max]
 
-    for θ in θ_tuple
-        if θ == (0,0)
+    for ϕ in ϕ_tuple
+        if ϕ == (0,0)
             continue
         end
-        θx, θz  = θ
-        objective[θx+1,θz+1] = steering_objective(((θx, θz)), chassi, steering, suspension)
+        ϕx, ϕz  = ϕ
+        objective[ϕx+1,ϕz+1] = steering_objective(((ϕx, ϕz)), chassi, steering, suspension)
 
     end
 
@@ -69,12 +69,12 @@ end
 
 
 """
-    grid_data_δ(θ_max::Tuple{I,I}, steering::Steering; step_size = 1) where {I <: Any}
+    grid_data_δ(ϕ_max::Tuple{I,I}, steering::Steering; step_size = 1) where {I <: Any}
 
-Calculates the turning angles of the vehicle for each turning angles of the rotation component (θx, θz) of the steering system.
+Calculates the turning angles of the vehicle for each turning angles of the rotation component (ϕx, ϕz) of the steering system.
 
 # Arguments
--`θ_max::Tuple{I,I}`: maximal turning angles of the rotation component
+-`ϕ_max::Tuple{I,I}`: maximal turning angles of the rotation component
 -`steering::Steering`: Instance of a specific steering mechanism in which the kinematics were previously calculated.
 
 # Keywords
@@ -85,22 +85,22 @@ Calculates the turning angles of the vehicle for each turning angles of the rota
 
 
 """
-function grid_data_δ(θ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension; step_size = 1) 
-    θx_max, θz_max = θ_max
+function grid_data_δ(ϕ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension; step_size = 1) 
+    ϕx_max, ϕz_max = ϕ_max
     
     
-    θ_tuple = [(i, j) for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
-    δi  = [ 0.0 for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
-    δo  = [ 0.0 for i in 0:step_size:θx_max, j in 0:step_size:θz_max]
+    ϕ_tuple = [(i, j) for i in 0:step_size:ϕx_max, j in 0:step_size:ϕz_max]
+    δi  = [ 0.0 for i in 0:step_size:ϕx_max, j in 0:step_size:ϕz_max]
+    δo  = [ 0.0 for i in 0:step_size:ϕx_max, j in 0:step_size:ϕz_max]
 
-    for θ in θ_tuple
-        if θ == (0,0)
+    for ϕ in ϕ_tuple
+        if ϕ == (0,0)
             continue
         end
-        θx, θz  = θ
-        temp_steering = update(((θx, θz)), steering, suspension)
-        δi[θx+1,θz+1] = temp_steering.δi 
-        δo[θx+1,θz+1] = temp_steering.δo 
+        ϕx, ϕz  = ϕ
+        temp_steering = update(((ϕx, ϕz)), steering, suspension)
+        δi[ϕx+1,ϕz+1] = temp_steering.δi 
+        δo[ϕx+1,ϕz+1] = temp_steering.δo 
     end
     return δi, δo
 end
@@ -151,12 +151,12 @@ end
 
 
 """
-    plot_optda_gird_obj(θ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassis) where {I <: Any}
+    plot_optda_gird_obj(ϕ_max::Tuple{I,I}, steering::Steering, suspension::Suspension, chassi::Chassis) where {I <: Any}
 
-Create a plot in which the objective (Ackermann ratio) are mapped to the turning angles of the rotation component (θx, θz) of the steering system.   
+Create a plot in which the objective (Ackermann ratio) are mapped to the turning angles of the rotation component (ϕx, ϕz) of the steering system.   
 
 # Arguments
--`θ_max::Tuple{I,I}`: maximal turning angles of the rotation component
+-`ϕ_max::Tuple{I,I}`: maximal turning angles of the rotation component
 -`steering::Steering`: Instance of a specific steering mechanism in which the kinematics were previously calculated.
 -`suspension::Suspension`: Instance of a specific suspension in which the kinematics were previously calculated.
 -`chassi::Chassis`: Instance of a Chassis
@@ -165,18 +165,18 @@ Create a plot in which the objective (Ackermann ratio) are mapped to the turning
 
 """
 function plot_optda_gird_obj(args...)
-    θx_max, θz_max = args[1]
-    θx = 0:1:θx_max
-    θz = 0:1:θz_max
+    ϕx_max, ϕz_max = args[1]
+    ϕx = 0:1:ϕx_max
+    ϕz = 0:1:ϕz_max
 
     objective = grid_data_obj(args...)
 
-    sur_obj = PlotlyJS.surface(;x=θx, y=θz, z=objective)
-    #title="Lenkabweichung in Abhängigkeit der Stellwinkel (θx, θz) der Rotationskomponente der Lenkgeometrie"
+    sur_obj = PlotlyJS.surface(;x=ϕx, y=ϕz, z=objective)
+    #title="Lenkabweichung in Abhängigkeit der Stellwinkel (ϕx, ϕz) der Rotationskomponente der Lenkgeometrie"
     layout = Layout(autosize=true, margin=attr(l=10, r=10, b=10, t=10),
     scene=attr(
-        xaxis=attr(title="θx in [°]"),
-        yaxis=attr(title="θz in [°]"),
+        xaxis=attr(title="ϕx in [°]"),
+        yaxis=attr(title="ϕz in [°]"),
         zaxis=attr(title="objective in [mm]"),
         scene = attr(aspectmode="cube") 
     ),
@@ -194,21 +194,21 @@ end
 
 
 """
-function plotSuspImpact(θ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension, chassis::Chassis; step_size = 1, suspensionNEUTRAL = Suspension((30,30)))
-    θx_max, θz_max = θ_max
-    θx = 0:1:θx_max
-    θz = 0:1:θz_max
+function plotSuspImpact(ϕ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension, chassis::Chassis; step_size = 1, suspensionNEUTRAL = Suspension((30,30)))
+    ϕx_max, ϕz_max = ϕ_max
+    ϕx = 0:1:ϕx_max
+    ϕz = 0:1:ϕz_max
 
-    objectiveNEUTRAL = grid_data_obj(θ_max, steering, suspensionNEUTRAL, chassis)
-    objective = grid_data_obj(θ_max, steering, suspension, chassis)
+    objectiveNEUTRAL = grid_data_obj(ϕ_max, steering, suspensionNEUTRAL, chassis)
+    objective = grid_data_obj(ϕ_max, steering, suspension, chassis)
 
-    δi_NEUTRAL, δo_NEUTRAL  = grid_data_δ(θ_max, steering, suspensionNEUTRAL)
-    δi, δo  = grid_data_δ(θ_max, steering, suspension)
+    δi_NEUTRAL, δo_NEUTRAL  = grid_data_δ(ϕ_max, steering, suspensionNEUTRAL)
+    δi, δo  = grid_data_δ(ϕ_max, steering, suspension)
 
     #############################################################################
     sur_objNEUTRAL = PlotlyJS.surface(;
-                                    x=θx, 
-                                    y=θz, 
+                                    x=ϕx, 
+                                    y=ϕz, 
                                     z=objectiveNEUTRAL, 
                                     name="Neutral",
                                     colorscale="Greys", 
@@ -221,8 +221,8 @@ function plotSuspImpact(θ_max::Tuple{Any,Any}, steering::Steering, suspension::
                                                 len=0.7            # Länge der Farbskala
                                                     ))
     sur_obj = PlotlyJS.surface(;
-                            x=θx, 
-                            y=θz, 
+                            x=ϕx, 
+                            y=ϕz, 
                             z=objective, 
                             name="Current",
                             colorscale="YlOrRd", 
@@ -237,8 +237,8 @@ function plotSuspImpact(θ_max::Tuple{Any,Any}, steering::Steering, suspension::
 
 #############################################################################
     sur_δi_NEUTRAL = PlotlyJS.surface(;
-                                    x=θx, 
-                                    y=θz, 
+                                    x=ϕx, 
+                                    y=ϕz, 
                                     z=δi_NEUTRAL, 
                                     name="Neutral",
                                     colorscale="Greys", 
@@ -252,8 +252,8 @@ function plotSuspImpact(θ_max::Tuple{Any,Any}, steering::Steering, suspension::
                                                     ))
 
     sur_δi = PlotlyJS.surface(;
-                            x=θx, 
-                            y=θz, 
+                            x=ϕx, 
+                            y=ϕz, 
                             z=δi, 
                             name="Current",
                             colorscale="YlOrRd", 
@@ -268,12 +268,12 @@ function plotSuspImpact(θ_max::Tuple{Any,Any}, steering::Steering, suspension::
 
 
 #############################################################################
-    #title="Lenkabweichung in Abhängigkeit der Stellwinkel (θx, θz) der Rotationskomponente der Lenkgeometrie"
+    #title="Lenkabweichung in Abhängigkeit der Stellwinkel (ϕx, ϕz) der Rotationskomponente der Lenkgeometrie"
     layout1 = Layout(autosize=true, 
                     margin=attr(l=10, r=10, b=10, t=10),
                     scene=attr(
-                        xaxis=attr(title="θx in [°]"),
-                        yaxis=attr(title="θz in [°]"),
+                        xaxis=attr(title="ϕx in [°]"),
+                        yaxis=attr(title="ϕz in [°]"),
                         zaxis=attr(title="objective in [mm]"),
                         scene = attr(aspectmode="cube")),
                     width=600,
@@ -284,8 +284,8 @@ function plotSuspImpact(θ_max::Tuple{Any,Any}, steering::Steering, suspension::
     layout2 = Layout(autosize=true, 
                     margin=attr(l=10, r=10, b=10, t=10),
                     scene=attr(
-                        xaxis=attr(title="θx in [°]"),
-                        yaxis=attr(title="θz in [°]"),
+                        xaxis=attr(title="ϕx in [°]"),
+                        yaxis=attr(title="ϕz in [°]"),
                         zaxis=attr(title="δ in [°]"),
                         scene = attr(aspectmode="cube")),
                     width=600,
@@ -301,37 +301,37 @@ function plotSuspImpact(θ_max::Tuple{Any,Any}, steering::Steering, suspension::
 end
 
 
-function plotSuspImpact2(θ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension, chassis::Chassis; step_size = 1, suspensionNEUTRAL = Suspension((30,30)))
-    θx_max, θz_max = θ_max
-    θx = 0:step_size:θx_max
-    θz = 0:step_size:θz_max
+function plotSuspImpact2(ϕ_max::Tuple{Any,Any}, steering::Steering, suspension::Suspension, chassis::Chassis; step_size = 1, suspensionNEUTRAL = Suspension((30,30)))
+    ϕx_max, ϕz_max = ϕ_max
+    ϕx = 0:step_size:ϕx_max
+    ϕz = 0:step_size:ϕz_max
 
     # Meshgrid erzeugen für x und y
-    θx_grid = repeat(θx', length(θz), 1)
-    θz_grid = repeat(θz, 1, length(θx))
+    ϕx_grid = repeat(ϕx', length(ϕz), 1)
+    ϕz_grid = repeat(ϕz, 1, length(ϕx))
 
     # Daten berechnen
-    objectiveNEUTRAL = grid_data_obj(θ_max, steering, suspensionNEUTRAL, chassis)
-    objective = grid_data_obj(θ_max, steering, suspension, chassis)
+    objectiveNEUTRAL = grid_data_obj(ϕ_max, steering, suspensionNEUTRAL, chassis)
+    objective = grid_data_obj(ϕ_max, steering, suspension, chassis)
 
-    δi_NEUTRAL, δo_NEUTRAL  = grid_data_δ(θ_max, steering, suspensionNEUTRAL)
-    δi, δo  = grid_data_δ(θ_max, steering, suspension)
+    δi_NEUTRAL, δo_NEUTRAL  = grid_data_δ(ϕ_max, steering, suspensionNEUTRAL)
+    δi, δo  = grid_data_δ(ϕ_max, steering, suspension)
 
     # Plot 1: Objective Comparison
     fig1 = Figure(resolution = (800, 600))
-    ax1 = Axis3(fig1[1, 1], title = "Objective", xlabel = "θx [°]", ylabel = "θz [°]", zlabel = "Objective [mm]")
+    ax1 = Axis3(fig1[1, 1], title = "Objective", xlabel = "ϕx [°]", ylabel = "ϕz [°]", zlabel = "Objective [mm]")
 
-    surface!(ax1, θx, θz, objectiveNEUTRAL; colormap = :greys, transparency = true, alpha = 0.8)
-    surface!(ax1, θx, θz, objective; colormap = :ylorrd, transparency = true, alpha = 0.5)
+    surface!(ax1, ϕx, ϕz, objectiveNEUTRAL; colormap = :greys, transparency = true, alpha = 0.8)
+    surface!(ax1, ϕx, ϕz, objective; colormap = :ylorrd, transparency = true, alpha = 0.5)
 
     fig1[1, 1] = ax1
 
     # Plot 2: δi Comparison
     fig2 = Figure(resolution = (800, 600))
-    ax2 = Axis3(fig2[1, 1], title = "Lenkabweichung δi", xlabel = "θx [°]", ylabel = "θz [°]", zlabel = "δ [°]")
+    ax2 = Axis3(fig2[1, 1], title = "Lenkabweichung δi", xlabel = "ϕx [°]", ylabel = "ϕz [°]", zlabel = "δ [°]")
 
-    surface!(ax2, θx, θz, δi_NEUTRAL; colormap = :greys, transparency = true, alpha = 0.8)
-    surface!(ax2, θx, θz, δi; colormap = :ylorrd, transparency = true, alpha = 0.5)
+    surface!(ax2, ϕx, ϕz, δi_NEUTRAL; colormap = :greys, transparency = true, alpha = 0.8)
+    surface!(ax2, ϕx, ϕz, δi; colormap = :ylorrd, transparency = true, alpha = 0.5)
 
     fig2[1, 1] = ax2
 
@@ -344,12 +344,12 @@ end
 
 
 """
-    plot_optda_gird_δi(θ_max::Tuple{I,I}, steering::Steering) where {T <: Any}
+    plot_optda_gird_δi(ϕ_max::Tuple{I,I}, steering::Steering) where {T <: Any}
     	
-Create a plot in which the turning angles of the vehicle are mapped to the turning angles of the rotation component (θx, θz) of the steering system.
+Create a plot in which the turning angles of the vehicle are mapped to the turning angles of the rotation component (ϕx, ϕz) of the steering system.
 
 # Arguments
--`θ_max::Tuple{I,I}`: maximal turning angles of the rotation component
+-`ϕ_max::Tuple{I,I}`: maximal turning angles of the rotation component
 -`steering::Steering`: Instance of a specific steering mechanism in which the kinematics were previously calculated.
 
 # Returns
@@ -357,21 +357,21 @@ Create a plot in which the turning angles of the vehicle are mapped to the turni
 
 """
 function plot_optda_gird_δ(args...)
-    θx_max, θz_max = args[1]
-    θx = 0:1:θx_max
-    θz = 0:1:θz_max
+    ϕx_max, ϕz_max = args[1]
+    ϕx = 0:1:ϕx_max
+    ϕz = 0:1:ϕz_max
 
 
     δi, δo  = grid_data_δ(args...)
 
-    sur_δi = PlotlyJS.surface(;x=θx, y=θz, z=δi)
-    sur_δo = PlotlyJS.surface(;x=θx, y=θz, z=δo)
+    sur_δi = PlotlyJS.surface(;x=ϕx, y=ϕz, z=δi)
+    sur_δo = PlotlyJS.surface(;x=ϕx, y=ϕz, z=δo)
 
-    #title="Lenkabweichung in Abhängigkeit der Stellwinkel (θx, θz) der Rotationskomponente der Lenkgeometrie"
+    #title="Lenkabweichung in Abhängigkeit der Stellwinkel (ϕx, ϕz) der Rotationskomponente der Lenkgeometrie"
     layout = Layout(autosize=true, margin=attr(l=10, r=10, b=10, t=10),
     scene=attr(
-        xaxis=attr(title="θx in [°]"),
-        yaxis=attr(title="θz in [°]"),
+        xaxis=attr(title="ϕx in [°]"),
+        yaxis=attr(title="ϕz in [°]"),
         zaxis=attr(title="objective in [mm]"),
         scene = attr(aspectmode="cube") 
     ),

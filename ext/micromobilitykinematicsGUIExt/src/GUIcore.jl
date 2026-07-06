@@ -31,8 +31,8 @@ Er enthält Felder zur Positionierung, grafischen Darstellung und Observables zu
 - `obs_rotation`: Observable für Rotationszustand.
 - `obs_geom_left`, `obs_geom_right`: Observables für Geometrieansichten.
 - `obs_stationary`: Observable für stationäre Zustände.
-- `obs_radii_θz`: Observable für Radien in θz-Richtung.
-- `obs_ratio_θz`, `obs_ratio_surface`, `obs_ratio_max`, `obs_ratio_min`: Observables für Verhältnis-Daten.
+- `obs_radii_ϕz`: Observable für Radien in ϕz-Richtung.
+- `obs_ratio_ϕz`, `obs_ratio_surface`, `obs_ratio_max`, `obs_ratio_min`: Observables für Verhältnis-Daten.
 
 # Konstruktor
 
@@ -47,9 +47,9 @@ mutable struct PlotSection  <: AbstractPlotSection
     ax_geom::Union{Axis3,Nothing}
     ax_radii::Union{Axis,Nothing}
     ax_ratio::Union{Axis,Nothing}
-    ax_ratio_θx::Union{Axis,Nothing}
+    ax_ratio_ϕx::Union{Axis,Nothing}
     ax_ratio_surface::Union{Axis3,Nothing}
-    ax_θ_vs_δ_surface::Union{Axis3,Nothing}
+    ax_ϕ_vs_δ_surface::Union{Axis3,Nothing}
     ax_deviation::Union{Axis,Nothing}
     ax_deviation_surface::Union{Axis3,Nothing}
     ax_compr_vs_δ::Union{Axis3,Nothing}
@@ -65,8 +65,8 @@ mutable struct PlotSection  <: AbstractPlotSection
 
     txt_ratio_max::Union{Makie.Text,Nothing}
     txt_ratio_min::Union{Makie.Text,Nothing}
-    txt_ratio_θx_max::Union{Makie.Text,Nothing}
-    txt_ratio_θx_min::Union{Makie.Text,Nothing}
+    txt_ratio_ϕx_max::Union{Makie.Text,Nothing}
+    txt_ratio_ϕx_min::Union{Makie.Text,Nothing}
     txt_deviation_max::Union{Makie.Text,Nothing}
     txt_deviation_min::Union{Makie.Text,Nothing}
 
@@ -91,20 +91,20 @@ mutable struct PlotSection  <: AbstractPlotSection
     obs_left_damper::Union{Observable,Nothing}
     obs_right_damper::Union{Observable,Nothing}
 
-    obs_radii_θz::Union{Observable,Nothing}
+    obs_radii_ϕz::Union{Observable,Nothing}
     
-    obs_ratio_θz::Union{Observable,Nothing}
-    obs_ratio_θx::Union{Observable,Nothing}
+    obs_ratio_ϕz::Union{Observable,Nothing}
+    obs_ratio_ϕx::Union{Observable,Nothing}
     obs_ratio_surface::Union{Observable,Nothing}
     obs_ratio_max::Union{Observable,Nothing}
     obs_ratio_min::Union{Observable,Nothing}
-    obs_ratio_θx_max::Union{Observable,Nothing}
-    obs_ratio_θx_min::Union{Observable,Nothing}
+    obs_ratio_ϕx_max::Union{Observable,Nothing}
+    obs_ratio_ϕx_min::Union{Observable,Nothing}
 
-    obs_θ_vs_δi_surface::Union{Observable,Nothing}
-    obs_θ_vs_δo_surface::Union{Observable,Nothing}
+    obs_ϕ_vs_δi_surface::Union{Observable,Nothing}
+    obs_ϕ_vs_δo_surface::Union{Observable,Nothing}
 
-    obs_deviation_θz::Union{Observable,Nothing}
+    obs_deviation_ϕz::Union{Observable,Nothing}
     obs_deviation_max::Union{Observable,Nothing}
     obs_deviation_min::Union{Observable,Nothing}
 
@@ -138,9 +138,9 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.ax_geom = nothing
         inst.ax_radii = nothing
         inst.ax_ratio = nothing 
-        inst.ax_ratio_θx = nothing
+        inst.ax_ratio_ϕx = nothing
         inst.ax_ratio_surface = nothing
-        inst.ax_θ_vs_δ_surface = nothing
+        inst.ax_ϕ_vs_δ_surface = nothing
         inst.ax_deviation = nothing
         inst.ax_deviation_surface = nothing
         inst.ax_compr_vs_δ = nothing
@@ -156,8 +156,8 @@ mutable struct PlotSection  <: AbstractPlotSection
 
         inst.txt_ratio_max = nothing 
         inst.txt_ratio_min = nothing 
-        inst.txt_ratio_θx_max = nothing 
-        inst.txt_ratio_θx_min = nothing 
+        inst.txt_ratio_ϕx_max = nothing 
+        inst.txt_ratio_ϕx_min = nothing 
         inst.txt_deviation_max = nothing
         inst.txt_deviation_min = nothing
 
@@ -165,17 +165,17 @@ mutable struct PlotSection  <: AbstractPlotSection
         inst.obs_geom_left = nothing
         inst.obs_geom_right = nothing
         inst.obs_stationary = nothing
-        inst.obs_radii_θz = nothing
-        inst.obs_ratio_θz = nothing
-        inst.obs_ratio_θx = nothing
+        inst.obs_radii_ϕz = nothing
+        inst.obs_ratio_ϕz = nothing
+        inst.obs_ratio_ϕx = nothing
         inst.obs_ratio_surface = nothing
         inst.obs_ratio_max = nothing
         inst.obs_ratio_min = nothing
-        inst.obs_ratio_θx_max = nothing
-        inst.obs_ratio_θx_min = nothing
-        inst.obs_θ_vs_δi_surface = nothing
-        inst.obs_θ_vs_δo_surface = nothing
-        inst.obs_deviation_θz = nothing
+        inst.obs_ratio_ϕx_max = nothing
+        inst.obs_ratio_ϕx_min = nothing
+        inst.obs_ϕ_vs_δi_surface = nothing
+        inst.obs_ϕ_vs_δo_surface = nothing
+        inst.obs_deviation_ϕz = nothing
         inst.obs_deviation_max = nothing
         inst.obs_deviation_min = nothing
 
@@ -221,7 +221,7 @@ Diese Sektion enthält GUI-Komponenten wie ein Titel-Label und ein Slider-Grid z
 - `slot`: Position im übergeordneten GridLayout.
 - `lyt`: Inneres GridLayout für die Anordnung von Komponenten.
 - `title`: Beschriftung der Sektion.
-- `sg_θ`: SliderGrid zur Steuerung des Winkels θ.
+- `sg_ϕ`: SliderGrid zur Steuerung des Winkels ϕ.
 
 # Konstruktor
 
@@ -236,7 +236,7 @@ mutable struct AngleSection <: AbstractAngleSection # Layout Angles Section
 
     title::Union{Label,Nothing}
 
-    sg_θ::Union{SliderGrid,Nothing}
+    sg_ϕ::Union{SliderGrid,Nothing}
 
 
     function AngleSection()
@@ -246,7 +246,7 @@ mutable struct AngleSection <: AbstractAngleSection # Layout Angles Section
 
         inst.lyt = nothing
         inst.title = nothing
-        inst.sg_θ = nothing
+        inst.sg_ϕ = nothing
 
         return inst
     end
