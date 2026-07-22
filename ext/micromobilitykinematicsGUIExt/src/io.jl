@@ -27,6 +27,17 @@ The result is an intuitive visual representation of the current steering geometr
 """
 function geometry_plot(ϕ::Tuple{T,T,T}, steering::Steering, suspension::Suspension)where {T <: Any}
 
+    steering_plot = deepcopy(steering)
+    suspension_plot = deepcopy(suspension)
+    MMK.update!(ϕ, steering_plot, suspension_plot)
+
+    fig = GLMakie.Figure(size = (1200, 800), figure_padding = (90, 35, 35, 35))
+    section_plot = PlotSection()
+    section_plot.slot = (1, 1)
+    geom_plot!(fig, section_plot, steering_plot, suspension_plot)
+
+    return fig
+
     ϕx, ϕy, ϕz = ϕ 
 
     steeringkinematicsMOVED!(ϕ, steering, suspension)

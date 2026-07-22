@@ -4,3 +4,7 @@ site/
 .vscode/
 
 Manifest.toml
+
+src/examples/*.png
+src/examples/vehicle_parameter_export/
+src/examples/fahrwerksparameter.xlsx

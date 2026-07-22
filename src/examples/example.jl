@@ -6,10 +6,10 @@ using GLMakie
 max_varphi_config = (15.0, 1.0, 35.0)
 
 steering = Steering(
-    57.4050864963812,
-    100.0000009999905,
-    109.196240211308,
-    229.7228503290388,
+    62.81680256916951,
+    100.00000099935133,
+    108.80559236847354,
+    227.8382026583041,
 )
 
 ## Suspension geometry
@@ -116,10 +116,10 @@ steering.δo
 lower_border = (50.0, 50.0, 70.0, 195.0)
 upper_border = (100.0, 100.0, 200.0, 260.0)
 
-# start_parameters = random_search(upper_border, lower_border, max_varphi_config)
-# opt = optim_over_range(start_parameters..., max_varphi_config)
-# steering = opt.steering
-# micromobilitykinematics.update!(varphi_config, steering, suspension)
+start_parameters = random_search(upper_border, lower_border, max_varphi_config)
+opt = optim_over_range(start_parameters..., max_varphi_config)
+steering = opt.steering
+ micromobilitykinematics.update!(varphi_config, steering, suspension)
 
 ## Interactive GUI
 

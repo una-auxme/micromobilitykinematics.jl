@@ -8,6 +8,34 @@ plot_title_size() = 28
 
 format_compression_percent(value) = "$(round(float(value), digits = 1))%"
 
+function filename_number(value; digits = 3)
+    rounded = round(float(value); digits = digits)
+    text = string(rounded)
+
+    while occursin(".", text) && endswith(text, "0")
+        text = text[1:end-1]
+    end
+
+    endswith(text, ".") && (text = text[1:end-1])
+
+    return replace(text, "-" => "m", "." => "p")
+end
+
+function plot_export_state_suffix(ϕ, suspension)
+    ϕx, ϕy, ϕz = ϕ
+    left_compression = suspension.damper[1].compression
+    right_compression = suspension.damper[2].compression
+
+    return "varphi_x=$(filename_number(ϕx))_" *
+           "varphi_y=$(filename_number(ϕy))_" *
+           "varphi_z=$(filename_number(ϕz))_" *
+           "compression_L=$(filename_number(left_compression))_" *
+           "compression_R=$(filename_number(right_compression))"
+end
+
+plot_export_filename(prefix, ϕ, suspension) =
+    "$(prefix)_$(plot_export_state_suffix(ϕ, suspension)).png"
+
 function compression_title_part(suspension)
     suspension === nothing && return ""
 

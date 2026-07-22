@@ -1,3 +1,142 @@
+mirror_for_side(vector, side_index) =
+    side_index == 2 ? Float64.(vector) .* [1.0, -1.0, 1.0] : Float64.(vector)
+
+function wheel_steering_angle_rad(steering, suspension, side_index)
+    if steering.circle_joints === nothing ||
+        steering.circle_joints_neutral === nothing ||
+        steering.track_lever_mounting_points_ucs === nothing
+        return 0.0
+    end
+
+    axis = wheel_axis_vehicle_direction(suspension, side_index)
+    any(isnan, axis) && return 0.0
+
+    track_lever_mount = Float64.(steering.track_lever_mounting_points_ucs[side_index])
+    neutral_track_lever = Float64.(steering.circle_joints_neutral[side_index]) .- track_lever_mount
+    moved_track_lever = Float64.(steering.circle_joints[side_index]) .- track_lever_mount
+
+    if finite_norm(neutral_track_lever) <= eps(Float64) || finite_norm(moved_track_lever) <= eps(Float64)
+        return 0.0
+    end
+
+    return atan(dot(axis, cross(neutral_track_lever, moved_track_lever)), dot(neutral_track_lever, moved_track_lever))
+end
+
+function wheel_visual_basis(steering, suspension, side_index)
+    carrier_axis = wheel_axis_vehicle_direction(suspension, side_index)
+    any(isnan, carrier_axis) && return ([NaN, NaN, NaN], carrier_axis, [NaN, NaN, NaN])
+
+    vehicle_outward = side_index == 2 ? [0.0, -1.0, 0.0] : [0.0, 1.0, 0.0]
+    axle_axis = vehicle_outward .- dot(vehicle_outward, carrier_axis) .* carrier_axis
+
+    if finite_norm(axle_axis) <= eps(Float64)
+        axle_axis = [1.0, 0.0, 0.0] .- dot([1.0, 0.0, 0.0], carrier_axis) .* carrier_axis
+    end
+
+    axle_axis ./= finite_norm(axle_axis)
+    toe_angle = deg2rad(Float64(suspension.wheelmount.to_angle)) * (side_index == 2 ? -1.0 : 1.0)
+    steering_angle = wheel_steering_angle_rad(steering, suspension, side_index) + toe_angle
+    axle_axis = rotate_vector_around_axis(axle_axis, carrier_axis, steering_angle)
+    axle_axis ./= finite_norm(axle_axis)
+    carrier_axis ./= finite_norm(carrier_axis)
+
+    radial_axis = cross(axle_axis, carrier_axis)
+    radial_axis ./= finite_norm(radial_axis)
+
+    return axle_axis, carrier_axis, radial_axis
+end
+
+function wheel_visual_radius(suspension)
+    return 130.0
+end
+
+function wheel_axle_start_vehicle_position(steering, suspension, side_index)
+    lower_joint = lower_joint_vehicle_position(steering, suspension, side_index)
+    carrier_axis = wheel_axis_vehicle_direction(suspension, side_index)
+    any(isnan, carrier_axis) && return lower_joint
+
+    return lower_joint .+ carrier_axis .* Float64(suspension.wheelmount.offset_z)
+end
+
+function wheel_visual_center_vehicle_position(steering, suspension, side_index)
+    axle_start = wheel_axle_start_vehicle_position(steering, suspension, side_index)
+    axle_axis, _, _ = wheel_visual_basis(steering, suspension, side_index)
+    any(isnan, axle_axis) && return axle_start
+
+    return axle_start .+ axle_axis .* Float64(suspension.wheelmount.offset_y)
+end
+
+function wheel_axis_points(steering, suspension, side_index)
+    axle_start = wheel_axle_start_vehicle_position(steering, suspension, side_index)
+    center = wheel_visual_center_vehicle_position(steering, suspension, side_index)
+
+    return [
+        Point3f(axle_start...),
+        Point3f(center...),
+    ]
+end
+
+function wheel_disc_segments(steering, suspension, side_index; chord_steps = 19, outline_steps = 72)
+    center = wheel_visual_center_vehicle_position(steering, suspension, side_index)
+    _, carrier_axis, radial_axis = wheel_visual_basis(steering, suspension, side_index)
+    radius = wheel_visual_radius(suspension)
+    segments = Point3f[]
+
+    for offset in range(-radius, radius; length = chord_steps)
+        half_chord = sqrt(max(radius^2 - offset^2, 0.0))
+        start_point = center .+ offset .* carrier_axis .- half_chord .* radial_axis
+        end_point = center .+ offset .* carrier_axis .+ half_chord .* radial_axis
+        push!(segments, Point3f(start_point...))
+        push!(segments, Point3f(end_point...))
+    end
+
+    outline_angles = range(0.0, 2pi; length = outline_steps + 1)
+
+    for index in 1:outline_steps
+        start_point = center .+ radius .* (cos(outline_angles[index]) .* radial_axis .+ sin(outline_angles[index]) .* carrier_axis)
+        end_point = center .+ radius .* (cos(outline_angles[index + 1]) .* radial_axis .+ sin(outline_angles[index + 1]) .* carrier_axis)
+        push!(segments, Point3f(start_point...))
+        push!(segments, Point3f(end_point...))
+    end
+
+    return segments
+end
+
+function wheel_visuals(steering, suspension)
+    return (
+        left_axis = wheel_axis_points(steering, suspension, 1),
+        right_axis = wheel_axis_points(steering, suspension, 2),
+        left_disc = wheel_disc_segments(steering, suspension, 1),
+        right_disc = wheel_disc_segments(steering, suspension, 2),
+    )
+end
+
+function set_geometry_limits!(ax, point_series...)
+    xs = Float64[]
+    ys = Float64[]
+    zs = Float64[]
+
+    for points in point_series
+        for point in points
+            point_tuple = Tuple(point)
+
+            if all(value -> value isa Real && isfinite(value), point_tuple)
+                push!(xs, Float64(point_tuple[1]))
+                push!(ys, Float64(point_tuple[2]))
+                push!(zs, Float64(point_tuple[3]))
+            end
+        end
+    end
+
+    isempty(xs) && return nothing
+
+    GLMakie.xlims!(ax, surface_zlimits(xs; lower_floor = -Inf, min_span = 120.0, padding = 0.16)...)
+    GLMakie.ylims!(ax, surface_zlimits(ys; lower_floor = -Inf, min_span = 120.0, padding = 0.16)...)
+    GLMakie.zlims!(ax, surface_zlimits(zs; lower_floor = -Inf, min_span = 120.0, padding = 0.16)...)
+
+    return nothing
+end
+
 """
     geom_plot!(fig,section_plot, steering)
 
@@ -40,7 +179,7 @@ function geom_plot!(fig, section_plot, steering, suspension)
 
     # Limits
     GLMakie.xlims!(section_plot.ax_geom, -200, 50)
-    GLMakie.ylims!(section_plot.ax_geom, -300, 300)
+    GLMakie.ylims!(section_plot.ax_geom, -360, 360)
     GLMakie.zlims!(section_plot.ax_geom, -200, 50)
 
 
@@ -103,6 +242,30 @@ function geom_plot!(fig, section_plot, steering, suspension)
     right_damper = [Point3f(conversion(2, suspension.damper[2].upper_fixture .*[1.0, -1.0, 1.0])...),
                          Point3f(conversion(2, suspension.damper[2].lower_fixture .*[1.0, -1.0, 1.0])...)]
 
+    wheel_visual = wheel_visuals(steering, suspension)
+    set_geometry_limits!(
+        section_plot.ax_geom,
+        rotational_coponent,
+        left_steering_connections,
+        right_steering_connections,
+        stationary,
+        left_lower_wishbone_axis,
+        right_lower_wishbone_axis,
+        left_upper_wishbone_axis,
+        right_upper_wishbone_axis,
+        left_wishbone_sphere_joint,
+        right_wishbone_sphere_joint,
+        left_lower_wishbone,
+        left_upper_wishbone,
+        right_lower_wishbone,
+        right_upper_wishbone,
+        left_damper,
+        right_damper,
+        wheel_visual.left_axis,
+        wheel_visual.right_axis,
+        wheel_visual.left_disc,
+        wheel_visual.right_disc,
+    )
 
     ############| Geometry Observervar                
     section_plot.obs_rotation = Observable(rotational_coponent)
@@ -126,6 +289,10 @@ function geom_plot!(fig, section_plot, steering, suspension)
 
     section_plot.obs_left_damper = Observable(left_damper)
     section_plot.obs_right_damper = Observable(right_damper)
+    section_plot.obs_left_wheel_axis = Observable(wheel_visual.left_axis)
+    section_plot.obs_right_wheel_axis = Observable(wheel_visual.right_axis)
+    section_plot.obs_left_wheel_disc = Observable(wheel_visual.left_disc)
+    section_plot.obs_right_wheel_disc = Observable(wheel_visual.right_disc)
 
 
 
@@ -148,6 +315,8 @@ function geom_plot!(fig, section_plot, steering, suspension)
 
     GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_left_damper, markersize=10; color = :black)
     GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_damper, markersize=10; color = :black)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_left_wheel_axis, markersize=8; color = :royalblue)
+    GLMakie.scatter!(section_plot.ax_geom, section_plot.obs_right_wheel_axis, markersize=8; color = :darkorange)
 
 
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_rotation)
@@ -167,6 +336,25 @@ function geom_plot!(fig, section_plot, steering, suspension)
 
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_left_damper; linestyle = :dash, color = :black)
     GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_damper; linestyle = :dash, color = :black)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_left_wheel_axis; color = :royalblue, linewidth = 4)
+    GLMakie.lines!(section_plot.ax_geom, section_plot.obs_right_wheel_axis; color = :darkorange, linewidth = 4)
+
+    GLMakie.linesegments!(
+        section_plot.ax_geom,
+        section_plot.obs_left_wheel_disc;
+        color = :royalblue,
+        linewidth = 1.5,
+        transparency = true,
+        alpha = 0.12,
+    )
+    GLMakie.linesegments!(
+        section_plot.ax_geom,
+        section_plot.obs_right_wheel_disc;
+        color = :darkorange,
+        linewidth = 1.5,
+        transparency = true,
+        alpha = 0.12,
+    )
 
 end 
 
@@ -731,6 +919,30 @@ function update_geometry!(ϕ, section_plot, steering, suspension)
     right_damper = [Point3f(conversion(2, suspension.damper[2].upper_fixture .*[1.0, -1.0, 1.0])...),
                          Point3f(conversion(2, suspension.damper[2].lower_fixture .*[1.0, -1.0, 1.0])...)]
 
+    wheel_visual = wheel_visuals(steering, suspension)
+    set_geometry_limits!(
+        section_plot.ax_geom,
+        rotational_coponent,
+        left_steering_connections,
+        right_steering_connections,
+        stationary,
+        left_lower_wishbone_axis,
+        right_lower_wishbone_axis,
+        left_upper_wishbone_axis,
+        right_upper_wishbone_axis,
+        left_wishbone_sphere_joint,
+        right_wishbone_sphere_joint,
+        left_lower_wishbone,
+        left_upper_wishbone,
+        right_lower_wishbone,
+        right_upper_wishbone,
+        left_damper,
+        right_damper,
+        wheel_visual.left_axis,
+        wheel_visual.right_axis,
+        wheel_visual.left_disc,
+        wheel_visual.right_disc,
+    )
 
     section_plot.obs_rotation[] = rotational_coponent
     section_plot.obs_geom_left[] = left_steering_connections
@@ -750,6 +962,10 @@ function update_geometry!(ϕ, section_plot, steering, suspension)
 
     section_plot.obs_left_damper[] = left_damper
     section_plot.obs_right_damper[] = right_damper
+    section_plot.obs_left_wheel_axis[] = wheel_visual.left_axis
+    section_plot.obs_right_wheel_axis[] = wheel_visual.right_axis
+    section_plot.obs_left_wheel_disc[] = wheel_visual.left_disc
+    section_plot.obs_right_wheel_disc[] = wheel_visual.right_disc
 
 
 end 

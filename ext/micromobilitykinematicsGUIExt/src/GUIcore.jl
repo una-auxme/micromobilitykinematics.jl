@@ -90,6 +90,10 @@ mutable struct PlotSection  <: AbstractPlotSection
 
     obs_left_damper::Union{Observable,Nothing}
     obs_right_damper::Union{Observable,Nothing}
+    obs_left_wheel_axis::Union{Observable,Nothing}
+    obs_right_wheel_axis::Union{Observable,Nothing}
+    obs_left_wheel_disc::Union{Observable,Nothing}
+    obs_right_wheel_disc::Union{Observable,Nothing}
 
     obs_radii_ϕz::Union{Observable,Nothing}
     
@@ -183,6 +187,10 @@ mutable struct PlotSection  <: AbstractPlotSection
 
         inst.obs_compr_vs_δi = nothing
         inst.obs_compr_vs_δo = nothing
+        inst.obs_left_wheel_axis = nothing
+        inst.obs_right_wheel_axis = nothing
+        inst.obs_left_wheel_disc = nothing
+        inst.obs_right_wheel_disc = nothing
         inst.obs_left_wheel_delta = nothing
         inst.obs_wheel_center_left = nothing
         inst.obs_wheel_center_right = nothing

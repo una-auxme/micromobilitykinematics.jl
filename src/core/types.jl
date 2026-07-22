@@ -89,7 +89,7 @@ mutable struct RotationalComponent <: AbstractComponent
         inst.x_rotational_radius = x_rotational_radius
         inst.z_rotational_radius = z_rotational_radius
 
-        inst.to_joint_pivot_point = 23.5
+        inst.to_joint_pivot_point = 29.5
         inst.distance_between_joint_pivot_points = inst.to_joint_pivot_point * 2
    
         return inst
@@ -547,7 +547,7 @@ mutable struct Measurements <: AbstractMeasurements
     function Measurements(chassi::Chassis, steering::Steering)
         inst = new()
         inst.track_width = chassi.width + 2 * abs(steering.wheel_ucs_position[1][2]) 
-        inst.wheel_base = 1000.0            
+        inst.wheel_base = 879.0            
         inst.turning_radius = 3000.0        # desired track radius
 
         return inst

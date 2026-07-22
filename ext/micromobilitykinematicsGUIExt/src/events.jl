@@ -1155,7 +1155,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_geo.elevation[] = section_plot.ax_geom.elevation[]
             #fig_geo.geo_ax.zoom[]      = section_plot.ax_geom.zoom[]  # optional
 
-            file_path = joinpath(base_path, "geometry(φx,φy,φz)=($ϕx,$ϕy,$ϕz).png")
+            file_path = joinpath(base_path, plot_export_filename("geometry", ϕ, suspension))
             GLMakie.save(file_path,fig_geo; px_per_unit = 20)
             GLMakie.display(fig)
 
@@ -1172,7 +1172,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             #ax_geo.elevation[] = section_plot.ax_geom.elevation[]
             #fig_geo.geo_ax.zoom[]      = section_plot.ax_geom.zoom[]  # optional
 
-            file_path = joinpath(base_path, "radii(φx,φy,φz)=($ϕx,$ϕy,$ϕz).png")
+            file_path = joinpath(base_path, plot_export_filename("radii", ϕ, suspension))
             GLMakie.save(file_path,fig_radii; px_per_unit = 20)
             GLMakie.display(fig)
 
@@ -1187,7 +1187,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             #ax_ratio.azimuth[]   = section_plot.ax_ratio.azimuth[]
             #ax_ratio.elevation[] = section_plot.ax_ratio.elevation[]
 
-            file_path = joinpath(base_path, "ackermannratio(φx,φy,φz)=($ϕx,$ϕy,φz).png")
+            file_path = joinpath(base_path, plot_export_filename("ackermannratio_varphi_z_sweep", ϕ, suspension))
             GLMakie.save(file_path,fig_ratio)
             GLMakie.display(fig)
         end
@@ -1195,7 +1195,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
         if section_plot_settings.menu.selection.val == "Ackermann ratio φx sweep"
             fig_ratio_ϕx = ackermannratio_ϕx_plot(ϕx_max, ϕy, ϕz, chassis, steering, suspension)
 
-            file_path = joinpath(base_path, "ackermannratio_φx_sweep.png")
+            file_path = joinpath(base_path, plot_export_filename("ackermannratio_varphi_x_sweep", ϕ, suspension))
             GLMakie.save(file_path, fig_ratio_ϕx)
             GLMakie.display(fig)
         end
@@ -1209,7 +1209,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_ratio_surface.azimuth[]   = section_plot.ax_ratio_surface.azimuth[]
             ax_ratio_surface.elevation[] = section_plot.ax_ratio_surface.elevation[]
 
-            file_path = joinpath(base_path, "ackermannratio_surface_plot.png")
+            file_path = joinpath(base_path, plot_export_filename("ackermannratio_surface_plot", ϕ, suspension))
             GLMakie.save(file_path,fig_ratio_surface)
             GLMakie.display(fig)
         end
@@ -1224,7 +1224,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             ax_ϕ_vs_δ_surface.azimuth[]   = section_plot.ax_ϕ_vs_δ_surface.azimuth[]
             ax_ϕ_vs_δ_surface.elevation[] = section_plot.ax_ϕ_vs_δ_surface.elevation[]
 
-            file_path = joinpath(base_path, "steering_vs_wheel_angles.png")
+            file_path = joinpath(base_path, plot_export_filename("steering_vs_wheel_angles", ϕ, suspension))
             GLMakie.save(file_path,fig_ϕ_vs_δ_surface)
             GLMakie.display(fig)
         end
@@ -1238,7 +1238,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
             #ax_deviation.azimuth[]   = section_plot.ax_deviation.azimuth[]
             #ax_deviation.elevation[] = section_plot.ax_deviation.elevation[]
 
-            file_path = joinpath(base_path, "ackermann_deviation.png")
+            file_path = joinpath(base_path, plot_export_filename("ackermann_deviation", ϕ, suspension))
             GLMakie.save(file_path, fig_deviation)
             GLMakie.display(fig)
         end
@@ -1254,7 +1254,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
                 end
             end
 
-            file_path = joinpath(base_path, "ackermann_deviation_surface.png")
+            file_path = joinpath(base_path, plot_export_filename("ackermann_deviation_surface", ϕ, suspension))
             GLMakie.save(file_path,fig_deviation_surface)
             GLMakie.display(fig)
         end
@@ -1270,7 +1270,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
                 end
             end
 
-            file_path = joinpath(base_path, "compression_vs_wheel_angles.png")
+            file_path = joinpath(base_path, plot_export_filename("compression_vs_wheel_angles", ϕ, suspension))
             GLMakie.save(file_path,fig_compr_vs_δ)
             GLMakie.display(fig)
         end
@@ -1286,7 +1286,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
                 end
             end
 
-            file_path = joinpath(base_path, "left_wheel_delta_vs_compression.png")
+            file_path = joinpath(base_path, plot_export_filename("left_wheel_delta_vs_compression", ϕ, suspension))
             GLMakie.save(file_path,fig_left_wheel_delta)
             GLMakie.display(fig)
         end
@@ -1302,7 +1302,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
                 end
             end
 
-            file_path = joinpath(base_path, "wheel_center_path.png")
+            file_path = joinpath(base_path, plot_export_filename("wheel_center_path", ϕ, suspension))
             GLMakie.save(file_path, fig_wheel_center_path)
             GLMakie.display(fig)
         end
@@ -1318,7 +1318,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
                 end
             end
 
-            file_path = joinpath(base_path, "wheel_center_surface.png")
+            file_path = joinpath(base_path, plot_export_filename("wheel_center_surface", ϕ, suspension))
             GLMakie.save(file_path, fig_wheel_center_surface)
             GLMakie.display(fig)
         end
@@ -1326,7 +1326,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
         if section_plot_settings.menu.selection.val == "Track width"
             fig_track_width = track_width_plot(steering, suspension)
 
-            file_path = joinpath(base_path, "track_width.png")
+            file_path = joinpath(base_path, plot_export_filename("track_width", ϕ, suspension))
             GLMakie.save(file_path, fig_track_width)
             GLMakie.display(fig)
         end
@@ -1334,7 +1334,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
         if section_plot_settings.menu.selection.val == "Damper motion ratio"
             fig_motion_ratio = motion_ratio_plot(steering, suspension)
 
-            file_path = joinpath(base_path, "damper_motion_ratio.png")
+            file_path = joinpath(base_path, plot_export_filename("damper_motion_ratio", ϕ, suspension))
             GLMakie.save(file_path, fig_motion_ratio)
             GLMakie.display(fig)
         end
@@ -1342,7 +1342,7 @@ function event_btn_save(interaction_lyt::InteractionLyt,
         if section_plot_settings.menu.selection.val == "Roll kinematics"
             fig_roll_kinematics = roll_kinematics_plot((ϕx, ϕy, ϕz), chassis, steering, suspension)
 
-            file_path = joinpath(base_path, "roll_kinematics.png")
+            file_path = joinpath(base_path, plot_export_filename("roll_kinematics", ϕ, suspension))
             GLMakie.save(file_path, fig_roll_kinematics)
             GLMakie.display(fig)
         end
@@ -1420,7 +1420,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_geo.azimuth[]   = section_plot.ax_geom.azimuth[]
         ax_geo.elevation[] = section_plot.ax_geom.elevation[]
 
-        file_path = joinpath(base_path, "geometry(φx,φy,φz)=($ϕx,$ϕy,$ϕz).png")
+        file_path = joinpath(base_path, plot_export_filename("geometry", ϕ, suspension))
         GLMakie.save(file_path,fig_geo; px_per_unit = 20)
 
 
@@ -1431,7 +1431,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         ax_geo = first(values(fig_radii.content))
 
-        file_path = joinpath(base_path, "radii(φx,φy,φz)=($ϕx,$ϕy,$ϕz).png")
+        file_path = joinpath(base_path, plot_export_filename("radii", ϕ, suspension))
         GLMakie.save(file_path,fig_radii; px_per_unit = 20)
 
 
@@ -1440,14 +1440,14 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         ax_ratio = first(values(fig_ratio.content))
 
-        file_path = joinpath(base_path, "ackermannratio(φx,φy,φz)=($ϕx,$ϕy,φz).png")
+        file_path = joinpath(base_path, plot_export_filename("ackermannratio_varphi_z_sweep", ϕ, suspension))
         GLMakie.save(file_path,fig_ratio)
 
 
         ###
         fig_ratio_ϕx = ackermannratio_ϕx_plot(ϕx_max, ϕy, ϕz, chassis, steering, suspension)
 
-        file_path = joinpath(base_path, "ackermannratio_φx_sweep.png")
+        file_path = joinpath(base_path, plot_export_filename("ackermannratio_varphi_x_sweep", ϕ, suspension))
         GLMakie.save(file_path, fig_ratio_ϕx)
 
 
@@ -1460,7 +1460,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_ratio_surface.azimuth[]   = section_plot.ax_ratio_surface.azimuth[]
         ax_ratio_surface.elevation[] = section_plot.ax_ratio_surface.elevation[]
 
-        file_path = joinpath(base_path, "ackermannratio_surface_plot.png")
+        file_path = joinpath(base_path, plot_export_filename("ackermannratio_surface_plot", ϕ, suspension))
         GLMakie.save(file_path,fig_ratio_surface)
 
 
@@ -1472,7 +1472,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
         ax_ϕ_vs_δ_surface.azimuth[]   = section_plot.ax_ϕ_vs_δ_surface.azimuth[]
         ax_ϕ_vs_δ_surface.elevation[] = section_plot.ax_ϕ_vs_δ_surface.elevation[]
 
-        file_path = joinpath(base_path, "steering_vs_wheel_angles.png")
+        file_path = joinpath(base_path, plot_export_filename("steering_vs_wheel_angles", ϕ, suspension))
         GLMakie.save(file_path,fig_ϕ_vs_δ_surface)
 
 
@@ -1481,7 +1481,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
 
         ax_deviation = first(values(fig_deviation.content))
 
-        file_path = joinpath(base_path, "ackermann_deviation.png")
+        file_path = joinpath(base_path, plot_export_filename("ackermann_deviation", ϕ, suspension))
         GLMakie.save(file_path, fig_deviation)
 
 
@@ -1496,7 +1496,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
             end
         end
 
-        file_path = joinpath(base_path, "ackermann_deviation_surface.png")
+        file_path = joinpath(base_path, plot_export_filename("ackermann_deviation_surface", ϕ, suspension))
         GLMakie.save(file_path,fig_deviation_surface)
 
 
@@ -1511,7 +1511,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
             end
         end
 
-        file_path = joinpath(base_path, "compression_vs_wheel_angles.png")
+        file_path = joinpath(base_path, plot_export_filename("compression_vs_wheel_angles", ϕ, suspension))
         GLMakie.save(file_path,fig_compr_vs_δ)
 
         ###
@@ -1525,7 +1525,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
             end
         end
 
-        file_path = joinpath(base_path, "left_wheel_delta_vs_compression.png")
+        file_path = joinpath(base_path, plot_export_filename("left_wheel_delta_vs_compression", ϕ, suspension))
         GLMakie.save(file_path,fig_left_wheel_delta)
 
         ###
@@ -1539,7 +1539,7 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
             end
         end
 
-        file_path = joinpath(base_path, "wheel_center_path.png")
+        file_path = joinpath(base_path, plot_export_filename("wheel_center_path", ϕ, suspension))
         GLMakie.save(file_path, fig_wheel_center_path)
 
 
@@ -1554,28 +1554,28 @@ function event_btn_save_all(interaction_lyt::InteractionLyt,
             end
         end
 
-        file_path = joinpath(base_path, "wheel_center_surface.png")
+        file_path = joinpath(base_path, plot_export_filename("wheel_center_surface", ϕ, suspension))
         GLMakie.save(file_path, fig_wheel_center_surface)
 
 
         ###
         fig_track_width = track_width_plot(steering, suspension)
 
-        file_path = joinpath(base_path, "track_width.png")
+        file_path = joinpath(base_path, plot_export_filename("track_width", ϕ, suspension))
         GLMakie.save(file_path, fig_track_width)
 
 
         ###
         fig_motion_ratio = motion_ratio_plot(steering, suspension)
 
-        file_path = joinpath(base_path, "damper_motion_ratio.png")
+        file_path = joinpath(base_path, plot_export_filename("damper_motion_ratio", ϕ, suspension))
         GLMakie.save(file_path, fig_motion_ratio)
 
 
         ###
         fig_roll_kinematics = roll_kinematics_plot(ϕ, chassis, steering, suspension)
 
-        file_path = joinpath(base_path, "roll_kinematics.png")
+        file_path = joinpath(base_path, plot_export_filename("roll_kinematics", ϕ, suspension))
         GLMakie.save(file_path, fig_roll_kinematics)
     end
 
