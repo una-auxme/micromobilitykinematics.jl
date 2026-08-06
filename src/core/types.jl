@@ -601,14 +601,23 @@ mutable struct OptDa # optimisation data
     steering::Union{Steering, Nothing}
     objective::Union{<:Number, Nothing}
     status::Union{Any,Nothing}
+    feasibility::Any
+    iterations::Int
 
-    function OptDa(input::Tuple{<:Number,<:Number,<:Number,<:Number}, steering::Steering, objective::Any, status::Any)
+    function OptDa(input::Tuple{<:Number,<:Number,<:Number,<:Number},
+                   steering::Steering,
+                   objective::Any,
+                   status::Any;
+                   feasibility = nothing,
+                   iterations = 0)
         inst = new()
         inst.ϕ = (steering.ϕx, steering.ϕz)
         inst.input = input
         inst.steering = steering
         inst.objective = objective 
         inst.status = status
+        inst.feasibility = feasibility
+        inst.iterations = iterations
         return inst
     end
 end

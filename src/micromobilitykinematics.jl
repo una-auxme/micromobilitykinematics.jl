@@ -35,6 +35,9 @@ module micromobilitykinematics
 
     export create_model_for_pose, get_model_solution, optim_at_pose, optim_series_at_pose, grid_optim, create_model_for_range, optim_over_range
     export checkConstraints, checkConstraints°, ackermann_deviation, ackermann_deviation_for_pose, ackermann_deviation_over_range
+    export OptimizationDomain, OperatingPoint, FeasibilityViolation, FeasibilityReport
+    export operating_points, initial_operating_points, evaluate_feasibility
+    export robust_random_search, robust_optim_over_range
 
     export plot_optda_series, plot_optda_gird_δ, plot_optda_gird_obj
 
@@ -59,6 +62,7 @@ module micromobilitykinematics
     include("optimization/dependencies/functions_for_dependencies.jl")
     include("optimization/dependencies/dependencies.jl")
     include("optimization/objective.jl")
+    include("optimization/robust.jl")
     include("optimization/driver.jl")
 
     include("utils/insights.jl")

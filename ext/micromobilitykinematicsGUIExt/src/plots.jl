@@ -343,17 +343,17 @@ function geom_plot!(fig, section_plot, steering, suspension)
         section_plot.ax_geom,
         section_plot.obs_left_wheel_disc;
         color = :royalblue,
-        linewidth = 1.5,
+        linewidth = 2.5,
         transparency = true,
-        alpha = 0.12,
+        alpha = 0.24,
     )
     GLMakie.linesegments!(
         section_plot.ax_geom,
         section_plot.obs_right_wheel_disc;
         color = :darkorange,
-        linewidth = 1.5,
+        linewidth = 2.5,
         transparency = true,
-        alpha = 0.12,
+        alpha = 0.24,
     )
 
 end 

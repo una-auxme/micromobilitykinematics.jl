@@ -10,10 +10,10 @@ Creates the same steering geometry as `example.jl`.
 """
 function tie_rod_track_lever_example_steering()
     return Steering(
-        57.4050864963812,
-        100.0000009999905,
-        109.196240211308,
-        229.7228503290388,
+        75.42675540883899,
+        91.8286361513241,
+        123.54626813005024,
+        227.48110204522783,
     )
 end
 
@@ -502,6 +502,89 @@ function reference_geometry(varphi_y, steering, suspension, side_index; referenc
     return tie_rod_track_lever_geometry(steering_reference, side_index)
 end
 
+"""
+    track_lever_joint_coordinate_system(result, steering, suspension; ...)
+
+Builds a right-handed coordinate system at the track-lever ball joint in the
+neutral suspension pose. Its y-axis is the optimized ball-joint neutral axis.
+The x-axis lies in the plane spanned by that axis and the neutral tie rod and
+points towards the tie rod's transverse component. The z-axis is `x × y` and
+is therefore orthogonal to both the optimized axis and the neutral tie rod.
+"""
+function track_lever_joint_coordinate_system(result,
+                                              steering,
+                                              suspension;
+                                              varphi_config_deg = (0.0, 1.0, 0.0),
+                                              compression_percent = 30.0)
+    summary = result.summary
+    steering_reference = deepcopy(steering)
+    suspension_reference = deepcopy(suspension)
+
+    for damper in suspension_reference.damper
+        damper.compression = compression_percent
+    end
+
+    micromobilitykinematics.update!(varphi_config_deg, steering_reference, suspension_reference)
+
+    side_index = summary.side_index
+    mount = Float64.(steering_reference.track_lever_mounting_points_ucs[side_index])
+    joint = Float64.(steering_reference.circle_joints[side_index])
+    sphere = Float64.(steering_reference.sphere_joints[side_index])
+    track_lever_basis = local_track_lever_basis(joint .- mount)
+
+    y_local = tie_rod_track_lever_unit(summary.optimal_direction)
+    neutral_tie_rod_local = tie_rod_track_lever_unit(to_local(sphere .- joint, track_lever_basis))
+    x_candidate = neutral_tie_rod_local .- dot(neutral_tie_rod_local, y_local) .* y_local
+    norm(x_candidate) > sqrt(eps(Float64)) || error("neutral tie rod is parallel to the optimal joint axis")
+    x_local = tie_rod_track_lever_unit(x_candidate)
+    z_local = tie_rod_track_lever_unit(cross(x_local, y_local))
+
+    from_local(vector) = vector[1] .* track_lever_basis.x .+
+                         vector[2] .* track_lever_basis.y .+
+                         vector[3] .* track_lever_basis.z
+
+    x_ucs = from_local(x_local)
+    y_ucs = from_local(y_local)
+    z_ucs = from_local(z_local)
+    rotation_joint_to_ucs = hcat(x_ucs, y_ucs, z_ucs)
+
+    return (
+        origin_ucs_mm = joint,
+        origin_track_lever_local_mm = [summary.track_lever_length_mm, 0.0, 0.0],
+        x_local = x_local,
+        y_local = y_local,
+        z_local = z_local,
+        neutral_tie_rod_local = neutral_tie_rod_local,
+        x_ucs = x_ucs,
+        y_ucs = y_ucs,
+        z_ucs = z_ucs,
+        neutral_tie_rod_ucs = tie_rod_track_lever_unit(sphere .- joint),
+        rotation_joint_to_ucs = rotation_joint_to_ucs,
+        rotation_ucs_to_joint = transpose(rotation_joint_to_ucs),
+    )
+end
+
+function print_track_lever_joint_coordinate_system(coordinate_system)
+    println()
+    println("Track-lever ball-joint coordinate system")
+    @printf("  origin UCS [mm]: [%.6f, %.6f, %.6f]\n", coordinate_system.origin_ucs_mm...)
+    @printf("  x-axis UCS: [%.9f, %.9f, %.9f]\n", coordinate_system.x_ucs...)
+    @printf("  y-axis UCS: [%.9f, %.9f, %.9f]\n", coordinate_system.y_ucs...)
+    @printf("  z-axis UCS: [%.9f, %.9f, %.9f]\n", coordinate_system.z_ucs...)
+    println("  rotation joint -> UCS, axes stored as columns:")
+
+    for row in axes(coordinate_system.rotation_joint_to_ucs, 1)
+        @printf(
+            "    [%.9f  %.9f  %.9f]\n",
+            coordinate_system.rotation_joint_to_ucs[row, 1],
+            coordinate_system.rotation_joint_to_ucs[row, 2],
+            coordinate_system.rotation_joint_to_ucs[row, 3],
+        )
+    end
+
+    return nothing
+end
+
 function add_plot_vector!(
     plot_segments,
     plot_endpoints,
@@ -907,8 +990,9 @@ end
 
 function plot_tie_rod_track_lever_vectors(result;
                                           save_path = joinpath(@__DIR__, "tie_rod_track_lever_angle_range.png"),
-                                          title = "Tie rod direction envelope in track-lever-local frame")
-    fig = Figure(size = (1500, 760))
+                                          title = "Tie rod direction envelope in track-lever-local frame",
+                                          interactive = false)
+    fig = Figure(size = (1800, 950))
     summary = result.summary
     all_angles = result.plot_angles
     colorrange = isempty(all_angles) ? (0.0, 1.0) : extrema(all_angles)
@@ -920,6 +1004,8 @@ function plot_tie_rod_track_lever_vectors(result;
         zlabel = "local z, vehicle-up projection [mm]",
         title = "$(summary.side) side",
         aspect = :data,
+        azimuth = deg2rad(60.7),
+        elevation = deg2rad(23.6),
     )
 
     track_start = Point3f(0.0, 0.0, 0.0)
@@ -980,20 +1066,39 @@ function plot_tie_rod_track_lever_vectors(result;
         fig[2, 3],
         plot_info_text(summary);
         justification = :left,
-        tellheight = false,
+        tellheight = true,
         tellwidth = true,
         halign = :left,
         valign = :top,
     )
+    viewpoint_text = lift(ax.azimuth, ax.elevation) do azimuth, elevation
+        @sprintf(
+            "3D viewpoint: azimuth %.1f deg | elevation %.1f deg",
+            rad2deg(azimuth),
+            rad2deg(elevation),
+        )
+    end
+    Label(fig[3, 1:3], viewpoint_text; tellwidth = false)
 
     save(save_path, fig)
     println()
     println("Saved plot: $save_path")
 
+    if interactive
+        screen = display(fig)
+        println("Interactive plot opened. Rotate the 3D view and close the window when finished.")
+        wait(screen)
+        @printf(
+            "Final 3D viewpoint: azimuth %.3f deg, elevation %.3f deg\n",
+            rad2deg(ax.azimuth[]),
+            rad2deg(ax.elevation[]),
+        )
+    end
+
     return fig
 end
 
-function run_tie_rod_track_lever_angle_example()
+function run_tie_rod_track_lever_angle_example(; interactive = false)
     varphi_limits_deg = (15.0, 1.0, 35.0)
     varphi_x_max_deg = 10.0
     angle_step_deg = 1.0
@@ -1010,8 +1115,8 @@ function run_tie_rod_track_lever_angle_example()
         varphi_x_range_deg = (0.0, varphi_x_max_deg),
         varphi_y_deg = varphi_limits_deg[2],
         varphi_z_range_deg = (-varphi_limits_deg[3], varphi_limits_deg[3]),
-        compression_range_percent = (10.0, 90.0),
-        high_steering_compression_range_percent = (20.0, 70.0),
+        compression_range_percent = (0.0, 100.0),
+        high_steering_compression_range_percent = (0.0, 100.0),
         high_steering_varphi_z_threshold_deg = 15.0,
         angle_step_deg = angle_step_deg,
         compression_step_percent = compression_step_percent,
@@ -1020,9 +1125,22 @@ function run_tie_rod_track_lever_angle_example()
     )
 
     print_tie_rod_track_lever_summary(result)
-    fig = plot_tie_rod_track_lever_vectors(result)
+    joint_coordinate_system = track_lever_joint_coordinate_system(
+        result,
+        steering_to_evaluate,
+        suspension_to_evaluate;
+        varphi_config_deg = (0.0, varphi_limits_deg[2], 0.0),
+        compression_percent = 30.0,
+    )
+    print_track_lever_joint_coordinate_system(joint_coordinate_system)
+    result = merge(result, (joint_coordinate_system = joint_coordinate_system,))
+    fig = plot_tie_rod_track_lever_vectors(
+        result;
+        title = "Tie rod direction envelope over full damper travel",
+        interactive = interactive,
+    )
 
     return result, fig
 end
 
-result, fig = run_tie_rod_track_lever_angle_example()
+result, fig = run_tie_rod_track_lever_angle_example(; interactive = "--interactive" in ARGS)

@@ -402,7 +402,8 @@ function ackermann_deviation_surface(chassis::Chassis,
             if steering.δo == 0.0
                 deviation[ϕx_i+1,ϕz_i+1] = NaN
             else
-                deviation[ϕx_i+1,ϕz_i+1] = ackermann_deviation(ϕ,chassis, steering, suspension)
+                # Plot convention: positive values are in front of the rear axle.
+                deviation[ϕx_i+1,ϕz_i+1] = -ackermann_deviation(ϕ,chassis, steering, suspension)
             end
         catch
             deviation[ϕx_i+1,ϕz_i+1] = NaN

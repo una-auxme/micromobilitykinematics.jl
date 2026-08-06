@@ -420,39 +420,37 @@ Performs an optimization over a defined steering angle range, targeting minimal 
     - The solver's termination status.
 
 # Notes
-- Internally uses `random_search` to generate a valid starting point.
-- Constructs a `Steering` and `Suspension` setup and builds a model with `create_model_for_range`.
-- Optimization is performed using `Ipopt` via `JuMP.optimize!`.
-- Output is postprocessed using `update!` before being packaged into `OptDa`.
+- Uses robust random search followed by derivative-free constrained optimization.
+- The actual `suspension` and `chassis` can be supplied as keyword arguments.
+- `OptDa.feasibility` contains the final suspension-travel certification report.
 
 """
-function optim_over_range(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, ϕ_max::Tuple{I,I,I}) where {T<:Number, I<:Number}
-    
-    # --- calaculate necessary input for optimization ---
-    param = random_search(upper_border, lower_border, ϕ_max)
-    steering = Steering(param...) 
-    suspension = Suspension((30,30))
-    suspensionkinematics!(suspension)
-
-
-    # --- generate optimization model ---
-    println("Thread $(Threads.threadid()):> optimization begin")
-    model = create_model_for_range(ϕ_max,steering)
-
-    # --- perform optimization ---
-    JuMP.optimize!(model)
-
-    # --- extract important data ---
-    sol,objective,status = get_model_solution(model)
-
-    # --- save data ---
-    steering = Steering(sol...)
-    update!(ϕ_max, steering, suspension)
-    optda = OptDa(param, steering, objective, status)
-
-    return optda
-
-end 
+function optim_over_range(upper_border::Tuple{T,T,T,T},
+                          lower_border::Tuple{T,T,T,T},
+                          ϕ_max::Tuple{I,I,I};
+                          suspension = Suspension((30.0, 30.0)),
+                          chassis = Chassis(),
+                          domain = OptimizationDomain(ϕ_max),
+                          kwargs...) where {T<:Number, I<:Number}
+    parameters = robust_random_search(
+        upper_border,
+        lower_border,
+        ϕ_max;
+        suspension = suspension,
+        chassis = chassis,
+        domain = domain,
+    )
+    return robust_optim_over_range(
+        parameters,
+        ϕ_max;
+        lower_border = lower_border,
+        upper_border = upper_border,
+        suspension = suspension,
+        chassis = chassis,
+        domain = domain,
+        kwargs...,
+    )
+end
 
 
 
@@ -476,37 +474,31 @@ Performs an optimization over a defined steering angle range using manually spec
     - The solver’s termination status.
 
 # Notes
-- Unlike the version with `random_search`, this function uses fixed parameter values.
-- Internally creates a `Steering` and `Suspension` system, then solves a nonlinear optimization problem with `Ipopt`.
-- `update!` is used post-optimization to apply the solution to the suspension model.
-- Useful for validating specific configurations across a range of steering angles.
+- Uses the specified values as the initial point for robust constrained optimization.
+- The actual `suspension`, `chassis`, and `OptimizationDomain` can be supplied.
+- The result is certified over the configured steering and suspension-travel range.
 
 """
-function optim_over_range(x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length, ϕ_max::Tuple)
-    
-    param = x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length
-    
-    # --- calaculate necessary input for optimization ---
-    steering = Steering(param...) 
-    suspension = Suspension((30,30))
-    suspensionkinematics!(suspension)
-
-
-    # --- generate optimization model ---
-    println("Thread $(Threads.threadid()):> optimization begin")
-    model = create_model_for_range(ϕ_max,steering)
-    
-    # --- perform optimization ---
-    JuMP.optimize!(model)
-
-    # --- extract important data ---
-    sol,objective,status = get_model_solution(model)
-
-    # --- save data ---
-    steering = Steering(sol...)
-    update!(ϕ_max, steering, suspension)
-    optda = OptDa(param, steering, objective, status)
-
-    return optda
-
-end 
+function optim_over_range(x_rotational_radius,
+                          z_rotational_radius,
+                          track_lever_length,
+                          tie_rod_length,
+                          ϕ_max::Tuple;
+                          suspension = Suspension((30.0, 30.0)),
+                          chassis = Chassis(),
+                          domain = OptimizationDomain(ϕ_max),
+                          lower_border = (50.0, 50.0, 70.0, 195.0),
+                          upper_border = (100.0, 100.0, 200.0, 260.0),
+                          kwargs...)
+    parameters = (x_rotational_radius, z_rotational_radius, track_lever_length, tie_rod_length)
+    return robust_optim_over_range(
+        parameters,
+        ϕ_max;
+        lower_border = lower_border,
+        upper_border = upper_border,
+        suspension = suspension,
+        chassis = chassis,
+        domain = domain,
+        kwargs...,
+    )
+end

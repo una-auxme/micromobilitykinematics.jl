@@ -10,10 +10,10 @@ Creates the same steering geometry as `example.jl`.
 """
 function tie_rod_rotational_component_example_steering()
     return Steering(
-        57.4050864963812,
-        100.0000009999905,
-        109.196240211308,
-        229.7228503290388,
+        75.42675540883899,
+        91.8286361513241,
+        123.54626813005024,
+        227.48110204522783,
     )
 end
 
@@ -907,8 +907,9 @@ end
 
 function plot_tie_rod_rotational_component_vectors(result;
                                           save_path = joinpath(@__DIR__, "tie_rod_rotational_component_angle_range.png"),
-                                          title = "Tie rod direction envelope in rotational-component-local frame")
-    fig = Figure(size = (1500, 760))
+                                          title = "Tie rod direction envelope in rotational-component-local frame",
+                                          interactive = false)
+    fig = Figure(size = (2200, 1050))
     summary = result.summary
     all_angles = result.plot_angles
     colorrange = isempty(all_angles) ? (0.0, 1.0) : extrema(all_angles)
@@ -920,6 +921,8 @@ function plot_tie_rod_rotational_component_vectors(result;
         zlabel = "local z, vehicle-up projection [mm]",
         title = "$(summary.side) side",
         aspect = :data,
+        azimuth = deg2rad(326.5),
+        elevation = deg2rad(26.3),
     )
 
     reference_start = Point3f(0.0, 0.0, 0.0)
@@ -980,20 +983,42 @@ function plot_tie_rod_rotational_component_vectors(result;
         fig[2, 3],
         plot_info_text(summary);
         justification = :left,
-        tellheight = false,
+        tellheight = true,
         tellwidth = true,
         halign = :left,
         valign = :top,
     )
+    viewpoint_text = lift(ax.azimuth, ax.elevation) do azimuth, elevation
+        @sprintf(
+            "3D viewpoint: azimuth %.1f deg | elevation %.1f deg",
+            rad2deg(azimuth),
+            rad2deg(elevation),
+        )
+    end
+    Label(fig[3, 1:3], viewpoint_text; tellwidth = false)
+    colsize!(fig.layout, 1, Relative(0.67))
+    colsize!(fig.layout, 2, Relative(0.06))
+    colsize!(fig.layout, 3, Relative(0.27))
 
     save(save_path, fig)
     println()
     println("Saved plot: $save_path")
 
+    if interactive
+        screen = display(fig)
+        println("Interactive plot opened. Rotate the 3D view and close the window when finished.")
+        wait(screen)
+        @printf(
+            "Final 3D viewpoint: azimuth %.3f deg, elevation %.3f deg\n",
+            rad2deg(ax.azimuth[]),
+            rad2deg(ax.elevation[]),
+        )
+    end
+
     return fig
 end
 
-function run_tie_rod_rotational_component_angle_example()
+function run_tie_rod_rotational_component_angle_example(; interactive = false)
     varphi_limits_deg = (15.0, 1.0, 35.0)
     varphi_x_max_deg = 10.0
     angle_step_deg = 1.0
@@ -1010,8 +1035,8 @@ function run_tie_rod_rotational_component_angle_example()
         varphi_x_range_deg = (0.0, varphi_x_max_deg),
         varphi_y_deg = varphi_limits_deg[2],
         varphi_z_range_deg = (-varphi_limits_deg[3], varphi_limits_deg[3]),
-        compression_range_percent = (10.0, 90.0),
-        high_steering_compression_range_percent = (20.0, 70.0),
+        compression_range_percent = (0.0, 100.0),
+        high_steering_compression_range_percent = (0.0, 100.0),
         high_steering_varphi_z_threshold_deg = 15.0,
         angle_step_deg = angle_step_deg,
         compression_step_percent = compression_step_percent,
@@ -1020,9 +1045,13 @@ function run_tie_rod_rotational_component_angle_example()
     )
 
     print_tie_rod_rotational_component_summary(result)
-    fig = plot_tie_rod_rotational_component_vectors(result)
+    fig = plot_tie_rod_rotational_component_vectors(
+        result;
+        title = "Tie rod direction envelope over full damper travel",
+        interactive = interactive,
+    )
 
     return result, fig
 end
 
-result, fig = run_tie_rod_rotational_component_angle_example()
+result, fig = run_tie_rod_rotational_component_angle_example(; interactive = "--interactive" in ARGS)

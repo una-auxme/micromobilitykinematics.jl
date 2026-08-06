@@ -253,25 +253,25 @@ random search with given border for the parameters and given angular area for ro
 # Returns:
 - `compLength`: tuple (x_rotational_radius, z_rotational_radius, track_lever.length, tie_rod.length)
 """
-function random_search(upper_border::Tuple{T,T,T,T},lower_border::Tuple{T,T,T,T}, ϕ_max::Tuple{I,I,I}; info = false, step_size = 1.0 ) where {T<:Number, I<:Number}
-    param = nothing
-    valid_param = false
-
-    i = 0
-    while !valid_param
-        param = [rand(l:u) for (l,u) in zip(lower_border, upper_border)]
-
-        if info 
-            println("Thread $(Threads.threadid()):> Random Search Iteration $i") 
-            println("Thread $(Threads.threadid()):> Parameters: $param \n")
-        end
-
-        suspension = Suspension((30,30))
-        suspensionkinematics!(suspension)
-        steering = Steering(param...)
-
-        valid_param = checkConstraints(step_size, ϕ_max, steering, suspension)
-        i +=1
-    end
-    return Tuple(param)
+function random_search(upper_border::Tuple{T,T,T,T},
+                       lower_border::Tuple{T,T,T,T},
+                       ϕ_max::Tuple{I,I,I};
+                       info = false,
+                       step_size = 1.0,
+                       suspension = Suspension((30.0, 30.0)),
+                       chassis = Chassis(),
+                       domain = OptimizationDomain(ϕ_max),
+                       max_attempts = 500,
+                       rng = Random.default_rng()) where {T<:Number, I<:Number}
+    return robust_random_search(
+        upper_border,
+        lower_border,
+        ϕ_max;
+        suspension = suspension,
+        chassis = chassis,
+        domain = domain,
+        max_attempts = max_attempts,
+        rng = rng,
+        info = info,
+    )
 end
