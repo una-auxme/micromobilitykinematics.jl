@@ -1,6 +1,9 @@
 name = "GeoSpatialRelations"
 uuid = "9c2cbfb9-3811-41fb-8b11-4506ae95e66c"
-authors = ["adribrune <adrianb.brune@gmail.com>"]
+authors = [
+    "Peter Krönes",
+    "Adrian Brune",
+]
 version = "0.1.0"
 
 [deps]

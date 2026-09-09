@@ -237,3 +237,20 @@ micromobilitykinematics.jl
 | date of publication: | 04.03.2024|
 | url:| [DOI: 10.17185/duepublico/43383](https://doi.org/10.17185/duepublico/81695) |
 | zite: | [BibTex](https://duepublico2.uni-due.de/receive/duepublico_mods_00081695?XSL.Transformer=bibtex) | | 
+
+## License
+
+Except for the organization logos listed below, the original content of this
+repository, including its source code, examples, documentation, and technical
+figures, is licensed under the [MIT License](LICENSE). Copyright (c) 2024-2026
+Peter Krönes.
+
+The following organization logos are excluded from the MIT License and may be
+subject to separate usage and trademark rights:
+
+- `docs/src/assets/149701353.png`
+- `docs/src/assets/149701353_V2.png`
+
+Third-party dependencies retain their respective licenses and are not
+relicensed by this project. Major project contributions are documented in
+[CONTRIBUTORS.md](CONTRIBUTORS.md).

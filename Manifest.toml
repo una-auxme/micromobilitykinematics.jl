@@ -2,7 +2,7 @@
 
 julia_version = "1.11.6"
 manifest_format = "2.0"
-project_hash = "9b9689f09a6aa41179d5b7d279347c7366166ad3"
+project_hash = "93002fbd4307e4e2ed81c97e7a9a279b042e7862"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -902,28 +902,6 @@ version = "1.29.3"
 
     [deps.JuMP.weakdeps]
     DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
-
-[[deps.Juniper]]
-deps = ["Distributed", "JSON", "LinearAlgebra", "MathOptInterface", "MutableArithmetics", "Random", "Statistics"]
-git-tree-sha1 = "3fee071e336de1f625dcf8b14c6cef2bd479071a"
-uuid = "2ddba703-00a4-53a7-87a5-e8b9971dde84"
-version = "0.9.4"
-
-[[deps.KNITRO]]
-deps = ["KNITRO_jll", "Libdl"]
-git-tree-sha1 = "ff48cef091958992b77fbca0543d48dc977906a9"
-uuid = "67920dd8-b58e-52a8-8622-53c4cffbe346"
-version = "1.1.0"
-weakdeps = ["MathOptInterface"]
-
-    [deps.KNITRO.extensions]
-    KNITROMathOptInterfaceExt = ["MathOptInterface"]
-
-[[deps.KNITRO_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "bdf7d90222a1624de37928c5847425194bf9c8ff"
-uuid = "0e6b36f8-8e90-4eb5-b54e-06f667ea875c"
-version = "15.0.1"
 
 [[deps.KernelDensity]]
 deps = ["Distributions", "DocStringExtensions", "FFTW", "Interpolations", "StatsBase"]

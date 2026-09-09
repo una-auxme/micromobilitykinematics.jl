@@ -13,9 +13,6 @@ module micromobilitykinematics
     #using GeoSpatialRelations
     include("GeoSpatialRelations/src/GeoSpatialRelations.jl")
     using .GeoSpatialRelations  
-    #using Colors  # (oder: using ColorTypes)
-
-    
     using JuMP
     using Ipopt
     using NLopt
